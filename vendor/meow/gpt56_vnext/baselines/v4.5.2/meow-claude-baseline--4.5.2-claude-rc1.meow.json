@@ -1,0 +1,2170 @@
+{
+  "mode": "claude",
+  "id": "meow-claude-baseline",
+  "version": "4.5.2-claude-rc1",
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "claude-fable-5.1",
+      "name": "claude-fable-5.1",
+      "request_model": "anthropic/claude-fable-5.1"
+    },
+    {
+      "id": "claude-opus-5",
+      "name": "claude-opus-5",
+      "request_model": "anthropic/claude-opus-5"
+    },
+    {
+      "id": "claude-sonnet-5",
+      "name": "claude-sonnet-5",
+      "request_model": "anthropic/claude-sonnet-5"
+    },
+    {
+      "id": "claude-haiku-4.5",
+      "name": "claude-haiku-4.5",
+      "request_model": "anthropic/claude-haiku-4.5"
+    }
+  ],
+  "probes": [
+    {
+      "id": "CL033",
+      "family_id": "CL033",
+      "source_group": "CL033",
+      "title": "随机英文字母",
+      "group": "CL033",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "CL033",
+          "system": ".",
+          "prompt": "不要思考，直接回答。随便选一个大写英文字母，只回答该字母。",
+          "history": [],
+          "effort": "low",
+          "profile": "claude-code",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "CL085",
+      "family_id": "CL085",
+      "source_group": "CL085",
+      "title": "随机地形",
+      "group": "CL085",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "CL085",
+          "system": ".",
+          "prompt": "不要思考，直接回答。从山地、平原、高原、盆地中选一种地形，只回答名称。",
+          "history": [],
+          "effort": "low",
+          "profile": "claude-code",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "CL087",
+      "family_id": "CL087",
+      "source_group": "CL087",
+      "title": "随机天干",
+      "group": "CL087",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "CL087",
+          "system": ".",
+          "prompt": "不要思考，直接回答。从十个天干中随便选一个，只回答一个字。",
+          "history": [],
+          "effort": "low",
+          "profile": "claude-code",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "CL022",
+      "family_id": "CL022",
+      "source_group": "CL022",
+      "title": "随机颜色",
+      "group": "CL022",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "CL022",
+          "system": ".",
+          "prompt": "不要思考，直接回答。从靛蓝、苔绿、银灰、玫红中选一个颜色，只回答颜色。",
+          "history": [],
+          "effort": "low",
+          "profile": "claude-code",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "CL026",
+      "family_id": "CL026",
+      "source_group": "CL026",
+      "title": "区间整数",
+      "group": "CL026",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "CL026",
+          "system": ".",
+          "prompt": "不要思考，直接回答。从19到71中选一个整数，只回答数字。",
+          "history": [],
+          "effort": "low",
+          "profile": "claude-code",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "meow CLAUDE baseline",
+    "description": "Four-window local audit candidate; not independently validated.",
+    "author": "chen-006",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "language": "zh-CN",
+    "created_at": "2026-09-07T13:11:10.202312+00:00"
+  },
+  "engine": {
+    "minimum_version": "4.5.0",
+    "scoring_version": "meow-fingerprint-v2",
+    "smoothing_alpha": 0.5,
+    "completion_ratio": 0.9
+  },
+  "tiers": {
+    "low": {
+      "counts": {
+        "CL033": 4,
+        "CL085": 4,
+        "CL087": 4,
+        "CL022": 4,
+        "CL026": 4
+      },
+      "thresholds": {
+        "claude-fable-5.1": 0.7228968296445468,
+        "claude-opus-5": 0.989652001139033,
+        "claude-sonnet-5": 0.7320530632447558,
+        "claude-haiku-4.5": 0.9996472298706827
+      }
+    },
+    "medium": {
+      "counts": {
+        "CL033": 10,
+        "CL085": 10,
+        "CL087": 10,
+        "CL022": 10,
+        "CL026": 10
+      },
+      "thresholds": {
+        "claude-fable-5.1": 0.9515690029536381,
+        "claude-opus-5": 0.9992315316926168,
+        "claude-sonnet-5": 0.9259293245307236,
+        "claude-haiku-4.5": 0.999971383320258
+      }
+    },
+    "high": {
+      "counts": {
+        "CL033": 20,
+        "CL085": 20,
+        "CL087": 20,
+        "CL022": 20,
+        "CL026": 20
+      },
+      "thresholds": {
+        "claude-fable-5.1": 0.9834274965532075,
+        "claude-opus-5": 0.9997836083621549,
+        "claude-sonnet-5": 0.9634832751729512,
+        "claude-haiku-4.5": 0.9999913858803422
+      }
+    }
+  },
+  "observations": {
+    "CL033": {
+      "claude-fable-5.1": {
+        "fresh_1": {
+          "counts": {
+            "k": 14,
+            "q": 9,
+            "r": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "k": 12,
+            "q": 13
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "k": 13,
+            "q": 11,
+            "m": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "k": 14,
+            "q": 10,
+            "r": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-opus-5": {
+        "fresh_1": {
+          "counts": {
+            "m": 24,
+            "k": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "m": 24,
+            "r": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "m": 21,
+            "q": 4
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "q": 4,
+            "r": 2,
+            "m": 19
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-sonnet-5": {
+        "fresh_1": {
+          "counts": {
+            "q": 16,
+            "k": 6,
+            "m": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "q": 17,
+            "k": 7,
+            "m": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "q": 19,
+            "k": 4,
+            "m": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "q": 18,
+            "m": 2,
+            "b": 1,
+            "k": 4
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-haiku-4.5": {
+        "fresh_1": {
+          "counts": {
+            "z": 12,
+            "x": 8,
+            "m": 2,
+            "a": 1,
+            "k": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "z": 15,
+            "x": 4,
+            "a": 4,
+            "m": 1,
+            "k": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "z": 11,
+            "k": 2,
+            "x": 7,
+            "a": 5
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "a": 2,
+            "z": 14,
+            "m": 1,
+            "k": 4,
+            "x": 4
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "CL085": {
+      "claude-fable-5.1": {
+        "fresh_1": {
+          "counts": {
+            "平原": 20,
+            "高原": 5
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "平原": 20,
+            "高原": 5
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "高原": 5,
+            "平原": 20
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "高原": 5,
+            "平原": 20
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-opus-5": {
+        "fresh_1": {
+          "counts": {
+            "平原": 3,
+            "盆地": 22
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "盆地": 22,
+            "平原": 2,
+            "高原": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "盆地": 22,
+            "平原": 2,
+            "高原": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "平原": 5,
+            "盆地": 19,
+            "高原": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-sonnet-5": {
+        "fresh_1": {
+          "counts": {
+            "平原": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "平原": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "平原": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "平原": 25
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-haiku-4.5": {
+        "fresh_1": {
+          "counts": {
+            "平原": 1,
+            "高原": 6,
+            "山地": 18
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "山地": 19,
+            "平原": 3,
+            "高原": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "平原": 1,
+            "高原": 4,
+            "山地": 20
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "平原": 4,
+            "山地": 16,
+            "高原": 5
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "CL087": {
+      "claude-fable-5.1": {
+        "fresh_1": {
+          "counts": {
+            "丙": 22,
+            "丁": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "丙": 21,
+            "丁": 4
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "丁": 6,
+            "丙": 18,
+            "庚": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "丙": 21,
+            "丁": 4
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-opus-5": {
+        "fresh_1": {
+          "counts": {
+            "戊": 16,
+            "辛": 8,
+            "癸": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "戊": 14,
+            "丙": 2,
+            "辛": 6,
+            "癸": 2,
+            "壬": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "辛": 9,
+            "戊": 9,
+            "丙": 1,
+            "癸": 4,
+            "壬": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "癸": 6,
+            "辛": 5,
+            "戊": 11,
+            "壬": 3
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-sonnet-5": {
+        "fresh_1": {
+          "counts": {
+            "壬": 8,
+            "丙": 6,
+            "丁": 2,
+            "庚": 5,
+            "辛": 1,
+            "戊": 1,
+            "甲": 1,
+            "乙": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "甲": 2,
+            "丙": 9,
+            "庚": 3,
+            "癸": 1,
+            "壬": 5,
+            "辛": 4,
+            "丁": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "庚": 6,
+            "丙": 7,
+            "辛": 6,
+            "壬": 2,
+            "甲": 2,
+            "丁": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "庚": 6,
+            "丙": 7,
+            "辛": 5,
+            "甲": 1,
+            "壬": 5,
+            "丁": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-haiku-4.5": {
+        "fresh_1": {
+          "counts": {
+            "甲": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "甲": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "甲": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "甲": 25
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "CL022": {
+      "claude-fable-5.1": {
+        "fresh_1": {
+          "counts": {
+            "靛蓝": 15,
+            "苔绿": 8,
+            "玫红": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "靛蓝": 17,
+            "苔绿": 8
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "苔绿": 10,
+            "靛蓝": 15
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "靛蓝": 15,
+            "苔绿": 10
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-opus-5": {
+        "fresh_1": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-sonnet-5": {
+        "fresh_1": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "苔绿": 25
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-haiku-4.5": {
+        "fresh_1": {
+          "counts": {
+            "靛蓝": 24,
+            "苔绿": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "靛蓝": 21,
+            "苔绿": 4
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "苔绿": 4,
+            "靛蓝": 21
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "靛蓝": 24,
+            "苔绿": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "CL026": {
+      "claude-fable-5.1": {
+        "fresh_1": {
+          "counts": {
+            "47": 20,
+            "42": 3,
+            "37": 1,
+            "43": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "47": 20,
+            "42": 2,
+            "43": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "47": 18,
+            "42": 6,
+            "43": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "47": 19,
+            "42": 3,
+            "43": 3
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-opus-5": {
+        "fresh_1": {
+          "counts": {
+            "43": 2,
+            "47": 12,
+            "45": 9,
+            "44": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "45": 9,
+            "44": 2,
+            "47": 14
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "47": 8,
+            "44": 6,
+            "45": 11
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "45": 12,
+            "44": 2,
+            "47": 10,
+            "43": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-sonnet-5": {
+        "fresh_1": {
+          "counts": {
+            "43": 22,
+            "47": 2,
+            "42": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "43": 24,
+            "42": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "43": 21,
+            "42": 3,
+            "47": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "43": 23,
+            "42": 2
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "claude-haiku-4.5": {
+        "fresh_1": {
+          "counts": {
+            "42": 14,
+            "45": 11
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_2": {
+          "counts": {
+            "45": 9,
+            "42": 15,
+            "47": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_3": {
+          "counts": {
+            "42": 16,
+            "47": 2,
+            "45": 7
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "fresh_4": {
+          "counts": {
+            "42": 17,
+            "45": 8
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    }
+  },
+  "fitted": {
+    "models": [
+      "claude-fable-5.1",
+      "claude-opus-5",
+      "claude-sonnet-5",
+      "claude-haiku-4.5"
+    ],
+    "cells": {
+      "CL033": {
+        "categories": [
+          "__OTHER__",
+          "a",
+          "b",
+          "k",
+          "m",
+          "q",
+          "r",
+          "x",
+          "z"
+        ],
+        "model_counts": {
+          "claude-fable-5.1": {
+            "k": 53,
+            "q": 43,
+            "r": 3,
+            "m": 1
+          },
+          "claude-opus-5": {
+            "m": 88,
+            "k": 1,
+            "r": 3,
+            "q": 8
+          },
+          "claude-sonnet-5": {
+            "q": 70,
+            "k": 21,
+            "m": 8,
+            "b": 1
+          },
+          "claude-haiku-4.5": {
+            "z": 52,
+            "x": 23,
+            "m": 4,
+            "a": 12,
+            "k": 9
+          }
+        },
+        "model_distributions": {
+          "claude-fable-5.1": {
+            "__OTHER__": 0.004784688995215311,
+            "a": 0.004784688995215311,
+            "b": 0.004784688995215311,
+            "k": 0.5119617224880383,
+            "m": 0.014354066985645933,
+            "q": 0.41626794258373206,
+            "r": 0.03349282296650718,
+            "x": 0.004784688995215311,
+            "z": 0.004784688995215311
+          },
+          "claude-opus-5": {
+            "__OTHER__": 0.004784688995215311,
+            "a": 0.004784688995215311,
+            "b": 0.004784688995215311,
+            "k": 0.014354066985645933,
+            "m": 0.84688995215311,
+            "q": 0.08133971291866028,
+            "r": 0.03349282296650718,
+            "x": 0.004784688995215311,
+            "z": 0.004784688995215311
+          },
+          "claude-sonnet-5": {
+            "__OTHER__": 0.004784688995215311,
+            "a": 0.004784688995215311,
+            "b": 0.014354066985645933,
+            "k": 0.20574162679425836,
+            "m": 0.08133971291866028,
+            "q": 0.6746411483253588,
+            "r": 0.004784688995215311,
+            "x": 0.004784688995215311,
+            "z": 0.004784688995215311
+          },
+          "claude-haiku-4.5": {
+            "__OTHER__": 0.004784688995215311,
+            "a": 0.11961722488038277,
+            "b": 0.004784688995215311,
+            "k": 0.09090909090909091,
+            "m": 0.0430622009569378,
+            "q": 0.004784688995215311,
+            "r": 0.004784688995215311,
+            "x": 0.22488038277511962,
+            "z": 0.5023923444976076
+          }
+        },
+        "pairwise_jsd": {
+          "claude-fable-5.1|claude-opus-5": 0.6825526814361431,
+          "claude-fable-5.1|claude-sonnet-5": 0.10016032507769779,
+          "claude-fable-5.1|claude-haiku-4.5": 0.7024909756870553,
+          "claude-opus-5|claude-sonnet-5": 0.5393373301230734,
+          "claude-opus-5|claude-haiku-4.5": 0.7611443663325906,
+          "claude-sonnet-5|claude-haiku-4.5": 0.7214373039835065
+        },
+        "between_model_jsd": 0.5845204971066779,
+        "within_model_jsd": 0.02742772848382475,
+        "model_drift": {
+          "claude-fable-5.1": 0.015706707900623302,
+          "claude-opus-5": 0.045095460340060865,
+          "claude-sonnet-5": 0.012446255942913008,
+          "claude-haiku-4.5": 0.03646248975170182
+        },
+        "model_drift_max": {
+          "claude-fable-5.1": 0.028157027894656572,
+          "claude-opus-5": 0.07615494486077333,
+          "claude-sonnet-5": 0.019093893441212498,
+          "claude-haiku-4.5": 0.048778718668852646
+        },
+        "window_pair_jsd": {
+          "claude-fable-5.1": {
+            "fresh_1|fresh_2": 0.028157027894656572,
+            "fresh_1|fresh_3": 0.026961904594849574,
+            "fresh_1|fresh_4": 0.003700786566846411,
+            "fresh_2|fresh_3": 0.008825995937264106,
+            "fresh_2|fresh_4": 0.01280715585216947,
+            "fresh_3|fresh_4": 0.013787376557953673
+          },
+          "claude-opus-5": {
+            "fresh_1|fresh_2": 0.012794703426499469,
+            "fresh_1|fresh_3": 0.05379151205814316,
+            "fresh_1|fresh_4": 0.07615494486077333,
+            "fresh_2|fresh_3": 0.053791512058143164,
+            "fresh_2|fresh_4": 0.05505134320252704,
+            "fresh_3|fresh_4": 0.018988746434278996
+          },
+          "claude-sonnet-5": {
+            "fresh_1|fresh_2": 0.011293786329846057,
+            "fresh_1|fresh_3": 0.009578076521955983,
+            "fresh_1|fresh_4": 0.014313368153360663,
+            "fresh_2|fresh_3": 0.013679279479325,
+            "fresh_2|fresh_4": 0.019093893441212498,
+            "fresh_3|fresh_4": 0.00671913173177785
+          },
+          "claude-haiku-4.5": {
+            "fresh_1|fresh_2": 0.04460249011351329,
+            "fresh_1|fresh_3": 0.048778718668852646,
+            "fresh_1|fresh_4": 0.030370692039155257,
+            "fresh_2|fresh_3": 0.027250812061741944,
+            "fresh_2|fresh_4": 0.02668438838375587,
+            "fresh_3|fresh_4": 0.041087837243191934
+          }
+        },
+        "weight": 0.9530765326116201,
+        "quality": {
+          "claude-fable-5.1": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "claude-opus-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "claude-sonnet-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "claude-haiku-4.5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "CL033"
+      },
+      "CL085": {
+        "categories": [
+          "__OTHER__",
+          "山地",
+          "平原",
+          "盆地",
+          "高原"
+        ],
+        "model_counts": {
+          "claude-fable-5.1": {
+            "平原": 80,
+            "高原": 20
+          },
+          "claude-opus-5": {
+            "平原": 12,
+            "盆地": 85,
+            "高原": 3
+          },
+          "claude-sonnet-5": {
+            "平原": 100
+          },
+          "claude-haiku-4.5": {
+            "平原": 9,
+            "高原": 18,
+            "山地": 73
+          }
+        },
+        "model_distributions": {
+          "claude-fable-5.1": {
+            "__OTHER__": 0.004878048780487805,
+            "山地": 0.004878048780487805,
+            "平原": 0.7853658536585366,
+            "盆地": 0.004878048780487805,
+            "高原": 0.2
+          },
+          "claude-opus-5": {
+            "__OTHER__": 0.004878048780487805,
+            "山地": 0.004878048780487805,
+            "平原": 0.12195121951219512,
+            "盆地": 0.8341463414634146,
+            "高原": 0.03414634146341464
+          },
+          "claude-sonnet-5": {
+            "__OTHER__": 0.004878048780487805,
+            "山地": 0.004878048780487805,
+            "平原": 0.9804878048780488,
+            "盆地": 0.004878048780487805,
+            "高原": 0.004878048780487805
+          },
+          "claude-haiku-4.5": {
+            "__OTHER__": 0.004878048780487805,
+            "山地": 0.7170731707317073,
+            "平原": 0.09268292682926829,
+            "盆地": 0.004878048780487805,
+            "高原": 0.18048780487804877
+          }
+        },
+        "pairwise_jsd": {
+          "claude-fable-5.1|claude-opus-5": 0.6401430295136207,
+          "claude-fable-5.1|claude-sonnet-5": 0.09360267466324668,
+          "claude-fable-5.1|claude-haiku-4.5": 0.5657450073579467,
+          "claude-opus-5|claude-sonnet-5": 0.6814245752600762,
+          "claude-opus-5|claude-haiku-4.5": 0.778698250870676,
+          "claude-sonnet-5|claude-haiku-4.5": 0.7252540031762037
+        },
+        "between_model_jsd": 0.5808112568069617,
+        "within_model_jsd": 0.0072141672832260716,
+        "model_drift": {
+          "claude-fable-5.1": 0.0,
+          "claude-opus-5": 0.011590012439924741,
+          "claude-sonnet-5": 0.0,
+          "claude-haiku-4.5": 0.017266656692979544
+        },
+        "model_drift_max": {
+          "claude-fable-5.1": 0.0,
+          "claude-opus-5": 0.017934551240856973,
+          "claude-sonnet-5": 0.0,
+          "claude-haiku-4.5": 0.027584204530566852
+        },
+        "window_pair_jsd": {
+          "claude-fable-5.1": {
+            "fresh_1|fresh_2": 0.0,
+            "fresh_1|fresh_3": 0.0,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.0
+          },
+          "claude-opus-5": {
+            "fresh_1|fresh_2": 0.009058749294087579,
+            "fresh_1|fresh_3": 0.009058749294087579,
+            "fresh_1|fresh_4": 0.015553473569659346,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.017934551240856973,
+            "fresh_3|fresh_4": 0.017934551240856973
+          },
+          "claude-sonnet-5": {
+            "fresh_1|fresh_2": 0.0,
+            "fresh_1|fresh_3": 0.0,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.0
+          },
+          "claude-haiku-4.5": {
+            "fresh_1|fresh_2": 0.023124544930632644,
+            "fresh_1|fresh_3": 0.00614163077410608,
+            "fresh_1|fresh_4": 0.023181781008905247,
+            "fresh_2|fresh_3": 0.012763378264156704,
+            "fresh_2|fresh_4": 0.010804400649509726,
+            "fresh_3|fresh_4": 0.027584204530566852
+          }
+        },
+        "weight": 0.9875791538151545,
+        "quality": {
+          "claude-fable-5.1": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-opus-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-sonnet-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-haiku-4.5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "CL085"
+      },
+      "CL087": {
+        "categories": [
+          "__OTHER__",
+          "丁",
+          "丙",
+          "乙",
+          "壬",
+          "庚",
+          "戊",
+          "甲",
+          "癸",
+          "辛"
+        ],
+        "model_counts": {
+          "claude-fable-5.1": {
+            "丙": 82,
+            "丁": 17,
+            "庚": 1
+          },
+          "claude-opus-5": {
+            "戊": 50,
+            "辛": 28,
+            "癸": 13,
+            "丙": 3,
+            "壬": 6
+          },
+          "claude-sonnet-5": {
+            "壬": 20,
+            "丙": 29,
+            "丁": 6,
+            "庚": 20,
+            "辛": 16,
+            "戊": 1,
+            "甲": 6,
+            "乙": 1,
+            "癸": 1
+          },
+          "claude-haiku-4.5": {
+            "甲": 100
+          }
+        },
+        "model_distributions": {
+          "claude-fable-5.1": {
+            "__OTHER__": 0.004761904761904762,
+            "丁": 0.16666666666666666,
+            "丙": 0.7857142857142857,
+            "乙": 0.004761904761904762,
+            "壬": 0.004761904761904762,
+            "庚": 0.014285714285714285,
+            "戊": 0.004761904761904762,
+            "甲": 0.004761904761904762,
+            "癸": 0.004761904761904762,
+            "辛": 0.004761904761904762
+          },
+          "claude-opus-5": {
+            "__OTHER__": 0.004761904761904762,
+            "丁": 0.004761904761904762,
+            "丙": 0.03333333333333333,
+            "乙": 0.004761904761904762,
+            "壬": 0.06190476190476191,
+            "庚": 0.004761904761904762,
+            "戊": 0.48095238095238096,
+            "甲": 0.004761904761904762,
+            "癸": 0.12857142857142856,
+            "辛": 0.2714285714285714
+          },
+          "claude-sonnet-5": {
+            "__OTHER__": 0.004761904761904762,
+            "丁": 0.06190476190476191,
+            "丙": 0.28095238095238095,
+            "乙": 0.014285714285714285,
+            "壬": 0.19523809523809524,
+            "庚": 0.19523809523809524,
+            "戊": 0.014285714285714285,
+            "甲": 0.06190476190476191,
+            "癸": 0.014285714285714285,
+            "辛": 0.15714285714285714
+          },
+          "claude-haiku-4.5": {
+            "__OTHER__": 0.004761904761904762,
+            "丁": 0.004761904761904762,
+            "丙": 0.004761904761904762,
+            "乙": 0.004761904761904762,
+            "壬": 0.004761904761904762,
+            "庚": 0.004761904761904762,
+            "戊": 0.004761904761904762,
+            "甲": 0.9571428571428572,
+            "癸": 0.004761904761904762,
+            "辛": 0.004761904761904762
+          }
+        },
+        "pairwise_jsd": {
+          "claude-fable-5.1|claude-opus-5": 0.7979099647004151,
+          "claude-fable-5.1|claude-sonnet-5": 0.3503917447386436,
+          "claude-fable-5.1|claude-haiku-4.5": 0.9053613885747291,
+          "claude-opus-5|claude-sonnet-5": 0.484126489353776,
+          "claude-opus-5|claude-haiku-4.5": 0.885087464286104,
+          "claude-sonnet-5|claude-haiku-4.5": 0.7259022749616512
+        },
+        "between_model_jsd": 0.6914632211025532,
+        "within_model_jsd": 0.027475006693630278,
+        "model_drift": {
+          "claude-fable-5.1": 0.00872127328971219,
+          "claude-opus-5": 0.05041985960268239,
+          "claude-sonnet-5": 0.05075889388212653,
+          "claude-haiku-4.5": 0.0
+        },
+        "model_drift_max": {
+          "claude-fable-5.1": 0.021978548992310783,
+          "claude-opus-5": 0.08951518228307044,
+          "claude-sonnet-5": 0.09956184633735585,
+          "claude-haiku-4.5": 0.0
+        },
+        "window_pair_jsd": {
+          "claude-fable-5.1": {
+            "fresh_1|fresh_2": 0.001780006786062065,
+            "fresh_1|fresh_3": 0.021978548992310783,
+            "fresh_1|fresh_4": 0.001780006786062065,
+            "fresh_2|fresh_3": 0.013394538586919113,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.013394538586919113
+          },
+          "claude-opus-5": {
+            "fresh_1|fresh_2": 0.03159526059375269,
+            "fresh_1|fresh_3": 0.06626974862037247,
+            "fresh_1|fresh_4": 0.08951518228307044,
+            "fresh_2|fresh_3": 0.032460526688218846,
+            "fresh_2|fresh_4": 0.054704465752692964,
+            "fresh_3|fresh_4": 0.027973973677986895
+          },
+          "claude-sonnet-5": {
+            "fresh_1|fresh_2": 0.06379983816290574,
+            "fresh_1|fresh_3": 0.09956184633735585,
+            "fresh_1|fresh_4": 0.05448457703194498,
+            "fresh_2|fresh_3": 0.04141027897116529,
+            "fresh_2|fresh_4": 0.024356753154517692,
+            "fresh_3|fresh_4": 0.02094006963486964
+          },
+          "claude-haiku-4.5": {
+            "fresh_1|fresh_2": 0.0,
+            "fresh_1|fresh_3": 0.0,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.0
+          }
+        },
+        "weight": 0.9602654112971899,
+        "quality": {
+          "claude-fable-5.1": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "claude-opus-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-sonnet-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.03
+          },
+          "claude-haiku-4.5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "CL087"
+      },
+      "CL022": {
+        "categories": [
+          "__OTHER__",
+          "玫红",
+          "苔绿",
+          "靛蓝"
+        ],
+        "model_counts": {
+          "claude-fable-5.1": {
+            "靛蓝": 62,
+            "苔绿": 36,
+            "玫红": 2
+          },
+          "claude-opus-5": {
+            "苔绿": 100
+          },
+          "claude-sonnet-5": {
+            "苔绿": 100
+          },
+          "claude-haiku-4.5": {
+            "靛蓝": 90,
+            "苔绿": 10
+          }
+        },
+        "model_distributions": {
+          "claude-fable-5.1": {
+            "__OTHER__": 0.004901960784313725,
+            "玫红": 0.024509803921568627,
+            "苔绿": 0.35784313725490197,
+            "靛蓝": 0.6127450980392157
+          },
+          "claude-opus-5": {
+            "__OTHER__": 0.004901960784313725,
+            "玫红": 0.004901960784313725,
+            "苔绿": 0.9852941176470589,
+            "靛蓝": 0.004901960784313725
+          },
+          "claude-sonnet-5": {
+            "__OTHER__": 0.004901960784313725,
+            "玫红": 0.004901960784313725,
+            "苔绿": 0.9852941176470589,
+            "靛蓝": 0.004901960784313725
+          },
+          "claude-haiku-4.5": {
+            "__OTHER__": 0.004901960784313725,
+            "玫红": 0.004901960784313725,
+            "苔绿": 0.10294117647058823,
+            "靛蓝": 0.8872549019607843
+          }
+        },
+        "pairwise_jsd": {
+          "claude-fable-5.1|claude-opus-5": 0.40329270266152667,
+          "claude-fable-5.1|claude-sonnet-5": 0.40329270266152667,
+          "claude-fable-5.1|claude-haiku-4.5": 0.07720302296538434,
+          "claude-opus-5|claude-sonnet-5": 0.0,
+          "claude-opus-5|claude-haiku-4.5": 0.7225323885330699,
+          "claude-sonnet-5|claude-haiku-4.5": 0.7225323885330699
+        },
+        "between_model_jsd": 0.38814220089242957,
+        "within_model_jsd": 0.007033258699804467,
+        "model_drift": {
+          "claude-fable-5.1": 0.012410014039460857,
+          "claude-opus-5": 0.0,
+          "claude-sonnet-5": 0.0,
+          "claude-haiku-4.5": 0.01572302075975701
+        },
+        "model_drift_max": {
+          "claude-fable-5.1": 0.022260686470957025,
+          "claude-opus-5": 0.0,
+          "claude-sonnet-5": 0.0,
+          "claude-haiku-4.5": 0.023584531139635517
+        },
+        "window_pair_jsd": {
+          "claude-fable-5.1": {
+            "fresh_1|fresh_2": 0.02106337784739722,
+            "fresh_1|fresh_3": 0.022260686470957025,
+            "fresh_1|fresh_4": 0.022260686470957025,
+            "fresh_2|fresh_3": 0.004437666723726936,
+            "fresh_2|fresh_4": 0.004437666723726936,
+            "fresh_3|fresh_4": 0.0
+          },
+          "claude-opus-5": {
+            "fresh_1|fresh_2": 0.0,
+            "fresh_1|fresh_3": 0.0,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.0
+          },
+          "claude-sonnet-5": {
+            "fresh_1|fresh_2": 0.0,
+            "fresh_1|fresh_3": 0.0,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.0,
+            "fresh_3|fresh_4": 0.0
+          },
+          "claude-haiku-4.5": {
+            "fresh_1|fresh_2": 0.023584531139635517,
+            "fresh_1|fresh_3": 0.023584531139635517,
+            "fresh_1|fresh_4": 0.0,
+            "fresh_2|fresh_3": 0.0,
+            "fresh_2|fresh_4": 0.023584531139635517,
+            "fresh_3|fresh_4": 0.023584531139635517
+          }
+        },
+        "weight": 0.9818796856316232,
+        "quality": {
+          "claude-fable-5.1": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-opus-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-sonnet-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-haiku-4.5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "CL022"
+      },
+      "CL026": {
+        "categories": [
+          "37",
+          "42",
+          "43",
+          "44",
+          "45",
+          "47",
+          "__OTHER__"
+        ],
+        "model_counts": {
+          "claude-fable-5.1": {
+            "47": 77,
+            "42": 14,
+            "37": 1,
+            "43": 8
+          },
+          "claude-opus-5": {
+            "43": 3,
+            "47": 44,
+            "45": 41,
+            "44": 12
+          },
+          "claude-sonnet-5": {
+            "43": 90,
+            "47": 3,
+            "42": 7
+          },
+          "claude-haiku-4.5": {
+            "42": 62,
+            "45": 35,
+            "47": 3
+          }
+        },
+        "model_distributions": {
+          "claude-fable-5.1": {
+            "37": 0.014492753623188406,
+            "42": 0.14009661835748793,
+            "43": 0.0821256038647343,
+            "44": 0.004830917874396135,
+            "45": 0.004830917874396135,
+            "47": 0.748792270531401,
+            "__OTHER__": 0.004830917874396135
+          },
+          "claude-opus-5": {
+            "37": 0.004830917874396135,
+            "42": 0.004830917874396135,
+            "43": 0.033816425120772944,
+            "44": 0.12077294685990338,
+            "45": 0.40096618357487923,
+            "47": 0.42995169082125606,
+            "__OTHER__": 0.004830917874396135
+          },
+          "claude-sonnet-5": {
+            "37": 0.004830917874396135,
+            "42": 0.07246376811594203,
+            "43": 0.8743961352657005,
+            "44": 0.004830917874396135,
+            "45": 0.004830917874396135,
+            "47": 0.033816425120772944,
+            "__OTHER__": 0.004830917874396135
+          },
+          "claude-haiku-4.5": {
+            "37": 0.004830917874396135,
+            "42": 0.6038647342995169,
+            "43": 0.004830917874396135,
+            "44": 0.004830917874396135,
+            "45": 0.34299516908212563,
+            "47": 0.033816425120772944,
+            "__OTHER__": 0.004830917874396135
+          }
+        },
+        "pairwise_jsd": {
+          "claude-fable-5.1|claude-opus-5": 0.3300171507251434,
+          "claude-fable-5.1|claude-sonnet-5": 0.5767297921910721,
+          "claude-fable-5.1|claude-haiku-4.5": 0.5905675727958697,
+          "claude-opus-5|claude-sonnet-5": 0.7520729128924049,
+          "claude-opus-5|claude-haiku-4.5": 0.48703568239050327,
+          "claude-sonnet-5|claude-haiku-4.5": 0.7455983057282046
+        },
+        "between_model_jsd": 0.5803369027871996,
+        "within_model_jsd": 0.019666585484683845,
+        "model_drift": {
+          "claude-fable-5.1": 0.019292895540622492,
+          "claude-opus-5": 0.03059347957071898,
+          "claude-sonnet-5": 0.014688055835243977,
+          "claude-haiku-4.5": 0.014091910992149936
+        },
+        "model_drift_max": {
+          "claude-fable-5.1": 0.03501606524876897,
+          "claude-opus-5": 0.05383973273128692,
+          "claude-sonnet-5": 0.02189262151885328,
+          "claude-haiku-4.5": 0.030791117861710446
+        },
+        "window_pair_jsd": {
+          "claude-fable-5.1": {
+            "fresh_1|fresh_2": 0.019153977456514985,
+            "fresh_1|fresh_3": 0.01948736878079694,
+            "fresh_1|fresh_4": 0.01735131266523406,
+            "fresh_2|fresh_3": 0.03501606524876897,
+            "fresh_2|fresh_4": 0.0024354917032132356,
+            "fresh_3|fresh_4": 0.022313157389206757
+          },
+          "claude-opus-5": {
+            "fresh_1|fresh_2": 0.020296438213598892,
+            "fresh_1|fresh_3": 0.05383973273128692,
+            "fresh_1|fresh_4": 0.010594604389955561,
+            "fresh_2|fresh_3": 0.04575780661117236,
+            "fresh_2|fresh_4": 0.019949377458210085,
+            "fresh_3|fresh_4": 0.033122918020090056
+          },
+          "claude-sonnet-5": {
+            "fresh_1|fresh_2": 0.019497237797302933,
+            "fresh_1|fresh_3": 0.013898336238919014,
+            "fresh_1|fresh_4": 0.02189262151885328,
+            "fresh_2|fresh_3": 0.01951267865304172,
+            "fresh_2|fresh_4": 0.0034612833145917666,
+            "fresh_3|fresh_4": 0.00986617748875514
+          },
+          "claude-haiku-4.5": {
+            "fresh_1|fresh_2": 0.009457914336636505,
+            "fresh_1|fresh_3": 0.030791117861710446,
+            "fresh_1|fresh_4": 0.009280911814438526,
+            "fresh_2|fresh_3": 0.006577759863743355,
+            "fresh_2|fresh_4": 0.00886015652923814,
+            "fresh_3|fresh_4": 0.01958360554713264
+          }
+        },
+        "weight": 0.9661117785372073,
+        "quality": {
+          "claude-fable-5.1": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "claude-opus-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-sonnet-5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "claude-haiku-4.5": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "CL026"
+      }
+    }
+  },
+  "collection": {
+    "scope": "fresh_five_probe_four_model_four_window_formal",
+    "run_id": "claude_tier_formal_20260907",
+    "sources": [
+      {
+        "url": "https://openrouter.ai/api/v1",
+        "provider": "openrouter",
+        "models": [
+          "claude-fable-5.1",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "claude-haiku-4.5"
+        ],
+        "probes": [
+          "CL033",
+          "CL085",
+          "CL087",
+          "CL022",
+          "CL026"
+        ],
+        "user_agent": "claude-cli/2.1.251 (external, cli)"
+      }
+    ],
+    "windows": {
+      "fresh_1": {
+        "started_at": "2026-09-07T12:41:48.137932+00:00",
+        "ended_at": "2026-09-07T12:48:28.386136+00:00",
+        "samples_per_cell_model": 25
+      },
+      "fresh_2": {
+        "started_at": "2026-09-07T12:49:28.432824+00:00",
+        "ended_at": "2026-09-07T12:55:53.279416+00:00",
+        "samples_per_cell_model": 25
+      },
+      "fresh_3": {
+        "started_at": "2026-09-07T12:56:53.358684+00:00",
+        "ended_at": "2026-09-07T13:03:40.522303+00:00",
+        "samples_per_cell_model": 25
+      },
+      "fresh_4": {
+        "started_at": "2026-09-07T13:04:40.579127+00:00",
+        "ended_at": "2026-09-07T13:11:10.037718+00:00",
+        "samples_per_cell_model": 25
+      }
+    },
+    "formal_requests": 2000,
+    "new_http_attempts": 2001,
+    "new_cost_usd": 0.6279101999999995,
+    "cumulative_cost_usd": 1.189769164927999,
+    "budget_usd": 3,
+    "old_or_screening_observations_reused": false,
+    "screening_samples_in_formal_pool": 0,
+    "actual_window_gaps_seconds": [
+      60.046687602996826,
+      60.05551719665527,
+      60.035134077072144
+    ],
+    "selection_report_sha256": "2e83ab5637183a06149e2f8d6ce222ad2f00e46a3e8826f5e309c0c1a4d1242b",
+    "prior_package_sha256": "2be6a59d8c39bd0c8116de35f0cf6d6aa518ac430cb5c68b5ccbd709169e3745",
+    "runtime_commit": "75e8154ce5781086a67815e0d0a21658256a544c"
+  },
+  "calibration": {
+    "status": "complete",
+    "tiers": {
+      "low": {
+        "algorithm": "empirical-multinomial-pcg64-v5-valid-answers",
+        "status": "target_met",
+        "sample_scope": "planned_count_of_valid_answers_per_cell",
+        "target_denominator": "simulated_batches_of_valid_answers_not_all_http_runs",
+        "thresholds": {
+          "claude-fable-5.1": 0.7228968296445468,
+          "claude-opus-5": 0.989652001139033,
+          "claude-sonnet-5": 0.7320530632447558,
+          "claude-haiku-4.5": 0.9996472298706827
+        },
+        "target": 0.99,
+        "selection_target": 0.999,
+        "total_batches": 10000000,
+        "per_model_batches": {
+          "claude-fable-5.1": 2500000,
+          "claude-opus-5": 2500000,
+          "claude-sonnet-5": 2500000,
+          "claude-haiku-4.5": 2500000
+        },
+        "seed": 493107,
+        "contract": "8f0d7a4db6a1e3aa4e5bb9523e9daccc3790a5f38f0cd3b812ae2ae6f0cbfc6b",
+        "selection_batches_per_model": {
+          "claude-fable-5.1": 100000,
+          "claude-opus-5": 100000,
+          "claude-sonnet-5": 100000,
+          "claude-haiku-4.5": 100000
+        },
+        "selection_confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 99900,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 1,
+            "claude-haiku-4.5": 0,
+            "insufficient": 99
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 99900,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 99900,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 99900,
+            "insufficient": 100
+          }
+        },
+        "confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 2497471,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 27,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2502
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 2497592,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2408
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 14,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 2497197,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2789
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 2497888,
+            "insufficient": 2112
+          }
+        },
+        "correct_rates": {
+          "claude-fable-5.1": 0.9989884,
+          "claude-opus-5": 0.9990368,
+          "claude-sonnet-5": 0.9988788,
+          "claude-haiku-4.5": 0.9991552
+        },
+        "independent_real_validation": false,
+        "pool_scope": "same_fit_pool_resampling"
+      },
+      "medium": {
+        "algorithm": "empirical-multinomial-pcg64-v5-valid-answers",
+        "status": "target_met",
+        "sample_scope": "planned_count_of_valid_answers_per_cell",
+        "target_denominator": "simulated_batches_of_valid_answers_not_all_http_runs",
+        "thresholds": {
+          "claude-fable-5.1": 0.9515690029536381,
+          "claude-opus-5": 0.9992315316926168,
+          "claude-sonnet-5": 0.9259293245307236,
+          "claude-haiku-4.5": 0.999971383320258
+        },
+        "target": 0.99,
+        "selection_target": 0.999,
+        "total_batches": 10000000,
+        "per_model_batches": {
+          "claude-fable-5.1": 2500000,
+          "claude-opus-5": 2500000,
+          "claude-sonnet-5": 2500000,
+          "claude-haiku-4.5": 2500000
+        },
+        "seed": 493108,
+        "contract": "0e82af2b670286b19c0210f2b2b90d25346eafc1d6c1d55edf4ae40306552cda",
+        "selection_batches_per_model": {
+          "claude-fable-5.1": 100000,
+          "claude-opus-5": 100000,
+          "claude-sonnet-5": 100000,
+          "claude-haiku-4.5": 100000
+        },
+        "selection_confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 99900,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 99900,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 99900,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 99900,
+            "insufficient": 100
+          }
+        },
+        "confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 2497845,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2155
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 2497722,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2278
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 2497482,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2518
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 2497730,
+            "insufficient": 2270
+          }
+        },
+        "correct_rates": {
+          "claude-fable-5.1": 0.999138,
+          "claude-opus-5": 0.9990888,
+          "claude-sonnet-5": 0.9989928,
+          "claude-haiku-4.5": 0.999092
+        },
+        "independent_real_validation": false,
+        "pool_scope": "same_fit_pool_resampling"
+      },
+      "high": {
+        "algorithm": "empirical-multinomial-pcg64-v5-valid-answers",
+        "status": "target_met",
+        "sample_scope": "planned_count_of_valid_answers_per_cell",
+        "target_denominator": "simulated_batches_of_valid_answers_not_all_http_runs",
+        "thresholds": {
+          "claude-fable-5.1": 0.9834274965532075,
+          "claude-opus-5": 0.9997836083621549,
+          "claude-sonnet-5": 0.9634832751729512,
+          "claude-haiku-4.5": 0.9999913858803422
+        },
+        "target": 0.99,
+        "selection_target": 0.999,
+        "total_batches": 10000000,
+        "per_model_batches": {
+          "claude-fable-5.1": 2500000,
+          "claude-opus-5": 2500000,
+          "claude-sonnet-5": 2500000,
+          "claude-haiku-4.5": 2500000
+        },
+        "seed": 493109,
+        "contract": "4c5ff79606f36620ec0f6d813a95d771d8b1a66bc8b384af0d7be3372f50d74b",
+        "selection_batches_per_model": {
+          "claude-fable-5.1": 100000,
+          "claude-opus-5": 100000,
+          "claude-sonnet-5": 100000,
+          "claude-haiku-4.5": 100000
+        },
+        "selection_confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 99900,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 99900,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 99900,
+            "claude-haiku-4.5": 0,
+            "insufficient": 100
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 99900,
+            "insufficient": 100
+          }
+        },
+        "confusion": {
+          "claude-fable-5.1": {
+            "claude-fable-5.1": 2497589,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2411
+          },
+          "claude-opus-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 2497075,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2925
+          },
+          "claude-sonnet-5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 2497550,
+            "claude-haiku-4.5": 0,
+            "insufficient": 2450
+          },
+          "claude-haiku-4.5": {
+            "claude-fable-5.1": 0,
+            "claude-opus-5": 0,
+            "claude-sonnet-5": 0,
+            "claude-haiku-4.5": 2497590,
+            "insufficient": 2410
+          }
+        },
+        "correct_rates": {
+          "claude-fable-5.1": 0.9990356,
+          "claude-opus-5": 0.99883,
+          "claude-sonnet-5": 0.99902,
+          "claude-haiku-4.5": 0.999036
+        },
+        "independent_real_validation": false,
+        "pool_scope": "same_fit_pool_resampling"
+      }
+    }
+  },
+  "validation": {
+    "status": "not_independently_validated"
+  },
+  "content_sha256": "c35f4c8c49615bc4b14b3b32dfaf1b6252118a60037a1f7470516876e9c52fa6"
+}

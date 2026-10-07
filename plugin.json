@@ -1,0 +1,19 @@
+{
+  "manifestVersion": 2,
+  "name": "model-health",
+  "displayName": "账号模型体检",
+  "publisher": "local",
+  "version": "0.2.1",
+  "description": "选择已有账号，使用 Meow 或 ModelTrace 检测模型行为指纹；独立插件，不改写账号或主服务",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "engines": {"codex-proxy-rs": ">=3.19.0, <4.0.0"},
+  "main": "bin/plugin",
+  "runtime": "trustedProcess",
+  "contributes": {"management": {}},
+  "resources": {"web/index.html":"text/html", "web/app.js":"text/javascript", "web/app.css":"text/css", "legal/LICENSE":"text/plain", "legal/NOTICE":"text/plain", "engine-legal/ENGINE-LICENSES.txt":"text/plain", "engine-legal/ENGINE-REQUIREMENTS.txt":"text/plain"},
+  "state": [{
+    "namespace":"runs", "schemaVersion":1,
+    "schema":{"type":"object", "required":["id","slot","plan","attempts","status"], "properties":{"id":{"type":"string","maxLength":100},"slot":{"type":"integer","minimum":0,"maximum":15},"plan":{"type":"object"},"attempts":{"type":"array","maxItems":162},"status":{"enum":["ready","running","paused","completed","stopped"]}}},
+    "maximumRecords":16, "maximumBytes":4194304, "maximumValueBytes":262144, "migratesFrom":[]
+  }]
+}

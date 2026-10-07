@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "packages": [
+    {
+      "id": "meow-gpt-other-cap98-efficient",
+      "version": "4.5.4-predictive.20260924.2",
+      "name": "GPT · 新模型基准",
+      "mode": "gpt",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98-efficient--4.5.4-predictive.20260924.2.meow.json",
+      "sha256": "98f8d12c83100352addf44db15d8b57aa183338a4fb5f83ba30ffdbc06d78612",
+      "content_sha256": "e5dee4ccbc9cfd03883c49b3571815f44a4bf1b792730f7918d62c5eba4711e5",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-gpt-chat-compatible",
+      "version": "4.5.4-chat.20260924.2",
+      "name": "GPT · Chat 兼容版",
+      "mode": "chat",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-chat-compatible--4.5.4-chat.20260924.2.meow.json",
+      "sha256": "5c835e5b6646359e33f3f56663b712f214eaa7eda1108088f3a3764bc0b4db72",
+      "content_sha256": "bb283cb4b04b9698b26fd26e4fc2d56149e25d4e0f03625bbc82605b3e453eb8",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-gpt-chat-compatible",
+      "version": "4.5.4-chat.20260924.1",
+      "name": "GPT · Chat 兼容版",
+      "mode": "chat",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-chat-compatible--4.5.4-chat.20260924.1.meow.json",
+      "sha256": "28fac40482ee53c64e1263a1bdabc7982652ef89aa49ec3e53f158841bbafa19",
+      "content_sha256": "1172fdfcf20e163f0445042bce96b46ff26e13a7d78a794a83d3504d161ff234",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-claude-chat-compatible",
+      "version": "4.5.4-chat.20260924.1",
+      "name": "Claude · Chat 兼容版",
+      "mode": "chat",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-chat-compatible--4.5.4-chat.20260924.1.meow.json",
+      "sha256": "db6728ff00d28f58ed21079ce66a82f70ba226a6530c52c5630fddd5cbf963da",
+      "content_sha256": "c96d6fab708c251cdf0267342c9a900080dc2ea0c740d78cf9393732e058f156",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-gpt-other-cap98-efficient",
+      "version": "4.5.4-predictive.20260924.1",
+      "name": "GPT · 新模型基准",
+      "mode": "gpt",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98-efficient--4.5.4-predictive.20260924.1.meow.json",
+      "sha256": "4ef53fa8a334260c67ddf2ab27b9e7deea76e9149ef94e1de93f46a8db2c744f",
+      "content_sha256": "3f340582329c960f18fc8a989544b9ab879b59b5ffcae855530b00f34863a0af",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-other-cap98-efficient",
+      "version": "4.5.4-predictive.20260924.1",
+      "name": "Claude · 新模型基准",
+      "mode": "claude",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-other-cap98-efficient--4.5.4-predictive.20260924.1.meow.json",
+      "sha256": "df005a15ef72cc805b57fd0caf8c8f6b99496ca37d73c6cc759adaa43158ef8c",
+      "content_sha256": "7d61ae9aba3b81b41de1b0dbd2caeb71ea2c53e85511959e160f9ef853d98322",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-chat-compatible",
+      "version": "4.5.4-chat.1",
+      "name": "Claude · Chat 兼容版",
+      "mode": "chat",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-chat-compatible--4.5.4-chat.1.meow.json",
+      "sha256": "747fd4a368e4bf375f0cbb829c01488b152f8bf280e386fd4895af40acd1676a",
+      "content_sha256": "d78d64f18f0219918cb58efb966c28d5a51b5d5143c9f025c16412f35f5daccd",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-gpt-chat-compatible",
+      "version": "4.5.4-chat.1",
+      "name": "GPT · Chat 兼容版",
+      "mode": "chat",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-chat-compatible--4.5.4-chat.1.meow.json",
+      "sha256": "1c4fcdf71ff7707cecac4fa3bcb41b5e22ecc7a073e961d60a0bf459a3e30546",
+      "content_sha256": "0445bb9a7b348f2c2eaf4f9307144875a9b72dd3638966424f0cb16a1c5d49c8",
+      "minimum_program_version": "4.5.4"
+    },
+    {
+      "id": "meow-gpt-other-cap98-efficient",
+      "version": "4.5.3-predictive.3",
+      "mode": "gpt",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98-efficient--4.5.3-predictive.3.meow.json",
+      "sha256": "62e08c7316e27d014bae1531e22a78fe08cd892b6589ccefe779ada2ea8cba7b",
+      "content_sha256": "fd888fd0402ce687329d145ca3b58ba6fcff309aad62f6e91800cc2f6aca4328",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-other-cap98-efficient",
+      "version": "4.5.3-predictive.3",
+      "mode": "claude",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-other-cap98-efficient--4.5.3-predictive.3.meow.json",
+      "sha256": "29e50352e1b8268e545723726f717d0fadd70433f4e4bbde5cb4b8f037e3e7b3",
+      "content_sha256": "eeac401648dd3ee7fc7f28d34b43733fa38c487e271d4e1d8a742fb71c192f63",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-gpt-other-cap98-efficient",
+      "version": "4.5.3-efficiency.rc1",
+      "mode": "gpt",
+      "content_sha256": "67a410ab169b2f997ec208cd1f01d03aa6870d647c0337c187f63fb11e4954d7",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98-efficient--4.5.3-efficiency.rc1.meow.json",
+      "sha256": "62478207bb26180eb2ba00df74b27456e6ca1415b8377964fe2d9f9d2cc61a23",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-other-cap98-efficient",
+      "version": "4.5.3-efficiency.rc1",
+      "mode": "claude",
+      "content_sha256": "d03ce3752d3304aeaf0258cc1b5f302b90a49cb66a23096f32ae0ba3124fe18a",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-other-cap98-efficient--4.5.3-efficiency.rc1.meow.json",
+      "sha256": "b6769f21bce27caad644057786e50c0e1ad05d64267437d7b9d3292ecb0e07a9",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-gpt-other-cap98",
+      "version": "4.5.3-predictive.2",
+      "mode": "gpt",
+      "content_sha256": "00846ce198b9366fadbabc0bb4b9c5f002ec84dc49a27cba3d8f9b33218fac3c",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98--4.5.3-predictive.2.meow.json",
+      "sha256": "6c81ef5de35d2c87a899e9a2430def693404ffa8afe6b3bb0b88e9f02f6cdc08",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-other-cap98",
+      "version": "4.5.3-predictive.2",
+      "mode": "claude",
+      "content_sha256": "602c0b550f9f3b55f8a4010a9ca673c5c62f7d1bd6a8d955134aa62397e008f0",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-other-cap98--4.5.3-predictive.2.meow.json",
+      "sha256": "7a9877bb432b66c1371a7131807ed3b2601c1137724476db159909df4a2d12d0",
+      "minimum_program_version": "4.5.3"
+    },
+    {
+      "id": "meow-claude-other-cap98",
+      "version": "4.5.2-other-cap98.2",
+      "mode": "claude",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-other-cap98--4.5.2-other-cap98.2.meow.json",
+      "sha256": "d3765de08058a93b45d0de52defa1e0814d5af4f89cdca6fba6375ef56dd1a0c",
+      "content_sha256": "d954278861f6f7738fb021de17abb51152a6f5f7ff94b505dd1d1b4bc52aa8a9"
+    },
+    {
+      "id": "meow-gpt-other-cap98",
+      "version": "4.5.2-other-cap98.2",
+      "mode": "gpt",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-other-cap98--4.5.2-other-cap98.2.meow.json",
+      "sha256": "b8ac00bfb7390ff39c2c4c3613792c214af7a6a5f5d823e1ad331c551c9e1890",
+      "content_sha256": "7bcc1959be264eb227b9687e029cde13bee273b1fd65c16143eb2c0defb653b1"
+    },
+    {
+      "id": "meow-gpt-baseline",
+      "version": "4.5.0-rc4",
+      "mode": "gpt",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-gpt-baseline--4.5.0-rc4.meow.json",
+      "sha256": "cc33fa064da3725749de7a67e74518b2435e32020f9d3ef8635618404fb8b253",
+      "content_sha256": "1ee40e3c9d6900701b86ffe5e698155d9bdf6503d20796431bad96666bd04fff"
+    },
+    {
+      "id": "meow-claude-baseline",
+      "version": "4.5.1-rc1",
+      "mode": "claude",
+      "publisher": "maintainer",
+      "path": "benchmarks/official/meow-claude-baseline--4.5.1-rc1.meow.json",
+      "sha256": "149bda2b8fa7ed55df8f92bf02a6b8497ae9e3ebdf677f6618463199b8bd16fd",
+      "content_sha256": "2be6a59d8c39bd0c8116de35f0cf6d6aa518ac430cb5c68b5ccbd709169e3745"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "packages": [
+    {
+      "id": "meow-gpt-other-cap98",
+      "version": "4.5.3-predictive.2",
+      "mode": "gpt",
+      "content_sha256": "00846ce198b9366fadbabc0bb4b9c5f002ec84dc49a27cba3d8f9b33218fac3c",
+      "file": "meow-gpt-other-cap98--4.5.3-predictive.2.meow.json"
+    },
+    {
+      "id": "meow-claude-other-cap98",
+      "version": "4.5.3-predictive.2",
+      "mode": "claude",
+      "content_sha256": "602c0b550f9f3b55f8a4010a9ca673c5c62f7d1bd6a8d955134aa62397e008f0",
+      "file": "meow-claude-other-cap98--4.5.3-predictive.2.meow.json"
+    }
+  ]
+}

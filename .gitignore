@@ -1,0 +1,16 @@
+.build/
+frontend/node_modules/
+frontend/dist/
+backend/target/
+__pycache__/
+*.pyc
+dist/
+review/
+.tools/
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*_rsa
+*_ed25519

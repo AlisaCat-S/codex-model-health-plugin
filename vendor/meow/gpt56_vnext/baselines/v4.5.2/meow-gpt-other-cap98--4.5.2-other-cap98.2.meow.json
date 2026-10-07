@@ -1,0 +1,3497 @@
+{
+  "mode": "gpt",
+  "id": "meow-gpt-other-cap98",
+  "version": "4.5.2-other-cap98.2",
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "gpt-6-astra",
+      "name": "gpt-6-astra",
+      "request_model": "openai/gpt-6-astra"
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "name": "gpt-5.6-sol",
+      "request_model": "openai/gpt-5.6-sol"
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "name": "gpt-5.6-terra",
+      "request_model": "openai/gpt-5.6-terra"
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "name": "gpt-5.6-luna",
+      "request_model": "openai/gpt-5.6-luna"
+    },
+    {
+      "id": "other_known_external",
+      "name": "Other",
+      "request_model": "reference-only:other",
+      "reference_only": true
+    }
+  ],
+  "probes": [
+    {
+      "id": "gpt__ZH027",
+      "family_id": "gpt__ZH027",
+      "source_group": "gpt__ZH027",
+      "title": "ZH027",
+      "group": "general",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__ZH027",
+          "system": ".",
+          "prompt": "随便说出一个拟声词，只回答拟声词。",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "gpt__b80_letter_count",
+      "family_id": "gpt__b80_letter_count",
+      "source_group": "gpt__b80_letter_count",
+      "title": "b80_letter_count",
+      "group": "general",
+      "normalizer": {
+        "id": "b80_exact_3",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__b80_letter_count",
+          "system": ".",
+          "prompt": "Count the letter r in strawberry. Reply only with the integer.",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "gpt__rand_bird",
+      "family_id": "gpt__rand_bird",
+      "source_group": "gpt__rand_bird",
+      "title": "rand_bird",
+      "group": "general",
+      "normalizer": {
+        "id": "behavior_label",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__rand_bird",
+          "system": ".",
+          "prompt": "Name a random bird. Reply with ONLY the bird name, one word.",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "gpt__rand_country",
+      "family_id": "gpt__rand_country",
+      "source_group": "gpt__rand_country",
+      "title": "rand_country",
+      "group": "general",
+      "normalizer": {
+        "id": "behavior_label",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__rand_country",
+          "system": ".",
+          "prompt": "Name a random country. Reply with ONLY the country name.",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "gpt__ZH006",
+      "family_id": "gpt__ZH006",
+      "source_group": "gpt__ZH006",
+      "title": "ZH006",
+      "group": "general",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__ZH006",
+          "system": ".",
+          "prompt": "随便说出一个国家，只回答国名。",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    },
+    {
+      "id": "gpt__ZH071",
+      "family_id": "gpt__ZH071",
+      "source_group": "gpt__ZH071",
+      "title": "ZH071",
+      "group": "general",
+      "normalizer": {
+        "id": "exact_trimmed_casefold",
+        "parameters": {
+          "max_length": 128
+        }
+      },
+      "cells": [
+        {
+          "id": "gpt__ZH071",
+          "system": ".",
+          "prompt": "从17到83中随便选一个整数，只回答数字。",
+          "history": [],
+          "effort": "low",
+          "profile": "standard",
+          "parameters": {
+            "max_output_tokens": 128
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "name": "GPT + Other (98%)",
+    "description": "Six probes plus an equal-model external reference. Existing-pool simulation only; cross-pool accuracy is not established. Other is a virtual reference, not a model identity.",
+    "author": "local research",
+    "license": "unspecified",
+    "language": "zh-CN",
+    "created_at": "2026-09-08T00:00:00+00:00"
+  },
+  "engine": {
+    "minimum_version": "4.5.2",
+    "scoring_version": "meow-fingerprint-v2",
+    "smoothing_alpha": 0.5,
+    "completion_ratio": 0.9,
+    "virtual_reference_version": 1
+  },
+  "tiers": {
+    "low": {
+      "counts": {
+        "gpt__ZH027": 7,
+        "gpt__b80_letter_count": 1,
+        "gpt__rand_bird": 6,
+        "gpt__rand_country": 1,
+        "gpt__ZH006": 3,
+        "gpt__ZH071": 2
+      },
+      "thresholds": {
+        "gpt-6-astra": 0.8788646703068773,
+        "gpt-5.6-sol": 0.7029147079493328,
+        "gpt-5.6-terra": 0.7551734998579104,
+        "gpt-5.6-luna": 0.8726572249240802,
+        "other_known_external": 0.3479734837731927
+      }
+    },
+    "medium": {
+      "counts": {
+        "gpt__ZH027": 16,
+        "gpt__b80_letter_count": 1,
+        "gpt__rand_bird": 13,
+        "gpt__rand_country": 1,
+        "gpt__ZH006": 5,
+        "gpt__ZH071": 4
+      },
+      "thresholds": {
+        "gpt-6-astra": 0.9533867720063844,
+        "gpt-5.6-sol": 0.8122216480420169,
+        "gpt-5.6-terra": 0.8461232814201343,
+        "gpt-5.6-luna": 0.9102183976879409,
+        "other_known_external": 0.6453766733251144
+      }
+    },
+    "high": {
+      "counts": {
+        "gpt__ZH027": 26,
+        "gpt__b80_letter_count": 1,
+        "gpt__rand_bird": 20,
+        "gpt__rand_country": 1,
+        "gpt__ZH006": 7,
+        "gpt__ZH071": 5
+      },
+      "thresholds": {
+        "gpt-6-astra": 0.9617231491125436,
+        "gpt-5.6-sol": 0.8391124547797956,
+        "gpt-5.6-terra": 0.8605521539588309,
+        "gpt-5.6-luna": 0.9173995871746337,
+        "other_known_external": 0.7398171176932161
+      }
+    }
+  },
+  "observations": {
+    "gpt__ZH027": {
+      "gpt-6-astra": {
+        "1": {
+          "counts": {
+            "哗啦": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "哗啦": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "哗啦": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "哗啦": 24,
+            "哗啦啦": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "1": {
+          "counts": {
+            "哗啦": 5,
+            "咕咚": 1,
+            "啪嗒": 1,
+            "哗啦。": 1,
+            "哗啦啦": 7,
+            "咕噜咕噜": 1,
+            "叮咚": 2,
+            "咔嚓": 4,
+            "哗啦哗啦": 2,
+            "咚咚": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "哗啦哗啦": 1,
+            "哗啦啦": 5,
+            "咕咚": 3,
+            "咕噜咕噜": 1,
+            "咚咚": 3,
+            "哗啦": 10,
+            "咔嚓": 1,
+            "咕噜": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "哗啦哗啦": 3,
+            "哗啦啦": 5,
+            "叮咚": 1,
+            "啪嗒": 1,
+            "咚咚": 3,
+            "咕咚": 1,
+            "咕噜咕噜": 2,
+            "咔嚓": 3,
+            "哗啦": 4,
+            "哗啦。": 1,
+            "扑通": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "咕噜咕噜": 2,
+            "咕咚": 4,
+            "咔嚓": 6,
+            "滴答": 1,
+            "哗啦": 1,
+            "扑通": 1,
+            "哗啦啦": 5,
+            "哗啦哗啦": 3,
+            "啪嗒": 1,
+            "咚咚": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-terra": {
+        "1": {
+          "counts": {
+            "哗啦": 5,
+            "啪！": 1,
+            "啪": 7,
+            "啪嗒": 11,
+            "哗啦啦": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "哗啦": 4,
+            "啪！": 2,
+            "轰隆": 2,
+            "啪嗒": 9,
+            "啪": 4,
+            "扑通": 2,
+            "轰隆隆": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "轰隆隆": 3,
+            "哗啦": 8,
+            "啪": 3,
+            "啪嗒": 6,
+            "哗啦啦": 4,
+            "啪！": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "哗啦": 9,
+            "啪": 4,
+            "砰": 1,
+            "轰隆": 1,
+            "轰隆隆": 4,
+            "啪嗒": 6
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-luna": {
+        "1": {
+          "counts": {
+            "哗啦哗啦": 4,
+            "哗啦啦": 11,
+            "喵喵": 8,
+            "哗啦": 1,
+            "喵呜": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "喵喵": 14,
+            "哗啦啦": 9,
+            "哗啦哗啦": 1,
+            "咚咚": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "喵喵": 9,
+            "哗啦啦": 12,
+            "哗啦哗啦": 1,
+            "哐当": 1,
+            "喵喵屾": 1,
+            "喵呜": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "喵喵": 10,
+            "哗啦哗啦": 1,
+            "哗啦啦": 13,
+            "哗啦": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "gpt__b80_letter_count": {
+      "gpt-6-astra": {
+        "1": {
+          "counts": {
+            "exact_3": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "exact_3": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "exact_3": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "exact_3": 25
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "historical_1": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_2": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_3": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_4": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        }
+      },
+      "gpt-5.6-terra": {
+        "historical_1": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_2": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_3": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_4": {
+          "counts": {
+            "exact_3": 20
+          },
+          "planned": 20,
+          "completed": 20
+        }
+      },
+      "gpt-5.6-luna": {
+        "historical_1": {
+          "counts": {
+            "other_integer": 18,
+            "exact_3": 2
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_2": {
+          "counts": {
+            "other_integer": 19,
+            "exact_3": 1
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_3": {
+          "counts": {
+            "other_integer": 16,
+            "exact_3": 4
+          },
+          "planned": 20,
+          "completed": 20
+        },
+        "historical_4": {
+          "counts": {
+            "exact_3": 3,
+            "other_integer": 17
+          },
+          "planned": 20,
+          "completed": 20
+        }
+      }
+    },
+    "gpt__rand_bird": {
+      "gpt-6-astra": {
+        "1": {
+          "counts": {
+            "kestrel": 3,
+            "kingfisher": 22
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "kingfisher": 22,
+            "kestrel": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "kestrel": 2,
+            "kingfisher": 23
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "kingfisher": 22,
+            "kestrel": 3
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "historical_1": {
+          "counts": {
+            "kingfisher": 22,
+            "kestrel": 8
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "kestrel": 6,
+            "kingfisher": 24
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "kingfisher": 19,
+            "kestrel": 11
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "kingfisher": 25,
+            "kestrel": 5
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      },
+      "gpt-5.6-terra": {
+        "historical_1": {
+          "counts": {
+            "kestrel": 26,
+            "kingfisher": 4
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "kestrel": 26,
+            "kingfisher": 4
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "kestrel": 28,
+            "kingfisher": 2
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "kestrel": 30
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      },
+      "gpt-5.6-luna": {
+        "historical_1": {
+          "counts": {
+            "kingfisher": 26,
+            "kestrel": 4
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "kestrel": 7,
+            "kingfisher": 23
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "kingfisher": 23,
+            "kestrel": 5,
+            "falcon": 1,
+            "heron": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "kingfisher": 28,
+            "kestrel": 2
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      }
+    },
+    "gpt__rand_country": {
+      "gpt-6-astra": {
+        "1": {
+          "counts": {
+            "namibia": 5,
+            "uruguay": 18,
+            "bhutan": 1,
+            "mongolia": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "uruguay": 19,
+            "namibia": 2,
+            "mongolia": 2,
+            "peru": 1,
+            "madagascar": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "uruguay": 23,
+            "botswana": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "namibia": 2,
+            "uruguay": 20,
+            "portugal": 1,
+            "madagascar": 1,
+            "suriname": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "historical_1": {
+          "counts": {
+            "uruguay": 20,
+            "portugal": 1,
+            "__INVALID_OUTPUT__": 1,
+            "namibia": 3,
+            "suriname": 1,
+            "madagascar": 2,
+            "botswana": 1,
+            "mongolia": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "laos": 1,
+            "portugal": 7,
+            "uruguay": 13,
+            "madagascar": 3,
+            "namibia": 5,
+            "bhutan": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "mozambique": 1,
+            "uruguay": 17,
+            "namibia": 2,
+            "suriname": 1,
+            "madagascar": 2,
+            "bhutan": 2,
+            "portugal": 3,
+            "paraguay": 1,
+            "mongolia": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "namibia": 3,
+            "uruguay": 15,
+            "slovenia": 1,
+            "paraguay": 1,
+            "portugal": 5,
+            "mongolia": 2,
+            "madagascar": 2,
+            "bhutan": 1
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      },
+      "gpt-5.6-terra": {
+        "historical_1": {
+          "counts": {
+            "bhutan": 10,
+            "suriname": 16,
+            "lesotho": 1,
+            "paraguay": 1,
+            "namibia": 1,
+            "laos": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "lesotho": 4,
+            "suriname": 11,
+            "bhutan": 10,
+            "uruguay": 3,
+            "namibia": 2
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "suriname": 12,
+            "lesotho": 6,
+            "bhutan": 8,
+            "paraguay": 1,
+            "laos": 1,
+            "chile": 1,
+            "uruguay": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "suriname": 13,
+            "paraguay": 1,
+            "namibia": 3,
+            "lesotho": 4,
+            "laos": 1,
+            "bhutan": 8
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      },
+      "gpt-5.6-luna": {
+        "historical_1": {
+          "counts": {
+            "mongolia": 13,
+            "namibia": 3,
+            "bhutan": 7,
+            "madagascar": 2,
+            "laos": 2,
+            "botswana": 1,
+            "uruguay": 1,
+            "nepal": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_2": {
+          "counts": {
+            "bhutan": 11,
+            "mongolia": 14,
+            "namibia": 2,
+            "laos": 1,
+            "morocco": 1,
+            "nepal": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_3": {
+          "counts": {
+            "nepal": 1,
+            "bhutan": 13,
+            "portugal": 1,
+            "mongolia": 8,
+            "peru": 1,
+            "laos": 1,
+            "madagascar": 1,
+            "botswana": 1,
+            "namibia": 2,
+            "uruguay": 1
+          },
+          "planned": 30,
+          "completed": 30
+        },
+        "historical_4": {
+          "counts": {
+            "bhutan": 6,
+            "mongolia": 16,
+            "morocco": 1,
+            "madagascar": 1,
+            "namibia": 3,
+            "laos": 2,
+            "nepal": 1
+          },
+          "planned": 30,
+          "completed": 30
+        }
+      }
+    },
+    "gpt__ZH006": {
+      "gpt-6-astra": {
+        "country_1": {
+          "counts": {
+            "挪威": 1,
+            "巴西": 13,
+            "新西兰": 1,
+            "葡萄牙": 4,
+            "加拿大": 5,
+            "法国": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_2": {
+          "counts": {
+            "新西兰": 1,
+            "加拿大": 7,
+            "巴西": 15,
+            "中国": 1,
+            "冰岛": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_3": {
+          "counts": {
+            "巴西": 13,
+            "中国": 1,
+            "加拿大": 11
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_4": {
+          "counts": {
+            "巴西": 17,
+            "加拿大": 7,
+            "法国": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "country_1": {
+          "counts": {
+            "冰岛": 22,
+            "葡萄牙": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_2": {
+          "counts": {
+            "冰岛": 21,
+            "葡萄牙": 2,
+            "加拿大": 1,
+            "新西兰": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_3": {
+          "counts": {
+            "冰岛": 22,
+            "葡萄牙": 2,
+            "新西兰": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_4": {
+          "counts": {
+            "冰岛": 21,
+            "挪威": 1,
+            "葡萄牙": 2,
+            "加拿大": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-terra": {
+        "country_1": {
+          "counts": {
+            "冰岛": 22,
+            "加拿大": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_2": {
+          "counts": {
+            "冰岛": 23,
+            "加拿大": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_3": {
+          "counts": {
+            "冰岛": 24,
+            "加拿大": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_4": {
+          "counts": {
+            "冰岛": 24,
+            "加拿大": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-luna": {
+        "country_1": {
+          "counts": {
+            "加拿大": 20,
+            "日本": 5
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_2": {
+          "counts": {
+            "加拿大": 25
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_3": {
+          "counts": {
+            "加拿大": 24,
+            "日本": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "country_4": {
+          "counts": {
+            "加拿大": 23,
+            "日本": 2
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    },
+    "gpt__ZH071": {
+      "gpt-6-astra": {
+        "1": {
+          "counts": {
+            "47": 3,
+            "46": 21,
+            "52": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "46": 21,
+            "47": 2,
+            "52": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "46": 21,
+            "49": 1,
+            "42": 2,
+            "47": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "47": 8,
+            "46": 14,
+            "49": 1,
+            "52": 1,
+            "42": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-sol": {
+        "1": {
+          "counts": {
+            "47": 18,
+            "42": 3,
+            "56": 2,
+            "52": 1,
+            "57": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "57": 4,
+            "61": 1,
+            "47": 14,
+            "42": 2,
+            "56": 2,
+            "52": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "47": 15,
+            "56": 2,
+            "46": 1,
+            "57": 4,
+            "42": 3
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "42": 3,
+            "47": 14,
+            "46": 3,
+            "52": 4,
+            "57": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-terra": {
+        "1": {
+          "counts": {
+            "52": 3,
+            "58": 9,
+            "42": 2,
+            "64": 5,
+            "62": 5,
+            "47": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "58": 7,
+            "64": 9,
+            "62": 3,
+            "42": 3,
+            "54": 1,
+            "52": 2
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "58": 10,
+            "42": 9,
+            "62": 2,
+            "46": 1,
+            "64": 2,
+            "54": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "64": 8,
+            "42": 3,
+            "47": 1,
+            "58": 5,
+            "62": 4,
+            "52": 3,
+            "54": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      },
+      "gpt-5.6-luna": {
+        "1": {
+          "counts": {
+            "52": 18,
+            "47": 4,
+            "56": 2,
+            "57": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "2": {
+          "counts": {
+            "52": 19,
+            "47": 2,
+            "56": 4
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "3": {
+          "counts": {
+            "52": 19,
+            "47": 4,
+            "57": 1,
+            "56": 1
+          },
+          "planned": 25,
+          "completed": 25
+        },
+        "4": {
+          "counts": {
+            "56": 3,
+            "52": 14,
+            "57": 5,
+            "47": 2,
+            "46": 1
+          },
+          "planned": 25,
+          "completed": 25
+        }
+      }
+    }
+  },
+  "fitted": {
+    "models": [
+      "gpt-6-astra",
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "other_known_external"
+    ],
+    "cells": {
+      "gpt__ZH027": {
+        "categories": [
+          "__OTHER__",
+          "叮咚",
+          "咔嚓",
+          "咕咚",
+          "咕噜",
+          "咕噜咕噜",
+          "咚咚",
+          "哐当",
+          "哗啦",
+          "哗啦。",
+          "哗啦哗啦",
+          "哗啦啦",
+          "啪",
+          "啪嗒",
+          "啪！",
+          "喵呜",
+          "喵喵",
+          "喵喵屾",
+          "扑通",
+          "滴答",
+          "砰",
+          "轰隆",
+          "轰隆隆"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "哗啦": 99,
+            "哗啦啦": 1
+          },
+          "gpt-5.6-sol": {
+            "哗啦": 20,
+            "咕咚": 9,
+            "啪嗒": 3,
+            "哗啦。": 2,
+            "哗啦啦": 22,
+            "咕噜咕噜": 6,
+            "叮咚": 3,
+            "咔嚓": 14,
+            "哗啦哗啦": 9,
+            "咚咚": 8,
+            "咕噜": 1,
+            "扑通": 2,
+            "滴答": 1
+          },
+          "gpt-5.6-terra": {
+            "哗啦": 26,
+            "啪！": 4,
+            "啪": 18,
+            "啪嗒": 32,
+            "哗啦啦": 5,
+            "轰隆": 3,
+            "扑通": 2,
+            "轰隆隆": 9,
+            "砰": 1
+          },
+          "gpt-5.6-luna": {
+            "哗啦哗啦": 7,
+            "哗啦啦": 45,
+            "喵喵": 41,
+            "哗啦": 2,
+            "喵呜": 2,
+            "咚咚": 1,
+            "哐当": 1,
+            "喵喵屾": 1
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "__OTHER__": 0.004484304932735426,
+            "叮咚": 0.004484304932735426,
+            "咔嚓": 0.004484304932735426,
+            "咕咚": 0.004484304932735426,
+            "咕噜": 0.004484304932735426,
+            "咕噜咕噜": 0.004484304932735426,
+            "咚咚": 0.004484304932735426,
+            "哐当": 0.004484304932735426,
+            "哗啦": 0.8923766816143498,
+            "哗啦。": 0.004484304932735426,
+            "哗啦哗啦": 0.004484304932735426,
+            "哗啦啦": 0.013452914798206279,
+            "啪": 0.004484304932735426,
+            "啪嗒": 0.004484304932735426,
+            "啪！": 0.004484304932735426,
+            "喵呜": 0.004484304932735426,
+            "喵喵": 0.004484304932735426,
+            "喵喵屾": 0.004484304932735426,
+            "扑通": 0.004484304932735426,
+            "滴答": 0.004484304932735426,
+            "砰": 0.004484304932735426,
+            "轰隆": 0.004484304932735426,
+            "轰隆隆": 0.004484304932735426
+          },
+          "gpt-5.6-sol": {
+            "__OTHER__": 0.004484304932735426,
+            "叮咚": 0.03139013452914798,
+            "咔嚓": 0.13004484304932734,
+            "咕咚": 0.08520179372197309,
+            "咕噜": 0.013452914798206279,
+            "咕噜咕噜": 0.05829596412556054,
+            "咚咚": 0.07623318385650224,
+            "哐当": 0.004484304932735426,
+            "哗啦": 0.18385650224215247,
+            "哗啦。": 0.02242152466367713,
+            "哗啦哗啦": 0.08520179372197309,
+            "哗啦啦": 0.20179372197309417,
+            "啪": 0.004484304932735426,
+            "啪嗒": 0.03139013452914798,
+            "啪！": 0.004484304932735426,
+            "喵呜": 0.004484304932735426,
+            "喵喵": 0.004484304932735426,
+            "喵喵屾": 0.004484304932735426,
+            "扑通": 0.02242152466367713,
+            "滴答": 0.013452914798206279,
+            "砰": 0.004484304932735426,
+            "轰隆": 0.004484304932735426,
+            "轰隆隆": 0.004484304932735426
+          },
+          "gpt-5.6-terra": {
+            "__OTHER__": 0.004484304932735426,
+            "叮咚": 0.004484304932735426,
+            "咔嚓": 0.004484304932735426,
+            "咕咚": 0.004484304932735426,
+            "咕噜": 0.004484304932735426,
+            "咕噜咕噜": 0.004484304932735426,
+            "咚咚": 0.004484304932735426,
+            "哐当": 0.004484304932735426,
+            "哗啦": 0.23766816143497757,
+            "哗啦。": 0.004484304932735426,
+            "哗啦哗啦": 0.004484304932735426,
+            "哗啦啦": 0.04932735426008968,
+            "啪": 0.16591928251121077,
+            "啪嗒": 0.2914798206278027,
+            "啪！": 0.04035874439461883,
+            "喵呜": 0.004484304932735426,
+            "喵喵": 0.004484304932735426,
+            "喵喵屾": 0.004484304932735426,
+            "扑通": 0.02242152466367713,
+            "滴答": 0.004484304932735426,
+            "砰": 0.013452914798206279,
+            "轰隆": 0.03139013452914798,
+            "轰隆隆": 0.08520179372197309
+          },
+          "gpt-5.6-luna": {
+            "__OTHER__": 0.004484304932735426,
+            "叮咚": 0.004484304932735426,
+            "咔嚓": 0.004484304932735426,
+            "咕咚": 0.004484304932735426,
+            "咕噜": 0.004484304932735426,
+            "咕噜咕噜": 0.004484304932735426,
+            "咚咚": 0.013452914798206279,
+            "哐当": 0.013452914798206279,
+            "哗啦": 0.02242152466367713,
+            "哗啦。": 0.004484304932735426,
+            "哗啦哗啦": 0.06726457399103139,
+            "哗啦啦": 0.4080717488789238,
+            "啪": 0.004484304932735426,
+            "啪嗒": 0.004484304932735426,
+            "啪！": 0.004484304932735426,
+            "喵呜": 0.02242152466367713,
+            "喵喵": 0.3721973094170404,
+            "喵喵屾": 0.013452914798206279,
+            "扑通": 0.004484304932735426,
+            "滴答": 0.004484304932735426,
+            "砰": 0.004484304932735426,
+            "轰隆": 0.004484304932735426,
+            "轰隆隆": 0.004484304932735426
+          },
+          "other_known_external": {
+            "__OTHER__": 0.09780928351155434,
+            "叮咚": 0.06829001294939058,
+            "咔嚓": 0.03588716675344093,
+            "咕咚": 0.03588716675344093,
+            "咕噜": 0.04347524263419974,
+            "咕噜咕噜": 0.029537960404234585,
+            "咚咚": 0.04347524263419974,
+            "哐当": 0.029537960404234585,
+            "哗啦": 0.08981537106011454,
+            "哗啦。": 0.029537960404234585,
+            "哗啦哗啦": 0.029537960404234585,
+            "哗啦啦": 0.04573938350220941,
+            "啪": 0.048585579451853635,
+            "啪嗒": 0.029537960404234585,
+            "啪！": 0.029537960404234585,
+            "喵呜": 0.029537960404234585,
+            "喵喵": 0.029537960404234585,
+            "喵喵屾": 0.029537960404234585,
+            "扑通": 0.029537960404234585,
+            "滴答": 0.04223637310264728,
+            "砰": 0.07463921929859693,
+            "轰隆": 0.03939017715300306,
+            "轰隆隆": 0.03939017715300306
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 0.448355512994052,
+          "gpt-6-astra|gpt-5.6-terra": 0.41354254841142407,
+          "gpt-6-astra|gpt-5.6-luna": 0.7535818701840621,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.43045306537725664,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.4087934546010404,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.655122120101041
+        },
+        "between_model_jsd": 0.518308095278146,
+        "within_model_jsd": 0.04643670741955219,
+        "model_drift": {
+          "gpt-6-astra": 0.002684052489323522,
+          "gpt-5.6-sol": 0.07970220008130427,
+          "gpt-5.6-terra": 0.07250206010105394,
+          "gpt-5.6-luna": 0.030858517006527034
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.005368104978647044,
+          "gpt-5.6-sol": 0.14900086759747733,
+          "gpt-5.6-terra": 0.08911761621895195,
+          "gpt-5.6-luna": 0.04855485056400734
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "1|2": 0.0,
+            "1|3": 0.0,
+            "1|4": 0.005368104978647044,
+            "2|3": 0.0,
+            "2|4": 0.005368104978647044,
+            "3|4": 0.005368104978647044
+          },
+          "gpt-5.6-sol": {
+            "1|2": 0.08291772757473284,
+            "1|3": 0.025230163276306807,
+            "1|4": 0.08023410674320913,
+            "2|3": 0.07713364064093191,
+            "2|4": 0.14900086759747733,
+            "3|4": 0.0636966946551676
+          },
+          "gpt-5.6-terra": {
+            "1|2": 0.06118029265184617,
+            "1|3": 0.07553776918684568,
+            "1|4": 0.08911761621895195,
+            "2|3": 0.08847799385156117,
+            "2|4": 0.06579104136748636,
+            "3|4": 0.05490764732963234
+          },
+          "gpt-5.6-luna": {
+            "1|2": 0.04855485056400734,
+            "1|3": 0.031983874772639594,
+            "1|4": 0.024348744769836166,
+            "2|3": 0.035105875807679834,
+            "2|4": 0.023601476629201673,
+            "3|4": 0.021556279495797605
+          }
+        },
+        "weight": 0.9104071345931182,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "gpt-5.6-sol": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.02
+          },
+          "gpt-5.6-terra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "gpt-5.6-luna": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.03
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__ZH027"
+      },
+      "gpt__b80_letter_count": {
+        "categories": [
+          "__OTHER__",
+          "exact_3",
+          "other_integer"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "exact_3": 100
+          },
+          "gpt-5.6-sol": {
+            "exact_3": 80
+          },
+          "gpt-5.6-terra": {
+            "exact_3": 80
+          },
+          "gpt-5.6-luna": {
+            "other_integer": 70,
+            "exact_3": 10
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "__OTHER__": 0.0049261083743842365,
+            "exact_3": 0.9901477832512315,
+            "other_integer": 0.0049261083743842365
+          },
+          "gpt-5.6-sol": {
+            "__OTHER__": 0.006134969325153374,
+            "exact_3": 0.9877300613496932,
+            "other_integer": 0.006134969325153374
+          },
+          "gpt-5.6-terra": {
+            "__OTHER__": 0.006134969325153374,
+            "exact_3": 0.9877300613496932,
+            "other_integer": 0.006134969325153374
+          },
+          "gpt-5.6-luna": {
+            "__OTHER__": 0.006134969325153374,
+            "exact_3": 0.12883435582822086,
+            "other_integer": 0.8650306748466258
+          },
+          "other_known_external": {
+            "__OTHER__": 0.0817233560090703,
+            "exact_3": 0.8365532879818594,
+            "other_integer": 0.0817233560090703
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 9.655807091837041e-05,
+          "gpt-6-astra|gpt-5.6-terra": 9.655807091837041e-05,
+          "gpt-6-astra|gpt-5.6-luna": 0.6843311821565701,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.0,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.6794794737951215,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.6794794737951215
+        },
+        "between_model_jsd": 0.3405805409814417,
+        "within_model_jsd": 0.0028475075422730012,
+        "model_drift": {
+          "gpt-6-astra": 0.0,
+          "gpt-5.6-sol": 0.0,
+          "gpt-5.6-terra": 0.0,
+          "gpt-5.6-luna": 0.011390030169092005
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.0,
+          "gpt-5.6-sol": 0.0,
+          "gpt-5.6-terra": 0.0,
+          "gpt-5.6-luna": 0.03053203345465772
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "1|2": 0.0,
+            "1|3": 0.0,
+            "1|4": 0.0,
+            "2|3": 0.0,
+            "2|4": 0.0,
+            "3|4": 0.0
+          },
+          "gpt-5.6-sol": {
+            "historical_1|historical_2": 0.0,
+            "historical_1|historical_3": 0.0,
+            "historical_1|historical_4": 0.0,
+            "historical_2|historical_3": 0.0,
+            "historical_2|historical_4": 0.0,
+            "historical_3|historical_4": 0.0
+          },
+          "gpt-5.6-terra": {
+            "historical_1|historical_2": 0.0,
+            "historical_1|historical_3": 0.0,
+            "historical_1|historical_4": 0.0,
+            "historical_2|historical_3": 0.0,
+            "historical_2|historical_4": 0.0,
+            "historical_3|historical_4": 0.0
+          },
+          "gpt-5.6-luna": {
+            "historical_1|historical_2": 0.00468020952077439,
+            "historical_1|historical_3": 0.011639137901902512,
+            "historical_1|historical_4": 0.0032750574149378667,
+            "historical_2|historical_3": 0.03053203345465772,
+            "historical_2|historical_4": 0.015617838137817378,
+            "historical_3|historical_4": 0.0025959045844621553
+          }
+        },
+        "weight": 0.9916392535696038,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-sol": {
+            "completed": 80,
+            "planned": 80,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-terra": {
+            "completed": 80,
+            "planned": 80,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-luna": {
+            "completed": 80,
+            "planned": 80,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__b80_letter_count"
+      },
+      "gpt__rand_bird": {
+        "categories": [
+          "__OTHER__",
+          "falcon",
+          "heron",
+          "kestrel",
+          "kingfisher"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "kestrel": 11,
+            "kingfisher": 89
+          },
+          "gpt-5.6-sol": {
+            "kingfisher": 90,
+            "kestrel": 30
+          },
+          "gpt-5.6-terra": {
+            "kestrel": 110,
+            "kingfisher": 10
+          },
+          "gpt-5.6-luna": {
+            "kingfisher": 100,
+            "kestrel": 18,
+            "falcon": 1,
+            "heron": 1
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "__OTHER__": 0.004878048780487805,
+            "falcon": 0.004878048780487805,
+            "heron": 0.004878048780487805,
+            "kestrel": 0.11219512195121951,
+            "kingfisher": 0.8731707317073171
+          },
+          "gpt-5.6-sol": {
+            "__OTHER__": 0.004081632653061225,
+            "falcon": 0.004081632653061225,
+            "heron": 0.004081632653061225,
+            "kestrel": 0.24897959183673468,
+            "kingfisher": 0.7387755102040816
+          },
+          "gpt-5.6-terra": {
+            "__OTHER__": 0.004081632653061225,
+            "falcon": 0.004081632653061225,
+            "heron": 0.004081632653061225,
+            "kestrel": 0.9020408163265307,
+            "kingfisher": 0.08571428571428572
+          },
+          "gpt-5.6-luna": {
+            "__OTHER__": 0.004081632653061225,
+            "falcon": 0.012244897959183673,
+            "heron": 0.012244897959183673,
+            "kestrel": 0.1510204081632653,
+            "kingfisher": 0.8204081632653061
+          },
+          "other_known_external": {
+            "__OTHER__": 0.5166990819164733,
+            "falcon": 0.15243532634836982,
+            "heron": 0.07932325323629671,
+            "kestrel": 0.06874124265428613,
+            "kingfisher": 0.1828010958445741
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 0.023281263244372755,
+          "gpt-6-astra|gpt-5.6-terra": 0.5238896970543195,
+          "gpt-6-astra|gpt-5.6-luna": 0.005054245963266004,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.3557143138059883,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.013364582816352073,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.4657737076214286
+        },
+        "between_model_jsd": 0.23117963508428788,
+        "within_model_jsd": 0.013120056262537098,
+        "model_drift": {
+          "gpt-6-astra": 0.001240637848296781,
+          "gpt-5.6-sol": 0.012763733886567376,
+          "gpt-5.6-terra": 0.019884959345436323,
+          "gpt-5.6-luna": 0.01859089396984791
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.002481275696593562,
+          "gpt-5.6-sol": 0.03291951152548665,
+          "gpt-5.6-terra": 0.04396418563470966,
+          "gpt-5.6-luna": 0.03437779738756133
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "1|2": 0.0,
+            "1|3": 0.002481275696593562,
+            "1|4": 0.0,
+            "2|3": 0.002481275696593562,
+            "2|4": 0.0,
+            "3|4": 0.002481275696593562
+          },
+          "gpt-5.6-sol": {
+            "historical_1|historical_2": 0.003912972366285166,
+            "historical_1|historical_3": 0.007392937323998192,
+            "historical_1|historical_4": 0.00927199996002891,
+            "historical_2|historical_3": 0.02193713638779201,
+            "historical_2|historical_4": 0.0011478457558133353,
+            "historical_3|historical_4": 0.03291951152548665
+          },
+          "gpt-5.6-terra": {
+            "historical_1|historical_2": 0.0,
+            "historical_1|historical_3": 0.007238023001064936,
+            "historical_1|historical_4": 0.04396418563470966,
+            "historical_2|historical_3": 0.007238023001064936,
+            "historical_2|historical_4": 0.04396418563470966,
+            "historical_3|historical_4": 0.01690533880106873
+          },
+          "gpt-5.6-luna": {
+            "historical_1|historical_2": 0.010410962100206873,
+            "historical_1|historical_3": 0.01472405436766789,
+            "historical_1|historical_4": 0.007238023001064936,
+            "historical_2|historical_3": 0.01504191593689682,
+            "historical_2|historical_4": 0.03437779738756133,
+            "historical_3|historical_4": 0.029752611025689605
+          }
+        },
+        "weight": 0.9432473528312582,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-sol": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-terra": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-luna": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.016666666666666666
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__rand_bird"
+      },
+      "gpt__rand_country": {
+        "categories": [
+          "__OTHER__",
+          "bhutan",
+          "botswana",
+          "chile",
+          "laos",
+          "lesotho",
+          "madagascar",
+          "mongolia",
+          "morocco",
+          "mozambique",
+          "namibia",
+          "nepal",
+          "paraguay",
+          "peru",
+          "portugal",
+          "slovenia",
+          "suriname",
+          "uruguay"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "namibia": 9,
+            "uruguay": 80,
+            "bhutan": 1,
+            "mongolia": 3,
+            "peru": 1,
+            "madagascar": 2,
+            "botswana": 2,
+            "portugal": 1,
+            "suriname": 1
+          },
+          "gpt-5.6-sol": {
+            "uruguay": 65,
+            "portugal": 16,
+            "namibia": 13,
+            "suriname": 2,
+            "madagascar": 9,
+            "botswana": 1,
+            "mongolia": 4,
+            "laos": 1,
+            "bhutan": 4,
+            "mozambique": 1,
+            "paraguay": 2,
+            "slovenia": 1
+          },
+          "gpt-5.6-terra": {
+            "bhutan": 36,
+            "suriname": 52,
+            "lesotho": 15,
+            "paraguay": 3,
+            "namibia": 6,
+            "laos": 3,
+            "uruguay": 4,
+            "chile": 1
+          },
+          "gpt-5.6-luna": {
+            "mongolia": 51,
+            "namibia": 10,
+            "bhutan": 37,
+            "madagascar": 4,
+            "laos": 6,
+            "botswana": 2,
+            "uruguay": 2,
+            "nepal": 4,
+            "morocco": 2,
+            "portugal": 1,
+            "peru": 1
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "__OTHER__": 0.0045871559633027525,
+            "bhutan": 0.013761467889908258,
+            "botswana": 0.022935779816513763,
+            "chile": 0.0045871559633027525,
+            "laos": 0.0045871559633027525,
+            "lesotho": 0.0045871559633027525,
+            "madagascar": 0.022935779816513763,
+            "mongolia": 0.03211009174311927,
+            "morocco": 0.0045871559633027525,
+            "mozambique": 0.0045871559633027525,
+            "namibia": 0.0871559633027523,
+            "nepal": 0.0045871559633027525,
+            "paraguay": 0.0045871559633027525,
+            "peru": 0.013761467889908258,
+            "portugal": 0.013761467889908258,
+            "slovenia": 0.0045871559633027525,
+            "suriname": 0.013761467889908258,
+            "uruguay": 0.7385321100917431
+          },
+          "gpt-5.6-sol": {
+            "__OTHER__": 0.00390625,
+            "bhutan": 0.03515625,
+            "botswana": 0.01171875,
+            "chile": 0.00390625,
+            "laos": 0.01171875,
+            "lesotho": 0.00390625,
+            "madagascar": 0.07421875,
+            "mongolia": 0.03515625,
+            "morocco": 0.00390625,
+            "mozambique": 0.01171875,
+            "namibia": 0.10546875,
+            "nepal": 0.00390625,
+            "paraguay": 0.01953125,
+            "peru": 0.00390625,
+            "portugal": 0.12890625,
+            "slovenia": 0.01171875,
+            "suriname": 0.01953125,
+            "uruguay": 0.51171875
+          },
+          "gpt-5.6-terra": {
+            "__OTHER__": 0.003875968992248062,
+            "bhutan": 0.28294573643410853,
+            "botswana": 0.003875968992248062,
+            "chile": 0.011627906976744186,
+            "laos": 0.027131782945736434,
+            "lesotho": 0.12015503875968993,
+            "madagascar": 0.003875968992248062,
+            "mongolia": 0.003875968992248062,
+            "morocco": 0.003875968992248062,
+            "mozambique": 0.003875968992248062,
+            "namibia": 0.050387596899224806,
+            "nepal": 0.003875968992248062,
+            "paraguay": 0.027131782945736434,
+            "peru": 0.003875968992248062,
+            "portugal": 0.003875968992248062,
+            "slovenia": 0.003875968992248062,
+            "suriname": 0.4069767441860465,
+            "uruguay": 0.03488372093023256
+          },
+          "gpt-5.6-luna": {
+            "__OTHER__": 0.003875968992248062,
+            "bhutan": 0.29069767441860467,
+            "botswana": 0.01937984496124031,
+            "chile": 0.003875968992248062,
+            "laos": 0.050387596899224806,
+            "lesotho": 0.003875968992248062,
+            "madagascar": 0.03488372093023256,
+            "mongolia": 0.3992248062015504,
+            "morocco": 0.01937984496124031,
+            "mozambique": 0.003875968992248062,
+            "namibia": 0.08139534883720931,
+            "nepal": 0.03488372093023256,
+            "paraguay": 0.003875968992248062,
+            "peru": 0.011627906976744186,
+            "portugal": 0.011627906976744186,
+            "slovenia": 0.003875968992248062,
+            "suriname": 0.003875968992248062,
+            "uruguay": 0.01937984496124031
+          },
+          "other_known_external": {
+            "__OTHER__": 0.14682539682539683,
+            "bhutan": 0.07063492063492063,
+            "botswana": 0.03492063492063492,
+            "chile": 0.04206349206349207,
+            "laos": 0.03492063492063492,
+            "lesotho": 0.03492063492063492,
+            "madagascar": 0.08492063492063492,
+            "mongolia": 0.046825396825396826,
+            "morocco": 0.03492063492063492,
+            "mozambique": 0.03492063492063492,
+            "namibia": 0.03492063492063492,
+            "nepal": 0.046825396825396826,
+            "paraguay": 0.03492063492063492,
+            "peru": 0.03492063492063492,
+            "portugal": 0.14206349206349206,
+            "slovenia": 0.03492063492063492,
+            "suriname": 0.03492063492063492,
+            "uruguay": 0.07063492063492063
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 0.07903900024814471,
+          "gpt-6-astra|gpt-5.6-terra": 0.6490071350759421,
+          "gpt-6-astra|gpt-5.6-luna": 0.5915165613775416,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.5724639250771651,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.5019030702984507,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.4720171782769153
+        },
+        "between_model_jsd": 0.47765781172569327,
+        "within_model_jsd": 0.0459614666027199,
+        "model_drift": {
+          "gpt-6-astra": 0.050157251183817086,
+          "gpt-5.6-sol": 0.05029525383186731,
+          "gpt-5.6-terra": 0.042338931102539085,
+          "gpt-5.6-luna": 0.04105443029265613
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.08459283319483407,
+          "gpt-5.6-sol": 0.08476912028766395,
+          "gpt-5.6-terra": 0.05824041817138002,
+          "gpt-5.6-luna": 0.07532154011349777
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "1|2": 0.031842270622971236,
+            "1|3": 0.08459283319483407,
+            "1|4": 0.04107249585751198,
+            "2|3": 0.061374743196711566,
+            "2|4": 0.03235734640132664,
+            "3|4": 0.04970381782954704
+          },
+          "gpt-5.6-sol": {
+            "historical_1|historical_2": 0.08476912028766395,
+            "historical_1|historical_3": 0.03978290445805009,
+            "historical_1|historical_4": 0.05611476757551454,
+            "historical_2|historical_3": 0.05729470110937528,
+            "historical_2|historical_4": 0.037804549107151045,
+            "historical_3|historical_4": 0.02600548045344893
+          },
+          "gpt-5.6-terra": {
+            "historical_1|historical_2": 0.05824041817138002,
+            "historical_1|historical_3": 0.0527440255066632,
+            "historical_1|historical_4": 0.026856249638900462,
+            "historical_2|historical_3": 0.04130501981349503,
+            "historical_2|historical_4": 0.03806539170934958,
+            "historical_3|historical_4": 0.03682248177544619
+          },
+          "gpt-5.6-luna": {
+            "historical_1|historical_2": 0.04003977607600622,
+            "historical_1|historical_3": 0.04257843111009943,
+            "historical_1|historical_4": 0.02029397882161061,
+            "historical_2|historical_3": 0.045159424700655815,
+            "historical_2|historical_4": 0.022933430934066953,
+            "historical_3|historical_4": 0.07532154011349777
+          }
+        },
+        "weight": 0.9037774208346573,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.04
+          },
+          "gpt-5.6-sol": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 1,
+            "valid_rate": 0.9916666666666667,
+            "singleton_mass": 0.041666666666666664
+          },
+          "gpt-5.6-terra": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.008333333333333333
+          },
+          "gpt-5.6-luna": {
+            "completed": 120,
+            "planned": 120,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.016666666666666666
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__rand_country"
+      },
+      "gpt__ZH006": {
+        "categories": [
+          "__OTHER__",
+          "中国",
+          "冰岛",
+          "加拿大",
+          "巴西",
+          "挪威",
+          "新西兰",
+          "日本",
+          "法国",
+          "葡萄牙"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "挪威": 1,
+            "巴西": 58,
+            "新西兰": 2,
+            "葡萄牙": 4,
+            "加拿大": 30,
+            "法国": 2,
+            "中国": 2,
+            "冰岛": 1
+          },
+          "gpt-5.6-sol": {
+            "冰岛": 86,
+            "葡萄牙": 9,
+            "加拿大": 2,
+            "新西兰": 2,
+            "挪威": 1
+          },
+          "gpt-5.6-terra": {
+            "冰岛": 93,
+            "加拿大": 7
+          },
+          "gpt-5.6-luna": {
+            "加拿大": 92,
+            "日本": 8
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "__OTHER__": 0.004761904761904762,
+            "中国": 0.023809523809523808,
+            "冰岛": 0.014285714285714285,
+            "加拿大": 0.2904761904761905,
+            "巴西": 0.5571428571428572,
+            "挪威": 0.014285714285714285,
+            "新西兰": 0.023809523809523808,
+            "日本": 0.004761904761904762,
+            "法国": 0.023809523809523808,
+            "葡萄牙": 0.04285714285714286
+          },
+          "gpt-5.6-sol": {
+            "__OTHER__": 0.004761904761904762,
+            "中国": 0.004761904761904762,
+            "冰岛": 0.8238095238095238,
+            "加拿大": 0.023809523809523808,
+            "巴西": 0.004761904761904762,
+            "挪威": 0.014285714285714285,
+            "新西兰": 0.023809523809523808,
+            "日本": 0.004761904761904762,
+            "法国": 0.004761904761904762,
+            "葡萄牙": 0.09047619047619047
+          },
+          "gpt-5.6-terra": {
+            "__OTHER__": 0.004761904761904762,
+            "中国": 0.004761904761904762,
+            "冰岛": 0.8904761904761904,
+            "加拿大": 0.07142857142857142,
+            "巴西": 0.004761904761904762,
+            "挪威": 0.004761904761904762,
+            "新西兰": 0.004761904761904762,
+            "日本": 0.004761904761904762,
+            "法国": 0.004761904761904762,
+            "葡萄牙": 0.004761904761904762
+          },
+          "gpt-5.6-luna": {
+            "__OTHER__": 0.004761904761904762,
+            "中国": 0.004761904761904762,
+            "冰岛": 0.004761904761904762,
+            "加拿大": 0.8809523809523809,
+            "巴西": 0.004761904761904762,
+            "挪威": 0.004761904761904762,
+            "新西兰": 0.004761904761904762,
+            "日本": 0.08095238095238096,
+            "法国": 0.004761904761904762,
+            "葡萄牙": 0.004761904761904762
+          },
+          "other_known_external": {
+            "__OTHER__": 0.13010204081632654,
+            "中国": 0.0586734693877551,
+            "冰岛": 0.13903061224489796,
+            "加拿大": 0.1683673469387755,
+            "巴西": 0.09438775510204081,
+            "挪威": 0.04974489795918367,
+            "新西兰": 0.04974489795918367,
+            "日本": 0.15688775510204084,
+            "法国": 0.10331632653061225,
+            "葡萄牙": 0.04974489795918367
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 0.7406065367829627,
+          "gpt-6-astra|gpt-5.6-terra": 0.7412684565837717,
+          "gpt-6-astra|gpt-5.6-luna": 0.4344057276048089,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.05070020010054789,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.8364671245138036,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.7489820698418738
+        },
+        "between_model_jsd": 0.5920716859046281,
+        "within_model_jsd": 0.023639432984804715,
+        "model_drift": {
+          "gpt-6-astra": 0.0528418645300078,
+          "gpt-5.6-sol": 0.012721739822403164,
+          "gpt-5.6-terra": 0.0051137975212550745,
+          "gpt-5.6-luna": 0.023880330065552822
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.09542941887142577,
+          "gpt-5.6-sol": 0.019145448778615112,
+          "gpt-5.6-terra": 0.010915922053964435,
+          "gpt-5.6-luna": 0.06516518724165768
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "country_1|country_2": 0.07478682169365251,
+            "country_1|country_3": 0.09542941887142577,
+            "country_1|country_4": 0.06676825036170815,
+            "country_2|country_3": 0.024441365665977995,
+            "country_2|country_4": 0.026621077883857543,
+            "country_3|country_4": 0.02900425270342477
+          },
+          "gpt-5.6-sol": {
+            "country_1|country_2": 0.014867843928804244,
+            "country_1|country_3": 0.008303853519580278,
+            "country_1|country_4": 0.014867843928804244,
+            "country_2|country_3": 0.006563990409223969,
+            "country_2|country_4": 0.012581458369391145,
+            "country_3|country_4": 0.019145448778615112
+          },
+          "gpt-5.6-terra": {
+            "country_1|country_2": 0.0022745027218776144,
+            "country_1|country_3": 0.010915922053964435,
+            "country_1|country_4": 0.010915922053964435,
+            "country_2|country_3": 0.003288219148861982,
+            "country_2|country_4": 0.003288219148861982,
+            "country_3|country_4": 0.0
+          },
+          "gpt-5.6-luna": {
+            "country_1|country_2": 0.06516518724165768,
+            "country_1|country_3": 0.033494185664026524,
+            "country_1|country_4": 0.016322617146294197,
+            "country_2|country_3": 0.00653119439068737,
+            "country_2|country_4": 0.01848057680178918,
+            "country_3|country_4": 0.003288219148861982
+          }
+        },
+        "weight": 0.9600733601224555,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.02
+          },
+          "gpt-5.6-sol": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "gpt-5.6-terra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-luna": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__ZH006"
+      },
+      "gpt__ZH071": {
+        "categories": [
+          "42",
+          "46",
+          "47",
+          "49",
+          "52",
+          "54",
+          "56",
+          "57",
+          "58",
+          "61",
+          "62",
+          "64",
+          "__OTHER__"
+        ],
+        "model_counts": {
+          "gpt-6-astra": {
+            "47": 14,
+            "46": 77,
+            "52": 4,
+            "49": 2,
+            "42": 3
+          },
+          "gpt-5.6-sol": {
+            "47": 61,
+            "42": 11,
+            "56": 6,
+            "52": 7,
+            "57": 10,
+            "61": 1,
+            "46": 4
+          },
+          "gpt-5.6-terra": {
+            "52": 8,
+            "58": 31,
+            "42": 17,
+            "64": 24,
+            "62": 14,
+            "47": 2,
+            "54": 3,
+            "46": 1
+          },
+          "gpt-5.6-luna": {
+            "52": 70,
+            "47": 12,
+            "56": 10,
+            "57": 7,
+            "46": 1
+          }
+        },
+        "model_distributions": {
+          "gpt-6-astra": {
+            "42": 0.03286384976525822,
+            "46": 0.7276995305164319,
+            "47": 0.13615023474178403,
+            "49": 0.023474178403755867,
+            "52": 0.04225352112676056,
+            "54": 0.004694835680751174,
+            "56": 0.004694835680751174,
+            "57": 0.004694835680751174,
+            "58": 0.004694835680751174,
+            "61": 0.004694835680751174,
+            "62": 0.004694835680751174,
+            "64": 0.004694835680751174,
+            "__OTHER__": 0.004694835680751174
+          },
+          "gpt-5.6-sol": {
+            "42": 0.107981220657277,
+            "46": 0.04225352112676056,
+            "47": 0.5774647887323944,
+            "49": 0.004694835680751174,
+            "52": 0.07042253521126761,
+            "54": 0.004694835680751174,
+            "56": 0.06103286384976526,
+            "57": 0.09859154929577464,
+            "58": 0.004694835680751174,
+            "61": 0.014084507042253521,
+            "62": 0.004694835680751174,
+            "64": 0.004694835680751174,
+            "__OTHER__": 0.004694835680751174
+          },
+          "gpt-5.6-terra": {
+            "42": 0.1643192488262911,
+            "46": 0.014084507042253521,
+            "47": 0.023474178403755867,
+            "49": 0.004694835680751174,
+            "52": 0.07981220657276995,
+            "54": 0.03286384976525822,
+            "56": 0.004694835680751174,
+            "57": 0.004694835680751174,
+            "58": 0.29577464788732394,
+            "61": 0.004694835680751174,
+            "62": 0.13615023474178403,
+            "64": 0.2300469483568075,
+            "__OTHER__": 0.004694835680751174
+          },
+          "gpt-5.6-luna": {
+            "42": 0.004694835680751174,
+            "46": 0.014084507042253521,
+            "47": 0.11737089201877934,
+            "49": 0.004694835680751174,
+            "52": 0.6619718309859155,
+            "54": 0.004694835680751174,
+            "56": 0.09859154929577464,
+            "57": 0.07042253521126761,
+            "58": 0.004694835680751174,
+            "61": 0.004694835680751174,
+            "62": 0.004694835680751174,
+            "64": 0.004694835680751174,
+            "__OTHER__": 0.004694835680751174
+          },
+          "other_known_external": {
+            "42": 0.3177155412249789,
+            "46": 0.04478463711460815,
+            "47": 0.10427872337389964,
+            "49": 0.04478463711460815,
+            "52": 0.04478463711460815,
+            "54": 0.04478463711460815,
+            "56": 0.04478463711460815,
+            "57": 0.05982223109957056,
+            "58": 0.04478463711460815,
+            "61": 0.04478463711460815,
+            "62": 0.04478463711460815,
+            "64": 0.05982223109957056,
+            "__OTHER__": 0.10008417628511505
+          }
+        },
+        "pairwise_jsd": {
+          "gpt-6-astra|gpt-5.6-sol": 0.45583280802351483,
+          "gpt-6-astra|gpt-5.6-terra": 0.6936635510328896,
+          "gpt-6-astra|gpt-5.6-luna": 0.6341311780463177,
+          "gpt-5.6-sol|gpt-5.6-terra": 0.5967356242577436,
+          "gpt-5.6-sol|gpt-5.6-luna": 0.3730086610815717,
+          "gpt-5.6-terra|gpt-5.6-luna": 0.6423252027462804
+        },
+        "between_model_jsd": 0.565949504198053,
+        "within_model_jsd": 0.0546301363282133,
+        "model_drift": {
+          "gpt-6-astra": 0.04900216096923676,
+          "gpt-5.6-sol": 0.0553683335641257,
+          "gpt-5.6-terra": 0.07559834066360192,
+          "gpt-5.6-luna": 0.0385517101158888
+        },
+        "model_drift_max": {
+          "gpt-6-astra": 0.08649875072602432,
+          "gpt-5.6-sol": 0.08658541105223934,
+          "gpt-5.6-terra": 0.1383282335280997,
+          "gpt-5.6-luna": 0.07170283297784211
+        },
+        "window_pair_jsd": {
+          "gpt-6-astra": {
+            "1|2": 0.004810340450686091,
+            "1|3": 0.038069297477221306,
+            "1|4": 0.0522639757914406,
+            "2|3": 0.042215447769710306,
+            "2|4": 0.07015515360033797,
+            "3|4": 0.08649875072602432
+          },
+          "gpt-5.6-sol": {
+            "1|2": 0.03434019376788189,
+            "1|3": 0.032990670286178914,
+            "1|4": 0.06918431698663734,
+            "2|3": 0.030946937609560285,
+            "2|4": 0.07816247168225644,
+            "3|4": 0.08658541105223934
+          },
+          "gpt-5.6-terra": {
+            "1|2": 0.036011149661732904,
+            "1|3": 0.12377977437009988,
+            "1|4": 0.02883574859864627,
+            "2|3": 0.11311817780744567,
+            "2|4": 0.013516960015587096,
+            "3|4": 0.1383282335280997
+          },
+          "gpt-5.6-luna": {
+            "1|2": 0.01956230715533428,
+            "1|3": 0.0031944287205285544,
+            "1|4": 0.047931245306673656,
+            "2|3": 0.03059957608940508,
+            "2|4": 0.07170283297784211,
+            "3|4": 0.058319870445549135
+          }
+        },
+        "weight": 0.9034717127182151,
+        "quality": {
+          "gpt-6-astra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.0
+          },
+          "gpt-5.6-sol": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "gpt-5.6-terra": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          },
+          "gpt-5.6-luna": {
+            "completed": 100,
+            "planned": 100,
+            "nonempty_windows": 4,
+            "invalid": 0,
+            "valid_rate": 1.0,
+            "singleton_mass": 0.01
+          }
+        },
+        "reference_ready": true,
+        "drift_estimable": true,
+        "family_id": "gpt__ZH071"
+      }
+    }
+  },
+  "collection": {
+    "sources": [
+      {
+        "url": "https://openrouter.ai/api/v1",
+        "provider": "openrouter"
+      }
+    ],
+    "scope": "existing_research_and_formal_observations_with_virtual_external_reference",
+    "internal_reference_sources": {
+      "gpt__ZH027": "published_baseline",
+      "gpt__b80_letter_count": "published_baseline",
+      "gpt__rand_bird": "published_baseline",
+      "gpt__rand_country": "published_baseline",
+      "gpt__ZH006": "published_baseline",
+      "gpt__ZH071": "historical_gpt_baseline_4.5.0_rc3_observations"
+    },
+    "virtual_reference": {
+      "id": "other_known_external",
+      "method": "equal_model_smoothed_internal_categories_v1",
+      "sources": [
+        "openai/gpt-5.5",
+        "deepseek/deepseek-v4-flash-0731",
+        "google/gemini-3.8-flash",
+        "x-ai/grok-4.6",
+        "z-ai/glm-5.3",
+        "moonshotai/kimi-k3",
+        "qwen/qwen3.8-flash"
+      ],
+      "counts": {
+        "gpt__ZH027": {
+          "openai/gpt-5.5": {
+            "哗啦": 4,
+            "咚咚": 2,
+            "喵": 1,
+            "咕噜": 2
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "砰": 4,
+            "喵": 1,
+            "咕咚": 1,
+            "咕咕": 1,
+            "咚": 1,
+            "啪": 1,
+            "咔嚓": 1,
+            "砰。": 1
+          },
+          "google/gemini-3.8-flash": {
+            "哗啦啦": 1,
+            "哗啦": 2,
+            "咚": 1,
+            "叮咚": 3,
+            "滴答": 2,
+            "啪": 2
+          },
+          "x-ai/grok-4.6": {
+            "砰": 1,
+            "喵": 2
+          },
+          "z-ai/glm-5.3": {
+            "哗啦啦": 1,
+            "轰隆": 1,
+            "轰隆隆": 1
+          },
+          "moonshotai/kimi-k3": {
+            "叮咚": 1,
+            "哗啦": 2
+          },
+          "qwen/qwen3.8-flash": {
+            "喵": 1,
+            "叮咚": 1,
+            "砰": 1
+          }
+        },
+        "gpt__b80_letter_count": {
+          "openai/gpt-5.5": {
+            "exact_3": 9
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "exact_3": 11
+          },
+          "google/gemini-3.8-flash": {
+            "exact_3": 11
+          },
+          "x-ai/grok-4.6": {
+            "exact_3": 3
+          },
+          "z-ai/glm-5.3": {
+            "exact_3": 3
+          },
+          "moonshotai/kimi-k3": {
+            "exact_3": 3
+          },
+          "qwen/qwen3.8-flash": {
+            "exact_3": 3
+          }
+        },
+        "gpt__rand_bird": {
+          "openai/gpt-5.5": {
+            "sparrow": 4,
+            "kingfisher": 5
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "wren": 1,
+            "raven": 3,
+            "sparrow": 3,
+            "falcon": 1,
+            "heron": 1,
+            "puffin": 1,
+            "kookaburra": 1
+          },
+          "google/gemini-3.8-flash": {
+            "robin": 4,
+            "sparrow": 4,
+            "puffin": 1,
+            "falcon": 2
+          },
+          "x-ai/grok-4.6": {
+            "falcon": 1,
+            "sparrow": 2
+          },
+          "z-ai/glm-5.3": {
+            "kingfisher": 2,
+            "penguin": 1
+          },
+          "moonshotai/kimi-k3": {
+            "falcon": 1,
+            "albatross": 1,
+            "flamingo": 1
+          },
+          "qwen/qwen3.8-flash": {
+            "sparrow": 3
+          }
+        },
+        "gpt__rand_country": {
+          "openai/gpt-5.5": {
+            "portugal": 9
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "bhutan": 5,
+            "kenya": 1,
+            "mali": 1,
+            "vanuatu": 1,
+            "canada": 1,
+            "chile": 1,
+            "madagascar": 1
+          },
+          "google/gemini-3.8-flash": {
+            "madagascar": 6,
+            "uruguay": 5
+          },
+          "x-ai/grok-4.6": {
+            "brazil": 1,
+            "france": 1,
+            "canada": 1
+          },
+          "z-ai/glm-5.3": {
+            "mongolia": 1,
+            "kazakhstan": 2
+          },
+          "moonshotai/kimi-k3": {
+            "portugal": 3
+          },
+          "qwen/qwen3.8-flash": {
+            "nepal": 1,
+            "kenya": 1,
+            "chad": 1
+          }
+        },
+        "gpt__ZH006": {
+          "openai/gpt-5.5": {
+            "加拿大": 9
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "肯尼亚": 1,
+            "马达加斯加": 1,
+            "日本": 2,
+            "巴西": 2,
+            "加拿大": 3,
+            "不丹": 1,
+            "中国": 1
+          },
+          "google/gemini-3.8-flash": {
+            "冰岛": 10,
+            "巴西": 1
+          },
+          "x-ai/grok-4.6": {
+            "日本": 1,
+            "japan": 2
+          },
+          "z-ai/glm-5.3": {
+            "法国": 2,
+            "日本": 1
+          },
+          "moonshotai/kimi-k3": {
+            "日本": 3
+          },
+          "qwen/qwen3.8-flash": {
+            "法国": 1,
+            "巴西": 1,
+            "智利": 1
+          }
+        },
+        "gpt__ZH071": {
+          "openai/gpt-5.5": {
+            "42": 7,
+            "47": 2
+          },
+          "deepseek/deepseek-v4-flash-0731": {
+            "50": 4,
+            "47": 1,
+            "42": 2,
+            "37": 2
+          },
+          "google/gemini-3.8-flash": {
+            "42": 9
+          },
+          "x-ai/grok-4.6": {
+            "42": 2,
+            "64": 1
+          },
+          "z-ai/glm-5.3": {
+            "42": 3
+          },
+          "moonshotai/kimi-k3": {
+            "42": 1,
+            "47": 1,
+            "57": 1
+          },
+          "qwen/qwen3.8-flash": {
+            "47": 1,
+            "42": 1
+          }
+        }
+      }
+    },
+    "original_research_sha256": "39e1fa4b30093e6671a6429d9cf921f296d0d5d56b5e13468083700d88cfc8e0"
+  },
+  "calibration": {
+    "status": "complete",
+    "algorithm": "research-other-fixed-source-empirical-pcg64-v1",
+    "tiers": {
+      "low": {
+        "algorithm": "research-other-fixed-source-empirical-pcg64-v1",
+        "status": "target_met",
+        "thresholds": {
+          "gpt-6-astra": 0.8788646703068773,
+          "gpt-5.6-sol": 0.7029147079493328,
+          "gpt-5.6-terra": 0.7551734998579104,
+          "gpt-5.6-luna": 0.8726572249240802,
+          "other_known_external": 0.3479734837731927
+        },
+        "total_batches": 10000000,
+        "target": 0.985,
+        "seed": 9085110,
+        "sample_scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+        "result": {
+          "signature": "e49f35072295f315006a43f2e59d7d7408aee74ceb096f4b80b37e4bbbac1fe4",
+          "scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+          "seed": 9085110,
+          "total_batches": 10000000,
+          "counts": {
+            "gpt__ZH027": 7,
+            "gpt__b80_letter_count": 1,
+            "gpt__rand_bird": 6,
+            "gpt__rand_country": 1,
+            "gpt__ZH006": 3,
+            "gpt__ZH071": 2
+          },
+          "total_requests": 20,
+          "thresholds": {
+            "gpt-6-astra": 0.8788646703068773,
+            "gpt-5.6-sol": 0.7029147079493328,
+            "gpt-5.6-terra": 0.7551734998579104,
+            "gpt-5.6-luna": 0.8726572249240802,
+            "other_known_external": 0.3479734837731927
+          },
+          "selection_batches_per_real_source": 100000,
+          "selection_coverage": 0.995,
+          "correct_target": 0.985,
+          "policy": {
+            "hard_ceiling": 0.98,
+            "selection_coverage": 0.995,
+            "verification_target": 0.985,
+            "preferred_fable_floor": null,
+            "prefer_monotonic": true
+          },
+          "status": "target_met",
+          "class_correct_rates": {
+            "gpt-6-astra": 0.9949255,
+            "gpt-5.6-sol": 0.9953445,
+            "gpt-5.6-terra": 0.994889,
+            "gpt-5.6-luna": 0.995202,
+            "other_known_external": 0.9993005
+          },
+          "minimum_class_correct": 0.994889,
+          "real_source_correct_rates": {
+            "gpt-6-astra": 0.9949255,
+            "gpt-5.6-sol": 0.9953445,
+            "gpt-5.6-terra": 0.994889,
+            "gpt-5.6-luna": 0.995202,
+            "openai/gpt-5.5": 0.9951035122412194,
+            "deepseek/deepseek-v4-flash-0731": 1.0,
+            "google/gemini-3.8-flash": 1.0,
+            "x-ai/grok-4.6": 1.0,
+            "z-ai/glm-5.3": 1.0,
+            "moonshotai/kimi-k3": 1.0,
+            "qwen/qwen3.8-flash": 1.0
+          },
+          "minimum_real_source_correct": 0.994889,
+          "high_error_rates": {
+            "gpt-6-astra": 2.15e-05,
+            "gpt-5.6-sol": 5e-07,
+            "gpt-5.6-terra": 0.0002725,
+            "gpt-5.6-luna": 6e-06,
+            "openai/gpt-5.5": 3.499991250021875e-05,
+            "deepseek/deepseek-v4-flash-0731": 0.0,
+            "google/gemini-3.8-flash": 0.0,
+            "x-ai/grok-4.6": 0.0,
+            "z-ai/glm-5.3": 0.0,
+            "moonshotai/kimi-k3": 0.0,
+            "qwen/qwen3.8-flash": 0.0
+          },
+          "class_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1989851,
+              "gpt-5.6-sol": 43,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 7,
+              "insufficient": 10099
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 1,
+              "gpt-5.6-sol": 1990689,
+              "gpt-5.6-terra": 145,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 64,
+              "insufficient": 9101
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 545,
+              "gpt-5.6-terra": 1989778,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9677
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 3,
+              "gpt-5.6-sol": 9,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990404,
+              "other_known_external": 56,
+              "insufficient": 9528
+            },
+            "other_known_external": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 10,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 1998601,
+              "insufficient": 1389
+            }
+          },
+          "source_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1989851,
+              "gpt-5.6-sol": 43,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 7,
+              "insufficient": 10099
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 1,
+              "gpt-5.6-sol": 1990689,
+              "gpt-5.6-terra": 145,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 64,
+              "insufficient": 9101
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 545,
+              "gpt-5.6-terra": 1989778,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9677
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 3,
+              "gpt-5.6-sol": 9,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990404,
+              "other_known_external": 56,
+              "insufficient": 9528
+            },
+            "openai/gpt-5.5": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 10,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 284316,
+              "insufficient": 1389
+            },
+            "deepseek/deepseek-v4-flash-0731": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285715,
+              "insufficient": 0
+            },
+            "google/gemini-3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "x-ai/grok-4.6": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "z-ai/glm-5.3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "moonshotai/kimi-k3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "qwen/qwen3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            }
+          },
+          "per_source_batches": {
+            "gpt-6-astra": 2000000,
+            "gpt-5.6-sol": 2000000,
+            "gpt-5.6-terra": 2000000,
+            "gpt-5.6-luna": 2000000,
+            "openai/gpt-5.5": 285715,
+            "deepseek/deepseek-v4-flash-0731": 285715,
+            "google/gemini-3.8-flash": 285714,
+            "x-ai/grok-4.6": 285714,
+            "z-ai/glm-5.3": 285714,
+            "moonshotai/kimi-k3": 285714,
+            "qwen/qwen3.8-flash": 285714
+          },
+          "wrong_directions": 883,
+          "insufficient": 39794,
+          "other_sampling": "one real external model supplies every probe in each batch; equal stratified allocation by source; never independent per-cell model mixing"
+        },
+        "contract": "c97f794f222e4cff295424cff9120d88afc4922bbb358f16fd155cb445625f60"
+      },
+      "medium": {
+        "algorithm": "research-other-fixed-source-empirical-pcg64-v1",
+        "status": "target_met",
+        "thresholds": {
+          "gpt-6-astra": 0.9533867720063844,
+          "gpt-5.6-sol": 0.8122216480420169,
+          "gpt-5.6-terra": 0.8461232814201343,
+          "gpt-5.6-luna": 0.9102183976879409,
+          "other_known_external": 0.6453766733251144
+        },
+        "total_batches": 10000000,
+        "target": 0.985,
+        "seed": 9085111,
+        "sample_scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+        "result": {
+          "signature": "fbf20706b516d9233ed3869a38ddd4aadb50f8f60e92cd61fe5afb53781adbef",
+          "scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+          "seed": 9085111,
+          "total_batches": 10000000,
+          "counts": {
+            "gpt__ZH027": 16,
+            "gpt__b80_letter_count": 1,
+            "gpt__rand_bird": 13,
+            "gpt__rand_country": 1,
+            "gpt__ZH006": 5,
+            "gpt__ZH071": 4
+          },
+          "total_requests": 40,
+          "thresholds": {
+            "gpt-6-astra": 0.9533867720063844,
+            "gpt-5.6-sol": 0.8122216480420169,
+            "gpt-5.6-terra": 0.8461232814201343,
+            "gpt-5.6-luna": 0.9102183976879409,
+            "other_known_external": 0.6453766733251144
+          },
+          "selection_batches_per_real_source": 100000,
+          "selection_coverage": 0.995,
+          "correct_target": 0.985,
+          "policy": {
+            "hard_ceiling": 0.98,
+            "selection_coverage": 0.995,
+            "verification_target": 0.985,
+            "preferred_fable_floor": null,
+            "prefer_monotonic": true
+          },
+          "status": "target_met",
+          "class_correct_rates": {
+            "gpt-6-astra": 0.9946805,
+            "gpt-5.6-sol": 0.995507,
+            "gpt-5.6-terra": 0.995024,
+            "gpt-5.6-luna": 0.995246,
+            "other_known_external": 0.9993225
+          },
+          "minimum_class_correct": 0.9946805,
+          "real_source_correct_rates": {
+            "gpt-6-astra": 0.9946805,
+            "gpt-5.6-sol": 0.995507,
+            "gpt-5.6-terra": 0.995024,
+            "gpt-5.6-luna": 0.995246,
+            "openai/gpt-5.5": 0.9952575118562204,
+            "deepseek/deepseek-v4-flash-0731": 1.0,
+            "google/gemini-3.8-flash": 1.0,
+            "x-ai/grok-4.6": 1.0,
+            "z-ai/glm-5.3": 1.0,
+            "moonshotai/kimi-k3": 1.0,
+            "qwen/qwen3.8-flash": 1.0
+          },
+          "minimum_real_source_correct": 0.9946805,
+          "high_error_rates": {
+            "gpt-6-astra": 0.0,
+            "gpt-5.6-sol": 0.0,
+            "gpt-5.6-terra": 5e-07,
+            "gpt-5.6-luna": 0.0,
+            "openai/gpt-5.5": 0.0,
+            "deepseek/deepseek-v4-flash-0731": 0.0,
+            "google/gemini-3.8-flash": 0.0,
+            "x-ai/grok-4.6": 0.0,
+            "z-ai/glm-5.3": 0.0,
+            "moonshotai/kimi-k3": 0.0,
+            "qwen/qwen3.8-flash": 0.0
+          },
+          "class_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1989361,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 10639
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1991014,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 8986
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1,
+              "gpt-5.6-terra": 1990048,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9951
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990492,
+              "other_known_external": 0,
+              "insufficient": 9508
+            },
+            "other_known_external": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 1998645,
+              "insufficient": 1355
+            }
+          },
+          "source_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1989361,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 10639
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1991014,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 8986
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1,
+              "gpt-5.6-terra": 1990048,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9951
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990492,
+              "other_known_external": 0,
+              "insufficient": 9508
+            },
+            "openai/gpt-5.5": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 284360,
+              "insufficient": 1355
+            },
+            "deepseek/deepseek-v4-flash-0731": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285715,
+              "insufficient": 0
+            },
+            "google/gemini-3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "x-ai/grok-4.6": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "z-ai/glm-5.3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "moonshotai/kimi-k3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "qwen/qwen3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            }
+          },
+          "per_source_batches": {
+            "gpt-6-astra": 2000000,
+            "gpt-5.6-sol": 2000000,
+            "gpt-5.6-terra": 2000000,
+            "gpt-5.6-luna": 2000000,
+            "openai/gpt-5.5": 285715,
+            "deepseek/deepseek-v4-flash-0731": 285715,
+            "google/gemini-3.8-flash": 285714,
+            "x-ai/grok-4.6": 285714,
+            "z-ai/glm-5.3": 285714,
+            "moonshotai/kimi-k3": 285714,
+            "qwen/qwen3.8-flash": 285714
+          },
+          "wrong_directions": 1,
+          "insufficient": 40439,
+          "other_sampling": "one real external model supplies every probe in each batch; equal stratified allocation by source; never independent per-cell model mixing"
+        },
+        "contract": "99f20bab0560702189e6902d3bc7c76abfc8457b2cc509002a153c18a5824920"
+      },
+      "high": {
+        "algorithm": "research-other-fixed-source-empirical-pcg64-v1",
+        "status": "target_met",
+        "thresholds": {
+          "gpt-6-astra": 0.9617231491125436,
+          "gpt-5.6-sol": 0.8391124547797956,
+          "gpt-5.6-terra": 0.8605521539588309,
+          "gpt-5.6-luna": 0.9173995871746337,
+          "other_known_external": 0.7398171176932161
+        },
+        "total_batches": 10000000,
+        "target": 0.985,
+        "seed": 9085112,
+        "sample_scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+        "result": {
+          "signature": "e24cb109f97ca535967ccc437801052059b1221422800e6cc70da0a3409df151",
+          "scope": "same_existing_valid_answer_pools_not_independent_real_validation",
+          "seed": 9085112,
+          "total_batches": 10000000,
+          "counts": {
+            "gpt__ZH027": 26,
+            "gpt__b80_letter_count": 1,
+            "gpt__rand_bird": 20,
+            "gpt__rand_country": 1,
+            "gpt__ZH006": 7,
+            "gpt__ZH071": 5
+          },
+          "total_requests": 60,
+          "thresholds": {
+            "gpt-6-astra": 0.9617231491125436,
+            "gpt-5.6-sol": 0.8391124547797956,
+            "gpt-5.6-terra": 0.8605521539588309,
+            "gpt-5.6-luna": 0.9173995871746337,
+            "other_known_external": 0.7398171176932161
+          },
+          "selection_batches_per_real_source": 100000,
+          "selection_coverage": 0.995,
+          "correct_target": 0.985,
+          "policy": {
+            "hard_ceiling": 0.98,
+            "selection_coverage": 0.995,
+            "verification_target": 0.985,
+            "preferred_fable_floor": null,
+            "prefer_monotonic": true
+          },
+          "status": "target_met",
+          "class_correct_rates": {
+            "gpt-6-astra": 0.9953225,
+            "gpt-5.6-sol": 0.995187,
+            "gpt-5.6-terra": 0.9951645,
+            "gpt-5.6-luna": 0.9953365,
+            "other_known_external": 0.999277
+          },
+          "minimum_class_correct": 0.9951645,
+          "real_source_correct_rates": {
+            "gpt-6-astra": 0.9953225,
+            "gpt-5.6-sol": 0.995187,
+            "gpt-5.6-terra": 0.9951645,
+            "gpt-5.6-luna": 0.9953365,
+            "openai/gpt-5.5": 0.9949390126524684,
+            "deepseek/deepseek-v4-flash-0731": 1.0,
+            "google/gemini-3.8-flash": 1.0,
+            "x-ai/grok-4.6": 1.0,
+            "z-ai/glm-5.3": 1.0,
+            "moonshotai/kimi-k3": 1.0,
+            "qwen/qwen3.8-flash": 1.0
+          },
+          "minimum_real_source_correct": 0.9949390126524684,
+          "high_error_rates": {
+            "gpt-6-astra": 0.0,
+            "gpt-5.6-sol": 0.0,
+            "gpt-5.6-terra": 5e-07,
+            "gpt-5.6-luna": 0.0,
+            "openai/gpt-5.5": 0.0,
+            "deepseek/deepseek-v4-flash-0731": 0.0,
+            "google/gemini-3.8-flash": 0.0,
+            "x-ai/grok-4.6": 0.0,
+            "z-ai/glm-5.3": 0.0,
+            "moonshotai/kimi-k3": 0.0,
+            "qwen/qwen3.8-flash": 0.0
+          },
+          "class_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1990645,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9355
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1990374,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9626
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1,
+              "gpt-5.6-terra": 1990329,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9670
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990673,
+              "other_known_external": 0,
+              "insufficient": 9327
+            },
+            "other_known_external": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 1998554,
+              "insufficient": 1446
+            }
+          },
+          "source_confusion": {
+            "gpt-6-astra": {
+              "gpt-6-astra": 1990645,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9355
+            },
+            "gpt-5.6-sol": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1990374,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9626
+            },
+            "gpt-5.6-terra": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 1,
+              "gpt-5.6-terra": 1990329,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 0,
+              "insufficient": 9670
+            },
+            "gpt-5.6-luna": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 1990673,
+              "other_known_external": 0,
+              "insufficient": 9327
+            },
+            "openai/gpt-5.5": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 284269,
+              "insufficient": 1446
+            },
+            "deepseek/deepseek-v4-flash-0731": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285715,
+              "insufficient": 0
+            },
+            "google/gemini-3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "x-ai/grok-4.6": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "z-ai/glm-5.3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "moonshotai/kimi-k3": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            },
+            "qwen/qwen3.8-flash": {
+              "gpt-6-astra": 0,
+              "gpt-5.6-sol": 0,
+              "gpt-5.6-terra": 0,
+              "gpt-5.6-luna": 0,
+              "other_known_external": 285714,
+              "insufficient": 0
+            }
+          },
+          "per_source_batches": {
+            "gpt-6-astra": 2000000,
+            "gpt-5.6-sol": 2000000,
+            "gpt-5.6-terra": 2000000,
+            "gpt-5.6-luna": 2000000,
+            "openai/gpt-5.5": 285715,
+            "deepseek/deepseek-v4-flash-0731": 285715,
+            "google/gemini-3.8-flash": 285714,
+            "x-ai/grok-4.6": 285714,
+            "z-ai/glm-5.3": 285714,
+            "moonshotai/kimi-k3": 285714,
+            "qwen/qwen3.8-flash": 285714
+          },
+          "wrong_directions": 1,
+          "insufficient": 39424,
+          "other_sampling": "one real external model supplies every probe in each batch; equal stratified allocation by source; never independent per-cell model mixing"
+        },
+        "contract": "081b7cdaf9ae01e18fc17708d738354dd3fb0b816af91689ef8c3569efaa4836"
+      }
+    }
+  },
+  "validation": {
+    "status": "not_independently_validated"
+  },
+  "content_sha256": "7bcc1959be264eb227b9687e029cde13bee273b1fd65c16143eb2c0defb653b1"
+}

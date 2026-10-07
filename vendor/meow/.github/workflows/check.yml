@@ -1,0 +1,58 @@
+name: Source and package acceptance
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements.txt
+      - run: python -B -m unittest discover -s tests -v
+      - run: node tests/report_urls.cjs
+      - run: node tests/v451_ui.cjs
+      - run: node tests/startup_updates.cjs
+      - run: node tests/ui_shared.cjs
+      - run: python -B scripts/reproduce.py --check-only
+      - run: python scripts/build_release.py --output dist
+      - run: python -B scripts/check_process_tree.py
+      - run: python -B scripts/check_package_install.py --archive dist/meow-llm-detector-v4.5.4-en.zip --output acceptance-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-acceptance-${{ matrix.os }}
+          path: |
+            acceptance-results/**/result.json
+            acceptance-results/**/launcher.log
+            dist/*
+          retention-days: 7
+  portable:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/build_windows_portable.py --source . --output dist --source-commit ${{ github.sha }}
+      - run: python scripts/verify_windows_portable.py dist
+      - run: python -B scripts/check_package_install.py --archive dist/meow-llm-detector-v4.5.4-windows-x64-portable-en.zip --kind windows-x64-portable --output acceptance-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portable-acceptance
+          path: |
+            acceptance-results/**/result.json
+            acceptance-results/**/launcher.log
+            dist/*
+          retention-days: 7

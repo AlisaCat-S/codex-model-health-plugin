@@ -1,0 +1,16 @@
+{
+  "packages": [
+    {
+      "id": "meow-claude-other-cap98",
+      "version": "4.5.2-other-cap98.2",
+      "content_sha256": "d954278861f6f7738fb021de17abb51152a6f5f7ff94b505dd1d1b4bc52aa8a9",
+      "file": "meow-claude-other-cap98--4.5.2-other-cap98.2.meow.json"
+    },
+    {
+      "id": "meow-gpt-other-cap98",
+      "version": "4.5.2-other-cap98.2",
+      "content_sha256": "7bcc1959be264eb227b9687e029cde13bee273b1fd65c16143eb2c0defb653b1",
+      "file": "meow-gpt-other-cap98--4.5.2-other-cap98.2.meow.json"
+    }
+  ]
+}
