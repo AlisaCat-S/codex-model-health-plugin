@@ -161,7 +161,13 @@ async fn dispatch(
     match (call.request.method.as_str(), call.request.path.as_str()) {
         ("GET", "api/bootstrap") => {
             let catalog = service.engine.query(json!({"op":"catalog"})).await?;
-            let accounts=host::accounts(&call.host).await?.into_iter().map(|a|json!({"id":a.account_id,"name":a.name,"provider":a.provider_id,"plan":a.plan_type})).collect::<Vec<_>>();
+            let accounts = host::accounts(&call.host)
+                .await?
+                .into_iter()
+                .map(|a| {
+                    json!({"id":a.account_id,"name":a.name,"email":a.email,"provider":a.provider_id,"plan":a.plan_type})
+                })
+                .collect::<Vec<_>>();
             reply(
                 json!({"catalog":catalog,"sources":updates::sources()?,"accounts":accounts,"keys":host::keys(&call.host).await?}),
             )
@@ -254,7 +260,7 @@ async fn start(
         created_at: now_ms(),
         updated_at: now_ms(),
         account_id: account.account_id,
-        account_name: account.name,
+        account_name: account_name_for_display(account.email.as_deref(), &account.name),
         credential_revision: account.credential_revision,
         account_identity: Some(account_identity),
         key_id: key.id,
@@ -370,4 +376,42 @@ fn excerpt(message: &str) -> String {
         end -= 1;
     }
     message[..end].to_owned()
+}
+
+fn account_name_for_display(email: Option<&str>, name: &str) -> String {
+    email
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .or_else(|| {
+            let trimmed_name = name.trim();
+            (!trimmed_name.is_empty()).then_some(trimmed_name)
+        })
+        .unwrap_or_default()
+        .to_owned()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::account_name_for_display;
+
+    #[test]
+    fn account_name_prefers_trimmed_email() {
+        assert_eq!(
+            account_name_for_display(Some("  first@example.com  "), "OPENAI账号"),
+            "first@example.com"
+        );
+    }
+
+    #[test]
+    fn account_name_falls_back_to_trimmed_name() {
+        assert_eq!(
+            account_name_for_display(Some("   "), "  OPENAI账号  "),
+            "OPENAI账号"
+        );
+    }
+
+    #[test]
+    fn account_name_allows_empty_fallback() {
+        assert_eq!(account_name_for_display(None, "   "), "");
+    }
 }

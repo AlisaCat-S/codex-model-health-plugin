@@ -5,6 +5,7 @@ import type { BaseTableColumn } from '@codex-proxy/ui'
 import { Play, Pause, Square, RefreshCw, FlaskConical, ArrowRight, Check, Fingerprint, ShieldCheck } from '@lucide/vue'
 import { api } from './api'
 import type { Bootstrap, Run, History, Method } from './api'
+import { accountDisplayName } from './accountDisplay'
 import { formatTime, methodText, statusText, tierText, verdict, tone, reasonText } from './presentation'
 import SourceUpdates from './SourceUpdates.vue'
 
@@ -32,6 +33,7 @@ const candidates = computed<[string, number][]>(() => {
 })
 const historyColumns: BaseTableColumn<History>[] = [{key:'created_at',label:'检测时间',kind:'datetime',format:value=>formatTime(Number(value))},{key:'account_name',label:'账号',kind:'identity',size:'xl'},{key:'method',label:'检测方法',size:'lg',format:value=>methodText(value as Method | undefined)},{key:'request_model',label:'请求模型',kind:'mono',size:'lg'},{key:'tier',label:'检测档位',size:'lg',format:value=>tierText[String(value)]},{key:'result',label:'检测结果',kind:'custom',size:'xl'},{key:'actions',label:'操作',kind:'actions'}]
 const attemptColumns = [{key:'number',label:'#',kind:'index'},{key:'job_id',label:'样本',kind:'mono',size:'xl'},{key:'status',label:'状态',kind:'status'},{key:'answer',label:'回答 / 错误',kind:'custom',size:'2xl'},{key:'request_id',label:'请求 ID',kind:'mono',size:'2xl'}] satisfies BaseTableColumn[]
+const accountOptions = computed(() => bootstrap.value?.accounts.map(a => ({value:a.id,label:accountDisplayName(a)})) ?? [])
 
 function message(cause: unknown) { return cause instanceof Error ? cause.message : String(cause) }
 async function loadHistory() { history.value = (await api<{runs: History[]}>('runs')).runs }
@@ -107,7 +109,7 @@ onScopeDispose(() => { disposed=true;keepRunning=false;document.removeEventListe
           <p v-else-if="bootstrap && (!bootstrap.accounts.length || !bootstrap.keys.length)" role="status" class="muted">请先在主项目启用 OpenAI 账号和测试 Key，然后刷新。</p>
           <div class="form-grid">
             <div class="field col-span-full"><label id="method-label">检测方法</label><BaseSegmented v-model="method" aria-labelledby="method-label" label="检测方法" :options="methodOptions" :disabled="loading || pumping || action" /></div>
-            <div class="field"><label id="account-label">检测账号</label><BaseSelect v-model="account" aria-labelledby="account-label" :options="bootstrap?.accounts.map(a=>({value:a.id,label:a.name})) ?? []" :disabled="loading || pumping" placeholder="选择已有账号" searchable /></div>
+            <div class="field"><label id="account-label">检测账号</label><BaseSelect v-model="account" aria-labelledby="account-label" :options="accountOptions" :disabled="loading || pumping" placeholder="选择已有账号" searchable /></div>
             <div class="field"><label id="key-label">计量 Key</label><BaseSelect v-model="key" aria-labelledby="key-label" :options="bootstrap?.keys.map(k=>({value:k.id,label:k.name})) ?? []" :disabled="loading || pumping" placeholder="选择用于计量的 Key" searchable /></div>
             <div class="field"><label id="model-label">请求模型</label><BaseSelect v-model="model" aria-labelledby="model-label" :options="models.map(m=>({value:m,label:m}))" :loading="modelsLoading" :disabled="!key || pumping" placeholder="先选择计量 Key" searchable /></div>
             <div class="field"><label id="claimed-label">对照基线</label><BaseSelect v-if="method === 'meow'" v-model="claimed" aria-labelledby="claimed-label" :options="catalog?.models.map(m=>({value:m.id,label:m.label || m.id})) ?? []" :disabled="loading || pumping" placeholder="选择要核对的模型" /><BaseSelect v-else model-value="unified" aria-labelledby="claimed-label" :options="[{value:'unified',label:`统一候选库 · ${catalog?.models.length ?? 0} 个模型`}]" disabled /></div>
