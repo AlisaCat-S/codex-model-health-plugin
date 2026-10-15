@@ -89,7 +89,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
 
     def runtime_account():
         return {"account_id": "smoke-account", "provider_id": "openai", "credential_revision": 1 + host["executions"],
-                "name": "Offline fixture", "email": None, "upstream_user_id": "fixture-user", "upstream_account_id": "fixture-workspace",
+                "name": "Offline fixture", "email": "  smoke@example.com  ", "upstream_user_id": "fixture-user", "upstream_account_id": "fixture-workspace",
                 "plan_type": "pro", "authentication_kind": "oauth", "enabled": True, "credential_state": "ready",
                 "has_refresh_token": True, "access_token_expires_at_ms": None, "next_refresh_at_ms": None}
 
@@ -214,6 +214,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
         assert sorted(t["count"] for t in meow["tiers"]) == [36, 72, 108]
         assert len(meow["models"]) == 4
         assert boot["accounts"][0]["id"] == "smoke-account" and boot["keys"][0]["id"] == "smoke-key"
+        assert boot["accounts"][0]["email"] == "  smoke@example.com  "
         assert host["callbacks"] == ["host.auth.list", "host.keys.list"]
         status, error = api("api/models", {})
         assert status == 400 and error["error"]["message"] == "请求参数格式错误", error
@@ -221,6 +222,8 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             status, result = api("api/runs/start", {"account_id": "smoke-account", "key_id": "smoke-key",
                                 "request_model": "gpt-6-astra", "claimed_model": "gpt-6-astra", "tier": "low"})
             assert status == 200, result
+            assert result["run"]["account_id"] == "smoke-account"
+            assert result["run"]["account_name"] == "smoke@example.com"
             run_id = result["run"]["id"]
             for completed in range(36):
                 status, result = api("api/runs/step", {"id": run_id})
@@ -251,6 +254,8 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             status, result = api("api/runs/start", {"method": "modeltrace", "account_id": "smoke-account", "key_id": "smoke-key",
                                 "request_model": "gpt-6-astra", "claimed_model": "unified", "tier": "fixed"})
             assert status == 200, result
+            assert result["run"]["account_id"] == "smoke-account"
+            assert result["run"]["account_name"] == "smoke@example.com"
             run_id = result["run"]["id"]
             plan = result["run"]["plan"]
             host["numeric"] = True

@@ -2,7 +2,7 @@
 
 为 [Codex Proxy RS](https://github.com/zyycn/codex-proxy-rs) 提供独立的账号模型体检页面：选择已有账号与计量 Key，通过原生代理和请求链路运行 **Meow / ModelTrace** 两种行为指纹检测，无需再次填写 API 地址或密钥，也不修改主项目。
 
-[下载 v0.2.1](https://github.com/R-lmmortal/codex-model-health-plugin/releases/tag/v0.2.1) · [反馈问题](https://github.com/R-lmmortal/codex-model-health-plugin/issues) · [插件使用规范](https://github.com/zyycn/codex-proxy-rs/blob/main/docs/plugins.md)
+[下载 v0.2.2](https://github.com/R-lmmortal/codex-model-health-plugin/releases/tag/v0.2.2) · [反馈问题](https://github.com/R-lmmortal/codex-model-health-plugin/issues) · [插件使用规范](https://github.com/zyycn/codex-proxy-rs/blob/main/docs/plugins.md)
 
 ![插件页面（模拟数据，不代表真实检测结果）](docs/screenshots/overview.png)
 
@@ -23,7 +23,7 @@
 
 | 项目 | 当前支持 |
 | --- | --- |
-| 插件 ID / 版本 | `local.model-health` / `0.2.1` |
+| 插件 ID / 版本 | `local.model-health` / `0.2.2` |
 | 宿主清单范围 | `>=3.19.0, <4.0.0`；实际使用验证为 3.19.0，其他版本需另验 |
 | Release 平台 | Linux x86_64，glibc 2.36+（如 Debian 12）；不适用于 ARM64、Alpine/musl 或 Windows |
 | 运行方式 | `trustedProcess`，插件以宿主系统身份运行，安装代表完整信任；不是操作系统沙箱 |
@@ -33,16 +33,16 @@
 
 ```text
 仓库：R-lmmortal/codex-model-health-plugin
-版本标签：v0.2.1（或留空查询最新稳定版）
+版本标签：v0.2.2（或留空查询最新稳定版）
 ```
 
-选择 `local.model-health-0.2.1-x86_64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载该文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
+选择 `local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载该文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
 
 Release 同时提供同名 `.tar.gz.sha256`；下载两个附件后可校验：
 
 ```sh
-sha256sum -c local.model-health-0.2.1-x86_64-unknown-linux-gnu.tar.gz.sha256
-# macOS：shasum -a 256 -c local.model-health-0.2.1-x86_64-unknown-linux-gnu.tar.gz.sha256
+sha256sum -c local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz.sha256
+# macOS：shasum -a 256 -c local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz.sha256
 ```
 
 保留 `local.model-health` 是为了让原先本地安装的版本继续沿用同一插件身份与历史，不是更换发布账号。仓库与发布者主页为 [R-lmmortal](https://github.com/R-lmmortal)。已有本地安装可在插件详情设置 GitHub 更新来源，或上传新版后确认切换；不要为了更新而删除原配置或私有数据。
@@ -50,7 +50,7 @@ sha256sum -c local.model-health-0.2.1-x86_64-unknown-linux-gnu.tar.gz.sha256
 ## 使用
 
 1. 按上述方式安装并启用插件。
-2. 打开「账号模型体检」，选择已启用的 OpenAI 账号和已有 Key 的名称。
+2. 打开「账号模型体检」，选择已启用的 OpenAI 账号和已有 Key 的名称。账号优先显示去除首尾空白后的邮箱；没有邮箱时显示账号名称。新建检测保存该显示名称，旧历史仍保留检测当时的名称；请求绑定始终使用账号 ID。
 3. 选择该 Key 可见的请求模型及检测方法。Meow 选择对照模型和 36 / 72 / 108 题档位；ModelTrace 使用统一候选库，固定 3 轮数字选择。切换方法保留账号、Key 和请求模型。
 4. 点击「开始检测」。宿主按所选 Key 计量；每次只执行一个请求。所选 Key 的分组/模型权限仍由主服务校验。
 5. 失败会暂停；点「继续检测」才会继续。每档最多追加 50% 重试预算。离开或隐藏页面后不再发送下一题；进行中的题目可能完成或中断，已计入的尝试不会清零。页面不承担无人值守后台任务。
