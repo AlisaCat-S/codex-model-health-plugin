@@ -67,7 +67,7 @@ try {
   await page.getByRole('alert').filter({hasText:'HTTP 403'}).waitFor()
   await page.getByRole('button',{name:'检查 ModelTrace 更新',exact:true}).click()
   await page.locator('.source-result-identical').waitFor()
-  await select('检测账号','主账号 A · 固定代理')
+  await select('检测账号','primary@example.com')
   await select('计量 Key','模型体检专用')
   await select('请求模型','gpt-6-astra')
   await select('对照基线','gpt-6-astra')
