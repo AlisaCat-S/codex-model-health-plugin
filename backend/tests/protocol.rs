@@ -379,7 +379,15 @@ async fn exact_account_key_pagination_and_request_evidence() {
     let mut peer = Peer::new().await;
     let mut host = Host::default();
     let boot = peer.api("api/bootstrap", None, &mut host).await.unwrap();
-    assert_eq!(boot["accounts"].as_array().unwrap().len(), 2);
+    let accounts = boot["accounts"].as_array().unwrap();
+    assert_eq!(accounts.len(), 2);
+    for (account, id) in accounts.iter().zip(["account-a", "account-b"]) {
+        assert!(account.get("email").is_some());
+        assert_eq!(account["id"], id);
+        assert_eq!(account["name"], id);
+        assert_eq!(account["provider"], "openai");
+        assert_eq!(account["plan"], "pro");
+    }
     assert!(!boot.to_string().contains("access_token"));
     assert_eq!(boot["sources"].as_array().unwrap().len(), 2);
     assert!(
@@ -395,6 +403,26 @@ async fn exact_account_key_pagination_and_request_evidence() {
     assert_eq!(result["run"]["attempts"][0]["status"], "ok");
     assert_eq!(result["run"]["attempts"][0]["request_id"], "request-1");
     assert_eq!(host.executions.len(), 1);
+}
+
+#[tokio::test]
+async fn run_account_name_prefers_trimmed_email_and_falls_back_to_name() {
+    let mut peer = Peer::new().await;
+
+    let mut host = Host {
+        account_patch: Some(json!({"name":"OPENAI账号","email":"  account@example.com  "})),
+        ..Host::default()
+    };
+    let run = peer.start(&mut host).await;
+    assert_eq!(run["account_name"], "account@example.com");
+
+    host.account_patch = Some(json!({"name":"  OPENAI账号  ","email":"   "}));
+    let run = peer.start(&mut host).await;
+    assert_eq!(run["account_name"], "OPENAI账号");
+
+    host.account_patch = Some(json!({"name":"   ","email":null}));
+    let run = peer.start(&mut host).await;
+    assert_eq!(run["account_name"], "");
 }
 
 const MEOW_SHA: &str = "0f31d4a96c9e953277ab8e337d3dbd3ec57b316e";

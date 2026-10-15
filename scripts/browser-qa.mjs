@@ -14,15 +14,15 @@ page.on('pageerror',e=>errors.push(e.message))
 const base=process.env.PREVIEW_URL || 'http://127.0.0.1:4175/'
 async function shot(name){await page.waitForTimeout(300);await page.screenshot({path:`${root}/review/screenshots/${name}.png`,fullPage:true,animations:'disabled'})}
 async function select(label, option){const trigger=page.getByRole('combobox',{name:label,exact:true});await trigger.click();const controls=await trigger.getAttribute('aria-controls');await page.locator(`[id="${controls}"]`).getByRole('option',{name:option,exact:true}).click()}
-async function configureTrace() {
+async function configureTrace(account = 'primary@example.com') {
   await page.getByRole('radio',{name:'ModelTrace',exact:true}).click()
-  await select('检测账号','主账号 A · 固定代理')
+  await select('检测账号',account)
   await select('计量 Key','模型体检专用')
   await select('请求模型','gpt-6-astra')
   await page.getByRole('radio',{name:'Meow',exact:true}).click()
   await page.getByRole('radio',{name:'ModelTrace',exact:true}).focus()
   await page.keyboard.press('Space')
-  assert.match(await page.getByRole('combobox',{name:'检测账号',exact:true}).textContent(),/主账号 A/)
+  assert.equal((await page.getByRole('combobox',{name:'检测账号',exact:true}).textContent()).trim(),account)
   assert.match(await page.getByRole('combobox',{name:'计量 Key',exact:true}).textContent(),/模型体检专用/)
   assert.match(await page.getByRole('combobox',{name:'请求模型',exact:true}).textContent(),/gpt-6-astra/)
   await page.getByText('3 个样本 · 最多 5 次请求（含重试）',{exact:false}).waitFor()
@@ -36,12 +36,18 @@ async function finishTrace() {
   assert.equal(await page.getByText('判定阈值',{exact:false}).count(),0)
   await page.getByText('Claude 家族',{exact:true}).waitFor()
 }
+async function assertNewAccountHistory(id, name) {
+  const {runs} = await page.evaluate(async()=>JSON.parse(new TextDecoder().decode((await window.codexProxyPlugin.request({method:'GET',path:'api/runs'})).body)))
+  assert.equal(runs[0].account_id,id,'display labels must not change account ID binding')
+  assert.equal(runs[0].account_name,name)
+  await page.getByRole('button',{name:`查看 ${name} 的检测报告`,exact:true}).waitFor()
+}
 try {
   await page.goto(`${base}?preview=1`)
   await page.getByText('Meow 4.5.4',{exact:true}).waitFor()
   await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).waitFor()
   await shot('light-setup')
-  await select('检测账号','主账号 A · 固定代理')
+  await select('检测账号','primary@example.com')
   await select('计量 Key','模型体检专用')
   await select('请求模型','gpt-6-astra')
   await select('对照基线','gpt-6-astra')
@@ -49,6 +55,7 @@ try {
   await page.getByRole('button',{name:'当前题完成后暂停',exact:true}).waitFor()
   await page.getByRole('button',{name:'当前题完成后暂停',exact:true}).click()
   await page.getByRole('button',{name:'继续检测',exact:true}).waitFor()
+  await assertNewAccountHistory('demo-a','primary@example.com')
   await shot('paused')
   await page.getByRole('button',{name:'继续检测',exact:true}).click()
   await page.getByRole('button',{name:'当前题完成后暂停',exact:true}).waitFor()
@@ -80,7 +87,8 @@ try {
   await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).last().click()
   await page.waitForFunction(()=>document.querySelector('progress')?.value===36)
   assert.equal(await page.getByText('判定阈值',{exact:false}).count(),3,'legacy Meow history remains readable')
-  await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).first().click()
+  await assertNewAccountHistory('demo-a','primary@example.com')
+  await page.getByRole('button',{name:'查看 primary@example.com 的检测报告',exact:true}).click()
   await page.waitForFunction(()=>document.querySelector('progress')?.value===3)
   await page.getByRole('radio',{name:'请求明细',exact:true}).click()
   await page.getByText('preview-request-3',{exact:true}).waitFor()
@@ -98,6 +106,12 @@ try {
   assert.equal(await page.locator('progress').getAttribute('value'),'0')
   await shot('modeltrace-short-answer')
   await page.setViewportSize({width:1440,height:1050})
+  for (const [id, name] of [['demo-b','backup@example.com'],['demo-c','无邮箱账号']]) {
+    await page.goto(`${base}?preview=1`)
+    await configureTrace(name)
+    await finishTrace()
+    await assertNewAccountHistory(id,name)
+  }
   await page.goto(`${base}?preview=1&theme=dark`)
   await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).click()
   await page.waitForFunction(()=>document.querySelector('progress')?.value===36)
@@ -116,7 +130,7 @@ try {
   await page.getByText('正在读取宿主账号与检测基线…',{exact:true}).waitFor()
   await shot('loading')
   assert.deepEqual(errors,[])
-  const result='BROWSER: meow/modeltrace/switch/pinned-selection/frozen-report/legacy-history/start/pause/resume/stop/samples/short-answer/light/dark/mobile/empty/error/loading PASS; console_errors=0; page_overflow=0\n'
+  const result='BROWSER: meow/modeltrace/switch/pinned-selection/email-display/name-fallback/account-id-binding/frozen-report/legacy-history/start/pause/resume/stop/samples/short-answer/light/dark/mobile/empty/error/loading PASS; console_errors=0; page_overflow=0\n'
   writeFileSync(`${root}/review/BROWSER-QA.txt`,result)
   console.log(result.trim())
 } finally {await browser.close()}
