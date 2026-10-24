@@ -70,16 +70,42 @@ jobs:
       RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - name: 注入时间版本号到 plugin.json（仅构建工作区，不回写仓库）
+      - name: 注入时间版本号（plugin.json + Cargo.toml/lock，仅构建工作区不回写）
         run: |
           python3 - <<'PY'
           import json, os, pathlib
+          version = os.environ["RELEASE_VERSION"]
           path = pathlib.Path("plugin.json")
           manifest = json.loads(path.read_text(encoding="utf-8"))
-          manifest["version"] = os.environ["RELEASE_VERSION"]
+          manifest["version"] = version
           path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          # 插件 User-Agent 使用 CARGO_PKG_VERSION（backend/src/updates.rs），需同步改写；
+          # Cargo.lock 的本包条目也一并更新以维持 cargo --locked 校验一致。
+          path = pathlib.Path("backend/Cargo.toml")
+          lines = path.read_text(encoding="utf-8").splitlines()
+          done = False
+          for i, line in enumerate(lines):
+              if line.startswith("version = "):
+                  lines[i] = 'version = "%s"' % version
+                  done = True
+                  break
+          assert done, "package version line not found in Cargo.toml"
+          path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          path = pathlib.Path("backend/Cargo.lock")
+          lines = path.read_text(encoding="utf-8").splitlines()
+          hit = False
+          for i, line in enumerate(lines):
+              if line == 'name = "codex-model-health-plugin"':
+                  assert lines[i + 1].startswith("version = "), lines[i + 1]
+                  lines[i + 1] = 'version = "%s"' % version
+                  hit = True
+                  break
+          assert hit, "self package entry not found in Cargo.lock"
+          path.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
           grep -F "\"version\": \"${RELEASE_VERSION}\"" plugin.json
+          grep -xF "version = \"${RELEASE_VERSION}\"" backend/Cargo.toml
+          grep -xF "version = \"${RELEASE_VERSION}\"" backend/Cargo.lock
       - uses: pnpm/action-setup@v4
         with:
           version: 12.14.0
