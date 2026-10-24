@@ -25,7 +25,7 @@
 | --- | --- |
 | 插件 ID / 版本 | `local.model-health` / `0.2.2` |
 | 宿主清单范围 | `>=3.19.0, <4.0.0`；实际使用验证为 3.19.0，其他版本需另验 |
-| Release 平台 | Linux x86_64，glibc 2.36+（如 Debian 12）；不适用于 ARM64、Alpine/musl 或 Windows |
+| Release 平台 | Linux x86_64 与 ARM64（aarch64），glibc 2.36+（如 Debian 12）；不适用于 Alpine/musl 或 Windows |
 | 运行方式 | `trustedProcess`，插件以宿主系统身份运行，安装代表完整信任；不是操作系统沙箱 |
 | 扩展能力 | 独立管理页面；不注册请求中间件、调度器、观察器或自动维护任务 |
 
@@ -36,13 +36,15 @@
 版本标签：v0.2.2（或留空查询最新稳定版）
 ```
 
-选择 `local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载该文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
+按服务器架构选择制品：AMD64/Intel 64 选 `local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz`，ARM64 选 `local.model-health-<版本>-aarch64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载对应文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
 
-Release 同时提供同名 `.tar.gz.sha256`；下载两个附件后可校验：
+版本号由 GitHub Actions 自动发布生成，格式为「语义版本 + UTC 时间戳」，如 `v0.2.2-20261024.1503`；时间部分递增可用于比较新旧，详见 [docs/release-automation.md](docs/release-automation.md)。
+
+Release 同时提供同名 `.tar.gz.sha256`；下载两个附件后可校验（以 x86_64 为例，aarch64 同理）：
 
 ```sh
-sha256sum -c local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz.sha256
-# macOS：shasum -a 256 -c local.model-health-0.2.2-x86_64-unknown-linux-gnu.tar.gz.sha256
+sha256sum -c local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz.sha256
+# macOS：shasum -a 256 -c local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz.sha256
 ```
 
 保留 `local.model-health` 是为了让原先本地安装的版本继续沿用同一插件身份与历史，不是更换发布账号。仓库与发布者主页为 [R-lmmortal](https://github.com/R-lmmortal)。已有本地安装可在插件详情设置 GitHub 更新来源，或上传新版后确认切换；不要为了更新而删除原配置或私有数据。
@@ -100,7 +102,11 @@ pnpm --dir frontend test
 pnpm --dir frontend build
 ```
 
-`build-linux.sh` 在 Docker 中构建内嵌 Python/NumPy 引擎、运行 Rust 的 `bundled-engine` 单测、编译 Linux 二进制、构建页面，最后使用官方 CLI 生成 `dist/*.tar.gz` 与校验文件。打包后在非 root、空环境、只读根目录和 `/tmp:noexec` 容器中运行离线协议验收；默认使用 `debian:bookworm-slim`，可通过 `SMOKE_IMAGE` 指定已准备好的 Debian 12 兼容镜像。
+`./scripts/build-linux.sh [目标]`（默认 `x86_64-unknown-linux-gnu`，可选 `aarch64-unknown-linux-gnu`）在 Docker 中构建内嵌 Python/NumPy 引擎、运行 Rust 的 `bundled-engine` 单测、编译对应架构的 Linux 二进制、构建页面，最后使用官方 CLI 生成 `dist/*.tar.gz` 与校验文件。打包后在非 root、空环境、只读根目录和 `/tmp:noexec` 容器中运行离线协议验收；默认使用 `debian:bookworm-slim`，可通过 `SMOKE_IMAGE` 指定已准备好的 Debian 12 兼容镜像，`SMOKE_PLATFORM` 默认与目标架构一致。
+
+### 自动构建发布
+
+`.github/workflows/release.yml`：推送 `main` 自动构建并发布 Release；也可在 Actions 页面手动触发（`workflow_dispatch`），勾选 `dry_run` 可只构建验收不发布，便于在分支试跑。每次运行用原生 runner（`ubuntu-latest` / `ubuntu-24.04-arm`）同时构建 x86_64 与 aarch64 两种制品，版本号自动生成为「语义版本 + UTC 时间戳」（如 `v0.2.2-20261024.1503`），并附同名 `.sha256`。设计与取舍见 [docs/release-automation.md](docs/release-automation.md)。
 
 直接运行不带 `bundled-engine` 的本机 `cargo test` 另依赖开发用 `meow-llm-detector:4.5.4` Docker 镜像；首次构建优先使用上面的完整脚本，无需这个额外镜像。
 

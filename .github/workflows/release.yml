@@ -1,0 +1,154 @@
+# 自动构建发布（Issue #1）
+# 触发：推送 main 自动构建并发布 Release；workflow_dispatch 支持在任意分支试跑
+# （dry_run=true 时只构建不发布）。版本号 = plugin.json 语义版本 + UTC 时间戳后缀，
+# 如 v0.2.2-20261024.1503；每次运行发布 x86_64 与 aarch64 两种 Linux glibc 制品。
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只构建与验收，不创建 Release"
+        type: boolean
+        default: false
+
+# 权限最小化：默认只读；仅 release 作业按需提升为 contents: write
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 计算时间版本号（语义版本 + yyyymmdd.HHMM，UTC）
+        id: version
+        run: |
+          BASE="$(python3 -c 'import json; print(json.load(open("plugin.json", encoding="utf-8"))["version"].split("-")[0])')"
+          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' <<<"$BASE" || { echo "invalid base version in plugin.json: $BASE" >&2; exit 1; }
+          STAMP="$(date -u +%Y%m%d.%H%M)"
+          VERSION="${BASE}-${STAMP}"
+          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}\.[0-9]{4}$' <<<"$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "release version: v$VERSION"
+
+  build:
+    name: build ${{ matrix.target }}
+    needs: prepare
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            platform: linux/amd64
+            runner: ubuntu-latest
+          - target: aarch64-unknown-linux-gnu
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    env:
+      RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 注入时间版本号到 plugin.json（仅构建工作区，不回写仓库）
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          path = pathlib.Path("plugin.json")
+          manifest = json.loads(path.read_text(encoding="utf-8"))
+          manifest["version"] = os.environ["RELEASE_VERSION"]
+          path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+          grep -F "\"version\": \"${RELEASE_VERSION}\"" plugin.json
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: 安装打包 CLI（锁定宿主提交，与 SDK 同源）
+        run: |
+          docker run --rm --platform "${{ matrix.platform }}" \
+            -v "$PWD:/work" -w /work rust:1.97-slim-bookworm \
+            sh -c 'cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
+              --rev fef52b3717019513108733549508377a309f129d \
+              --locked --root /work/.tools/cpr-cli codex-proxy-plugin-cli'
+          test -x .tools/cpr-cli/bin/cpr-plugin
+      - name: 前端单测
+        run: pnpm --dir frontend install --frozen-lockfile && pnpm --dir frontend test
+      - name: 构建引擎/后端、打包并离线验收（含 sha256）
+        env:
+          CPR_PLUGIN_BIN: ${{ github.workspace }}/.tools/cpr-cli/bin/cpr-plugin
+        run: ./scripts/build-linux.sh "${{ matrix.target }}"
+      - name: 核对制品
+        run: |
+          ls -l dist/
+          grep -Eq "^local\.model-health-${RELEASE_VERSION}-${{ matrix.target }}-unknown-linux-gnu\.tar\.gz(\.sha256)?$" <(ls dist/) \
+            || { for f in dist/*; do echo "$f"; done; exit 1; }
+          test -f "dist/local.model-health-${RELEASE_VERSION}-${{ matrix.target }}-unknown-linux-gnu.tar.gz"
+          test -f "dist/local.model-health-${RELEASE_VERSION}-${{ matrix.target }}-unknown-linux-gnu.tar.gz.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugin-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    if: ${{ inputs.dry_run != true }}
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.prepare.outputs.tag }}
+    steps:
+      - name: 汇总两个架构的制品
+        uses: actions/download-artifact@v4
+        with:
+          pattern: plugin-*
+          path: dist
+          merge-multiple: true
+      - name: 核对制品齐全
+        run: |
+          ls -l dist/
+          for arch in x86_64 aarch64; do
+            test -f dist/local.model-health-*-${arch}-unknown-linux-gnu.tar.gz
+            test -f dist/local.model-health-*-${arch}-unknown-linux-gnu.tar.gz.sha256
+          done
+      - name: 创建 Release 并上传制品
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="$(cat <<EOF
+          自动构建发布（时间版本号，UTC）。
+
+          - 版本：${TAG#v}（语义版本 + 时间戳后缀，时间部分为 UTC）
+          - 制品（Linux glibc 2.36+，如 Debian 12；不支持 Alpine/musl 与 Windows）：
+            - \`local.model-health-${TAG#v}-x86_64-unknown-linux-gnu.tar.gz\`（AMD64/Intel 64）
+            - \`local.model-health-${TAG#v}-aarch64-unknown-linux-gnu.tar.gz\`（ARM64）
+          - 每个制品附同名 \`.tar.gz.sha256\`：\`sha256sum -c <文件名>.sha256\`（macOS：\`shasum -a 256 -c\`）。
+          - 请按服务器架构选择对应制品；不要上传 GitHub 自动生成的 Source code 归档。
+
+          完整安装说明见仓库 README。
+          EOF
+          )"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "release $TAG already exists, uploading with --clobber"
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --title "$TAG" --notes "$NOTES" --latest
+          fi

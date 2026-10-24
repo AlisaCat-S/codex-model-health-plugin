@@ -14,3 +14,6 @@ review/
 *.pem
 *_rsa
 *_ed25519
+
+# agent goal-tracking workspace (local only)
+.pi/

@@ -53,7 +53,8 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
     # 只读根文件系统与 /tmp:noexec 保持实际部署条件，不能为了测试放开 /tmp。
     root.chmod(0o755)
     container = f"model-health-smoke-{os.getpid()}"
-    command = ["docker", "run", "--rm", "--name", container, "-i", "--platform", "linux/amd64",
+    command = ["docker", "run", "--rm", "--name", container, "-i", "--platform",
+               os.environ.get("SMOKE_PLATFORM", "linux/amd64"),
                "--network", "none", "--read-only", "--user", "10001:10001",
                "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,size=64m",
                "--tmpfs", "/package:rw,exec,nosuid,nodev,size=256m,uid=10001,gid=10001,mode=0700",
