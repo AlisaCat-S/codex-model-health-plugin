@@ -33,7 +33,7 @@ class ModelTraceTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256((adapter.VENDOR / name).read_bytes()).hexdigest(), digest)
         catalogs = worker.handle({"op": "catalog"})["methods"]
         self.assertEqual([c["method"] for c in catalogs], ["meow", "modeltrace"])
-        self.assertEqual(len(catalogs[1]["models"]), 17)
+        self.assertEqual(len(catalogs[1]["models"]), 18)
         self.assertEqual(catalogs[1]["family_count"], 2)
 
     def test_frozen_challenges_and_payload_use_provider_defaults(self):

@@ -281,7 +281,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                 print("MODELTRACE ABSENT: methods=meow; real_model_calls=0", flush=True)
                 sys.exit(1)
             trace = next(c for c in catalogs if c["method"] == "modeltrace")
-            assert len(trace["models"]) == 17 and trace["family_count"] == 2
+            assert len(trace["models"]) == 18 and trace["family_count"] == 2
             status, result = api("api/runs/start", {"method": "modeltrace", "account_id": "smoke-account", "key_id": "smoke-key",
                                 "request_model": "gpt-6-astra", "claimed_model": "unified", "tier": "fixed"})
             assert status == 200, result
@@ -301,7 +301,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                         status, response = api("api/runs/control", {"id": run_id, "action": action})
                         assert status == 200, response
             assert result["run"]["status"] == "completed" and result["run"]["report"]["verdict"] == "attributed"
-            assert len(result["run"]["report"]["analysis"]["results"]) == 17
+            assert len(result["run"]["report"]["analysis"]["results"]) == 18
             assert len({a["job_id"] for a in result["run"]["attempts"]}) == 3
             assert host["executions"] == before + 3
             status, restored = api("api/runs/get", {"id": run_id})
@@ -310,7 +310,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             status, history = api("api/runs")
             assert status == 200 and history["runs"][0]["method"] == "modeltrace"
             assert history["runs"][0]["report"] == result["run"]["report"]
-            print("MODELTRACE PASS: completed=3/3; candidates=17; pinned_account_key=PASS; frozen_plan=PASS; pause_resume=PASS; history=PASS; real_model_calls=0", flush=True)
+            print("MODELTRACE PASS: completed=3/3; candidates=18; pinned_account_key=PASS; frozen_plan=PASS; pause_resume=PASS; history=PASS; real_model_calls=0", flush=True)
         if updates:
             if "sources" not in boot:
                 print("UPDATES ABSENT: sources=0; model_methods=2; real_model_calls=0", flush=True)

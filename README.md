@@ -12,8 +12,8 @@
 
 | 项目 | 集成内容与固定版本 | 许可证 |
 | --- | --- | --- |
-| [Meow LLM Detector — chen-006](https://github.com/chen-006/meow-llm-detector) | 题目、响应解析、答案归一化与行为概率评分；引擎 4.5.4 / 基线 4.5.3-predictive.2；[提交 0f31d4a](https://github.com/chen-006/meow-llm-detector/tree/0f31d4a96c9e953277ab8e337d3dbd3ec57b316e) | [PolyForm Noncommercial 1.0.0](vendor/meow/LICENSE) |
-| [ModelTrace — xqy2006](https://github.com/xqy2006/ModelTrace) | 原始指纹算法与统一候选库；[提交 d4131b3](https://github.com/xqy2006/ModelTrace/tree/d4131b30243dfa05e70180b5eedde742103f1d73) | [MIT](vendor/modeltrace/LICENSE) |
+| [Meow LLM Detector — chen-006](https://github.com/chen-006/meow-llm-detector) | 题目、响应解析、答案归一化与行为概率评分；引擎 4.5.4 / 基线 4.5.3-predictive.2；[提交 dc608d5](https://github.com/chen-006/meow-llm-detector/tree/dc608d5c097abf96575d5b34f49952ddbd27c281) | [PolyForm Noncommercial 1.0.0](vendor/meow/LICENSE) |
+| [ModelTrace — xqy2006](https://github.com/xqy2006/ModelTrace) | 原始指纹算法与统一候选库；[提交 6cd4a8f](https://github.com/xqy2006/ModelTrace/tree/6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2) | [MIT](vendor/modeltrace/LICENSE) |
 
 宿主集成使用 [Codex Proxy 公开 SDK](https://github.com/zyycn/codex-proxy-rs/tree/76291f448cdf1d1da2027da32b7c949deb998c7a/backend/crates/gateway-plugin/sdk)（v3.30.2，插件 RPC 协议 v5）、[@codex-proxy/ui](https://github.com/zyycn/codex-proxy-ui) v0.3.2，并参考 [官方插件示例与规范](https://github.com/zyycn/codex-proxy-plugins)。
 
@@ -77,7 +77,7 @@ Meow 报告给出行为匹配、行为偏移或证据不足。ModelTrace 报告�
 - 使用 `host.auth.list/get_runtime` 的非秘密账号资料、`host.keys.list` 和 `host.models.list`；页面只提交账号 ID 与 Key ID，不读取原始凭据。
 - 每个 `host.model.execute_stream` 都显式指定 `account_id`、`client_key_id`、`provider=openai` 和 `protocol=openai`。主服务负责代理、鉴权、配额与最终计量；插件不搭建另一套 HTTP 出口。
 - 完整保留 Meow 的题目、参数、SSE 解析、答案归一化和概率评分。原源码放在 `vendor/meow`，文件哈希没有改变。Meow 版本 4.5.4；基线内容哈希冻结在每次任务中。
-- ModelTrace 的原始 `fingerprint.py` 和统一候选库固定在上游提交 `d4131b30243dfa05e70180b5eedde742103f1d73`，来源及逐文件哈希见 `vendor/modeltrace/SOURCE.json`。复用原始随机题目生成、数字解析、Hellinger / 有序数字块融合、温度校准和家族聚合，不引入原项目的网络服务或 API Key 表单。
+- ModelTrace 的原始 `fingerprint.py` 和统一候选库固定在上游提交 `6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2`，来源及逐文件哈希见 `vendor/modeltrace/SOURCE.json`。复用原始随机题目生成、数字解析、Hellinger / 有序数字块融合、温度校准和家族聚合，不引入原项目的网络服务或 API Key 表单。
 - ModelTrace 生成 3 份独立题目后持久化，断点续测与失败重试保留题目和检测方法。通过现有 Responses 流发送单条用户消息，采样使用供应商默认值，不套用 Meow 的 256-token 短答参数。沿用插件单题 90 秒上限、串行执行、人工续测和 50% 重试预算（3 个有效样本、最多 5 次尝试），而非原网页的自动重试流程。
 - `ready → running → ready/paused/completed`；显式停止转 `stopped`。发送前先写 pending，异常中断后按一次未知结果计入预算。首轮所有题优先于重试；成功样本不重复计数。
 - 全局推理并发为 1；网络等待时释放状态锁。页面暂停/结束保留当前题的结果。每题发送前及续测时核对账号 ID、平台、启用状态和冻结的上游身份；Cookie 回写、令牌刷新导致的凭据版本变化不视作换号，认证类型或上游身份变化则中止续测。
