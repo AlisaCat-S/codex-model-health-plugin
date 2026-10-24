@@ -30,14 +30,23 @@ jobs:
       tag: ${{ steps.version.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
-      - name: 计算时间版本号（语义版本 + yyyymmdd.HHMM，UTC）
+      - name: 计算时间版本号（语义版本 + yyyymmdd.HM，UTC）
         id: version
         run: |
           BASE="$(python3 -c 'import json; print(json.load(open("plugin.json", encoding="utf-8"))["version"].split("-")[0])')"
           grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' <<<"$BASE" || { echo "invalid base version in plugin.json: $BASE" >&2; exit 1; }
-          STAMP="$(date -u +%Y%m%d.%H%M)"
-          VERSION="${BASE}-${STAMP}"
-          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}\.[0-9]{4}$' <<<"$VERSION"
+          # semver 预发布数字标识符不允许前导零，分钟段按十进制去零（59<100<2359 仍单调）
+          DAY="$(date -u +%Y%m%d)"
+          HM="$((10#$(date -u +%H%M)))"
+          VERSION="${BASE}-${DAY}.${HM}"
+          grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}\.[0-9]{1,4}$' <<<"$VERSION"
+          python3 - "$VERSION" <<'PY'
+          import re, sys
+          v = sys.argv[1]
+          core, pre = v.split("-")
+          parts = pre.split(".")
+          assert len(core.split(".")) == 3 and all(p.isdigit() and (p == "0" or not p.startswith("0")) for p in parts), v
+          PY
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
           echo "release version: v$VERSION"

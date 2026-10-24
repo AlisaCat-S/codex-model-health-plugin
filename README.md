@@ -38,7 +38,7 @@
 
 按服务器架构选择制品：AMD64/Intel 64 选 `local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz`，ARM64 选 `local.model-health-<版本>-aarch64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载对应文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
 
-版本号由 GitHub Actions 自动发布生成，格式为「语义版本 + UTC 时间戳」，如 `v0.2.2-20261024.1503`；时间部分递增可用于比较新旧，详见 [docs/release-automation.md](docs/release-automation.md)。
+版本号由 GitHub Actions 自动发布生成，格式为「语义版本 + UTC 时间戳」，如 `v0.2.2-20261024.1503`；分钟数不带前导零（05:04 记为 `20261024.504`）以符合 semver 预发布标识符规则，数值比较仍严格单调。详见 [docs/release-automation.md](docs/release-automation.md)。
 
 Release 同时提供同名 `.tar.gz.sha256`；下载两个附件后可校验（以 x86_64 为例，aarch64 同理）：
 
