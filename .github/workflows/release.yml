@@ -181,9 +181,9 @@ jobs:
           完整安装说明见仓库 README。
           EOF
           )"
-          if gh release view "$TAG" >/dev/null 2>&1; then
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "release $TAG already exists, uploading with --clobber"
-            gh release upload "$TAG" dist/* --clobber
+            gh release upload "$TAG" dist/* --clobber --repo "$GITHUB_REPOSITORY"
           else
-            gh release create "$TAG" dist/* --title "$TAG" --notes "$NOTES" --latest
+            gh release create "$TAG" dist/* --title "$TAG" --notes "$NOTES" --latest --repo "$GITHUB_REPOSITORY"
           fi
