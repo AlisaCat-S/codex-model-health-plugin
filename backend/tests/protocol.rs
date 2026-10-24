@@ -217,8 +217,13 @@ impl Host {
                     self.http_body.is_none(),
                     "previous HTTP body was not released"
                 );
-                let headers: Vec<(String, String)> =
+                // 协议 v5：header 值为字节数组，按 UTF-8 解码后再断言
+                let headers: Vec<(String, Vec<u8>)> =
                     serde_json::from_value(params["headers"].clone()).unwrap();
+                let headers: Vec<(String, String)> = headers
+                    .into_iter()
+                    .map(|(name, value)| (name, String::from_utf8(value).expect("header 不是 UTF-8")))
+                    .collect();
                 assert_eq!(headers.len(), 3);
                 assert_eq!(
                     headers[0],
@@ -241,7 +246,7 @@ impl Host {
                 }
                 let (status, body) = self.http.pop_front().expect("unexpected HTTP request");
                 self.http_body = Some(body);
-                metadata(json!({"status":status,"headers":[],"stream":"github"}))
+                metadata(json!({"status":status,"http_version":"HTTP/1.1","headers":[],"stream":"github","trailers":[]}))
             }
             "host.http.stream_read" => {
                 assert!(payload.is_empty());
