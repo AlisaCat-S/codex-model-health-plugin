@@ -430,8 +430,8 @@ async fn run_account_name_prefers_trimmed_email_and_falls_back_to_name() {
     assert_eq!(run["account_name"], "");
 }
 
-const MEOW_SHA: &str = "0f31d4a96c9e953277ab8e337d3dbd3ec57b316e";
-const TRACE_SHA: &str = "d4131b30243dfa05e70180b5eedde742103f1d73";
+const MEOW_SHA: &str = "dc608d5c097abf96575d5b34f49952ddbd27c281";
+const TRACE_SHA: &str = "6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2";
 
 fn github_reply(host: &mut Host, status: u16, body: Value) {
     host.http
@@ -746,7 +746,7 @@ async fn modeltrace_uses_same_host_path_and_resumes_frozen_plan() {
             .as_array()
             .unwrap()
             .len(),
-        17
+        18
     );
     let history = peer.api("api/runs", None, &mut host).await.unwrap();
     assert_eq!(history["runs"][0]["method"], "modeltrace");

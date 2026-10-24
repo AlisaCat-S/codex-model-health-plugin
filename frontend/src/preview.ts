@@ -4,11 +4,11 @@ import { accountDisplayName } from './accountDisplay'
 
 const params = new URLSearchParams(location.search)
 const sources: UpstreamSource[] = [
-  {method:'meow',label:'Meow',url:'https://github.com/chen-006/meow-llm-detector',bundled_commit:'0f31d4a96c9e953277ab8e337d3dbd3ec57b316e'},
-  {method:'modeltrace',label:'ModelTrace',url:'https://github.com/xqy2006/ModelTrace',bundled_commit:'d4131b30243dfa05e70180b5eedde742103f1d73'},
+  {method:'meow',label:'Meow',url:'https://github.com/chen-006/meow-llm-detector',bundled_commit:'dc608d5c097abf96575d5b34f49952ddbd27c281'},
+  {method:'modeltrace',label:'ModelTrace',url:'https://github.com/xqy2006/ModelTrace',bundled_commit:'6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2'},
 ]
 const catalog: MethodCatalog = {method:'meow',label:'Meow',engine_version:'4.5.4',id:'meow-gpt-other-cap98',version:'4.5.3-predictive.2',hash:'00846ce198b9366fadbabc0bb4b9c5f002ec84dc49a27cba3d8f9b33218fac3c',models:[{id:'gpt-6-astra'},{id:'gpt-5.6-sol'}],tiers:[{id:'low',count:36},{id:'medium',count:72},{id:'high',count:108}]}
-const trace: MethodCatalog = {method:'modeltrace',label:'ModelTrace',engine_version:'d4131b3',id:'modeltrace-unified',version:'d4131b3',hash:'e514c76928ea38d23bc0f14d3935f23c97b1efb6d96b18a19bdc88ad2d830536',family_count:2,tiers:[{id:'fixed',count:3}],models:['gpt-5.4','gpt-5.5','gpt-5.6-luna','gpt-5.6-terra','gpt-5.6-sol','gpt-6-astra','gpt-6-sol','gpt-6-luna','claude-haiku-4-5-20251001','claude-sonnet-4-6','claude-sonnet-5','claude-sonnet-5-5','claude-opus-4-6','claude-opus-4-7','claude-opus-4-8','claude-opus-5','claude-opus-5-5'].map(id=>({id}))}
+const trace: MethodCatalog = {method:'modeltrace',label:'ModelTrace',engine_version:'6cd4a8f',id:'modeltrace-unified',version:'6cd4a8f',hash:'f267d0513aa06981d024ec5394746fceddf44e4e8a75fa6bf8304255f4b32d6d',family_count:2,tiers:[{id:'fixed',count:3}],models:['gpt-5.4','gpt-5.5','gpt-5.6-luna','gpt-5.6-terra','gpt-5.6-sol','gpt-6-astra','gpt-6-sol','gpt-6-luna','claude-haiku-4-5-20251001','claude-sonnet-4-6','claude-sonnet-5','claude-sonnet-5-5','claude-opus-4-6','claude-opus-4-7','claude-opus-4-8','claude-opus-5','claude-opus-5-5','claude-haiku-5-5'].map(id=>({id}))}
 const methods: Catalog = {methods:[catalog,trace]}
 const previewAccounts = [
   {id:'demo-a',name:'OPENAI账号',email:'primary@example.com',plan:'pro'},
