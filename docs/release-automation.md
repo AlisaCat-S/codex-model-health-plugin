@@ -23,12 +23,12 @@
 
 | 制品 | runner | 引擎 | Rust 二进制 | 冒烟验收容器 |
 | --- | --- | --- | --- | --- |
-| `x86_64-unknown-linux-gnu` | `ubuntu-latest` | `docker buildx --platform linux/amd64`（原生） | `rust:1.97-slim-bookworm` 容器内原生构建 | `--platform linux/amd64` |
+| `x86_64-unknown-linux-gnu` | `ubuntu-latest` | `docker buildx --platform linux/amd64`（原生） | `rust:1.99-slim-bookworm` 容器内原生构建 | `--platform linux/amd64` |
 | `aarch64-unknown-linux-gnu` | `ubuntu-24.04-arm` | `docker buildx --platform linux/arm64`（原生） | 同上（arm64 原生） | `--platform linux/arm64` |
 
 仓库为公开仓库，GitHub 提供免费的 arm64 托管 runner，因此无需 QEMU 模拟或交叉工具链，两个架构均为原生构建，与既有本地构建命令保持一致（glibc/Debian 12 基线不变）。
 
-打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev fef52b3717019513108733549508377a309f129d --locked`，在对应架构的 `rust:1.97-slim-bookworm` 容器内安装，产物为该架构原生二进制。
+打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev 76291f448cdf1d1da2027da32b7c949deb998c7a --locked`（v3.30.2，插件 RPC 协议 v5），在对应架构的 `rust:1.99-slim-bookworm` 容器内安装，产物为该架构原生二进制。
 
 ## 权限
 

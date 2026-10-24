@@ -65,9 +65,23 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                'exec /usr/bin/env -i ./bin/plugin']
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
 
+    # 协议 v5 帧编码：[u32 元数据长度][u64 载荷总长][元数据 JSON][业务 data JSON][原始正文]；
+    # Hello.configuration / Call.params / Callback.params / Result.result 移入 data 段，
+    # 元数据内以 data_bytes 声明长度（为 0 时省略）。
     def send(message, payload=b""):
+        data = b""
+        kind = message["type"]
+        if kind == "hello":
+            data = json.dumps(message["handshake"].pop("configuration"), separators=(",", ":")).encode()
+            message["data_bytes"] = len(data)
+        elif kind in ("call", "callback"):
+            data = json.dumps(message.pop("params"), separators=(",", ":")).encode()
+            message["data_bytes"] = len(data)
+        elif kind == "result":
+            data = json.dumps(message.pop("result"), separators=(",", ":")).encode()
+            message["data_bytes"] = len(data)
         body = json.dumps(message, separators=(",", ":")).encode()
-        process.stdin.write(struct.pack(">IQ", len(body), len(payload)) + body + payload)
+        process.stdin.write(struct.pack(">IQ", len(body), len(data) + len(payload)) + body + data + payload)
         process.stdin.flush()
 
     def read_exact(length):
@@ -82,9 +96,25 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
         return result
 
     def receive():
-        meta, payload = struct.unpack(">IQ", read_exact(12))
-        assert 0 < meta <= 65536 and payload < 2 * 1024 * 1024
-        return json.loads(read_exact(meta)), read_exact(payload)
+        meta, total = struct.unpack(">IQ", read_exact(12))
+        assert 0 < meta <= 65536 and total < 2 * 1024 * 1024
+        message = json.loads(read_exact(meta))
+        request_bytes = message.pop("request_context_bytes", 0)
+        data_bytes = message.pop("data_bytes", 0)
+        assert request_bytes == 0, "冒烟宿主不下发入口请求快照"
+        payload = read_exact(total)
+        data, payload = payload[:data_bytes], payload[data_bytes:]
+        if data_bytes:
+            kind = message["type"]
+            value = json.loads(data)
+            if kind == "hello":
+                message["handshake"]["configuration"] = value
+            elif kind in ("call", "callback"):
+                message["params"] = value
+            else:
+                assert kind == "result", message
+                message["result"] = value
+        return message, payload
 
     host = {"executions": 0, "state": {}, "callbacks": [], "numeric": False, "http_body": None}
 
@@ -102,7 +132,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             url = params["url"]
             pattern = r"https://api\.github\.com/repos/(chen-006/meow-llm-detector|xqy2006/ModelTrace)/(commits\?per_page=1|compare/[0-9a-f]{40}\.\.\.[0-9a-f]{40}\?per_page=1&page=2)"
             assert re.fullmatch(pattern, url), url
-            headers = dict(params["headers"])
+            headers = {name: bytes(value).decode() for name, value in params["headers"]}
             assert set(headers) == {"User-Agent", "Accept", "X-GitHub-Api-Version"}
             assert headers["User-Agent"] == f'codex-model-health/{manifest["version"]}'
             status = 200
@@ -126,7 +156,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                     data = [{"sha": source["bundled_commit"] if source["method"] == "meow" else "a" * 40}]
                 body = json.dumps(data).encode()
             host["http_body"] = body
-            return {"status": status, "headers": [], "stream": "github"}, b""
+            return {"status": status, "http_version": "HTTP/1.1", "headers": [], "stream": "github", "trailers": []}, b""
         if method == "host.http.stream_read":
             assert params["stream"] == "github" and not payload
             body = host["http_body"]
@@ -203,9 +233,9 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             send({"type": "result", "id": message["id"], "result": result}, response)
 
     try:
-        send({"type": "hello", "handshake": {"protocol_version": 2, "artifact_sha256": hashlib.sha256(package.read_bytes()).hexdigest(), "plugin_id": "local.model-health", "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "configuration": {}, "contributes": manifest["contributes"]}})
+        send({"type": "hello", "handshake": {"protocol_version": 5, "artifact_sha256": hashlib.sha256(package.read_bytes()).hexdigest(), "plugin_id": "local.model-health", "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "configuration": {}, "contributes": manifest["contributes"]}})
         ready, _ = receive()
-        assert ready["type"] == "ready"
+        assert ready["type"] == "ready" and ready["protocol_version"] == 5
         context = {"call_id": 1, "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "stage": "management", "timeout_ms": 120000, "resource_stream": False, "resource_scope_id": "smoke", "request_id": None, "attempt_id": None, "account_id": None, "credential_revision": None}
         status, boot = api("api/bootstrap")
         assert status == 200, boot
@@ -311,7 +341,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
         send({"type": "shutdown"})
         process.wait(timeout=15)
         assert process.returncode == 0, process.stderr.read().decode()
-        print("PACKAGE PASS: hashes=PASS; tmp_noexec=PASS; nonroot=PASS; empty_env=PASS; readonly_root=PASS; sdk_v2=PASS; engine=4.5.4; accounts=1; keys=1; error_http=400; real_model_calls=0")
+        print("PACKAGE PASS: hashes=PASS; tmp_noexec=PASS; nonroot=PASS; empty_env=PASS; readonly_root=PASS; sdk_v5=PASS; engine=4.5.4; accounts=1; keys=1; error_http=400; real_model_calls=0")
     finally:
         if process.poll() is None:
             subprocess.run(["docker", "rm", "-f", container], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)

@@ -118,7 +118,7 @@ impl Peer {
     ) -> Result<Value, PluginFault> {
         let id = self.sequence;
         self.sequence += 2;
-        self.send(Frame{message:Message::Call{id,method:"management.handle".into(),context:CallContext{call_id:id,instance_id:"test".into(),generation:1,incarnation:"test".into(),stage:Stage::Management,timeout_ms:120000,resource_stream:false,resource_scope_id:"scope".into(),request_id:None,attempt_id:None,account_id:None,credential_revision:None},params:json!({"method":if input.is_some(){"POST"}else{"GET"},"path":path,"query":"","content_type":input.as_ref().map(|_|"application/json"),"headers":[]})},payload:input.map(|v|serde_json::to_vec(&v).unwrap()).unwrap_or_default()}).await;
+        self.send(Frame{message:Message::Call{id,method:"management.handle".into(),context:CallContext{request:None,call_id:id,instance_id:"test".into(),generation:1,incarnation:"test".into(),stage:Stage::Management,timeout_ms:120000,resource_stream:false,resource_scope_id:"scope".into(),request_id:None,attempt_id:None,account_id:None,credential_revision:None},params:json!({"method":if input.is_some(){"POST"}else{"GET"},"path":path,"query":"","content_type":input.as_ref().map(|_|"application/json"),"headers":[]})},payload:input.map(|v|serde_json::to_vec(&v).unwrap()).unwrap_or_default()}).await;
         loop {
             let frame = self.receive().await;
             match frame.message {

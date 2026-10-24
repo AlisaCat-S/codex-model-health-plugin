@@ -117,9 +117,9 @@ jobs:
       - name: 安装打包 CLI（锁定宿主提交，与 SDK 同源）
         run: |
           docker run --rm --platform "${{ matrix.platform }}" \
-            -v "$PWD:/work" -w /work rust:1.97-slim-bookworm \
+            -v "$PWD:/work" -w /work rust:1.99-slim-bookworm \
             sh -c 'cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-              --rev fef52b3717019513108733549508377a309f129d \
+              --rev 76291f448cdf1d1da2027da32b7c949deb998c7a \
               --locked --root /work/.tools/cpr-cli codex-proxy-plugin-cli'
           test -x .tools/cpr-cli/bin/cpr-plugin
       - name: 前端单测
