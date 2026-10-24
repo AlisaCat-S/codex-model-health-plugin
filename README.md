@@ -90,7 +90,7 @@ Meow 报告给出行为匹配、行为偏移或证据不足。ModelTrace 报告�
 
 ## 构建与验证
 
-构建工具：Docker Buildx、Node 24+、pnpm 10.10、Python 3.9+（安装包冒烟测试）、Rust 1.97（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `fef52b3717019513108733549508377a309f129d`，前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
+构建工具：Docker Buildx、Node 24+、pnpm 12.14（`allowBuilds` 需 pnpm 11+）、Python 3.9+（安装包冒烟测试）、Rust 1.97（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `fef52b3717019513108733549508377a309f129d`，前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
 
 ```sh
 cargo install --git https://github.com/zyycn/codex-proxy-rs.git \

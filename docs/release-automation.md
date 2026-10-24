@@ -39,7 +39,7 @@
 
 ```sh
 bash -n scripts/build-linux.sh          # 脚本语法
-./scripts/build-linux.sh                # 本地默认 x86_64 全流程（需 Docker/Node 24+/pnpm 10.10/Python 3.9+）
+./scripts/build-linux.sh                # 本地默认 x86_64 全流程（需 Docker/Node 24+/pnpm 12.14/Python 3.9+）
 ./scripts/build-linux.sh aarch64-unknown-linux-gnu   # ARM64 包（在 ARM 机器上原生；x86 机器上需 QEMU）
 actionlint .github/workflows/release.yml  # workflow 静态校验
 ```
