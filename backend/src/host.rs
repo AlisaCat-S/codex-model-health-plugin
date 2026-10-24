@@ -2,14 +2,13 @@ use crate::{
     domain::{AccountIdentity, Run},
     invalid,
 };
-use gateway_plugin_sdk::{
-    PluginFault,
-    call::{host::*, model::WirePayload},
-    client::HostClient,
-};
+use gateway_plugin_sdk::{ErrorCode, PluginFault, SendState, call::host::*, client::HostClient};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::{Value, json};
 use std::collections::BTreeSet;
+
+mod responses;
+use responses::ResponsesStream;
 
 pub async fn metadata<I: Serialize, O: DeserializeOwned>(
     host: &HostClient,
@@ -234,41 +233,55 @@ pub async fn execute(
         .map_err(|e| e.into_plugin_fault())?;
     let result: ModelStreamResult =
         serde_json::from_value(reply.result).map_err(|_| invalid("模型响应缺少请求 ID"))?;
+    let mut ended = false;
     let read = tokio::time::timeout(
         std::time::Duration::from_secs(90),
-        read_stream(host, &result.stream),
+        read_stream(host, &result.stream, &mut ended),
     )
     .await;
     match read {
         Ok(Ok(sse)) => Ok((result.request_id, sse)),
         other => {
-            let mut message = match other {
-                Ok(Err(e)) => e.message,
-                _ => "单题达到 90 秒上限".into(),
+            let mut fault = match other {
+                Ok(Err(error)) => error,
+                _ => stream_fault(ErrorCode::Timeout, "模型流读取达到 90 秒上限"),
             };
-            let close = host
-                .call(
-                    "host.model.stream_close",
-                    json!({"stream":result.stream}),
-                    vec![],
-                )
-                .await;
-            if let Err(error) = close {
-                message.push_str(&format!(
+            // end=true 时宿主已回收句柄；不能再次关闭并用权限错误覆盖真正原因。
+            if !ended
+                && let Err(error) = host
+                    .call(
+                        "host.model.stream_close",
+                        json!({"stream":result.stream}),
+                        vec![],
+                    )
+                    .await
+            {
+                fault.message.push_str(&format!(
                     "；关闭执行流：{}",
                     error.into_plugin_fault().message
                 ));
             }
             Err(ExecutionFailure {
                 request_id: Some(result.request_id),
-                fault: invalid(message),
+                fault,
             })
         }
     }
 }
 
-async fn read_stream(host: &HostClient, stream: &str) -> Result<String, PluginFault> {
-    let mut sse = String::new();
+fn stream_fault(code: ErrorCode, message: &str) -> PluginFault {
+    // 已进入模型执行流程；本地解码失败不代表上游未发送，不能沿用默认 NotSent。
+    let mut fault = PluginFault::new(code, message);
+    fault.send_state = SendState::Ambiguous;
+    fault
+}
+
+async fn read_stream(
+    host: &HostClient,
+    stream: &str,
+    ended: &mut bool,
+) -> Result<String, PluginFault> {
+    let mut response = ResponsesStream::default();
     loop {
         let reply = host
             .call(
@@ -278,40 +291,24 @@ async fn read_stream(host: &HostClient, stream: &str) -> Result<String, PluginFa
             )
             .await
             .map_err(|e| e.into_plugin_fault())?;
-        let state: ModelStreamReadResult =
-            serde_json::from_value(reply.result).map_err(|_| invalid("模型流状态格式错误"))?;
+        let state: ModelStreamReadResult = serde_json::from_value(reply.result)
+            .map_err(|_| stream_fault(ErrorCode::Fault, "模型流状态格式错误"))?;
+        *ended = state.end;
         let batch = if reply.payload.is_empty() && state.events == 0 {
             ModelEventBatch::default()
         } else {
-            ModelEventBatch::decode(&reply.payload).map_err(|_| invalid("模型事件批次格式错误"))?
+            ModelEventBatch::decode(&reply.payload)
+                .map_err(|_| stream_fault(ErrorCode::Fault, "模型事件批次格式错误"))?
         };
         if batch.events.len() != state.events as usize {
-            return Err(invalid("模型事件数量不一致"));
+            return Err(stream_fault(ErrorCode::Fault, "模型事件数量不一致"));
         }
         for event in batch.events {
-            let Some(wire) = event.wire else {
-                continue;
-            };
-            if wire.protocol != "openai" {
-                return Err(invalid("模型返回了不匹配的协议"));
-            }
-            match wire.payload {
-                WirePayload::Json { data, .. } => {
-                    sse.push_str("data: ");
-                    sse.push_str(&data.to_string());
-                    sse.push_str("\n\n");
-                }
-                WirePayload::RawSse { frame } => {
-                    sse.push_str(std::str::from_utf8(&frame).map_err(|_| invalid("SSE 编码错误"))?)
-                }
-                _ => return Err(invalid("模型未返回 Responses SSE；检测中止以免误评分")),
-            }
-            if sse.len() > 1024 * 1024 {
-                return Err(invalid("检测响应超过 1 MiB"));
-            }
+            response.push(event)?;
         }
+        // response.completed 不是句柄 EOF；继续读到宿主结算完成才交给评分器。
         if state.end {
-            return Ok(sse);
+            return Ok(response.finish());
         }
     }
 }

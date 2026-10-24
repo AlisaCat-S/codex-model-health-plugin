@@ -76,9 +76,10 @@ Meow 报告给出行为匹配、行为偏移或证据不足。ModelTrace 报告�
 
 - 使用 `host.auth.list/get_runtime` 的非秘密账号资料、`host.keys.list` 和 `host.models.list`；页面只提交账号 ID 与 Key ID，不读取原始凭据。
 - 每个 `host.model.execute_stream` 都显式指定 `account_id`、`client_key_id`、`provider=openai` 和 `protocol=openai`。主服务负责代理、鉴权、配额与最终计量；插件不搭建另一套 HTTP 出口。
+- 支持宿主返回的 Responses SSE 与 WebSocket 事件，统一交给原解析器判定完成、错误与拒答；读至宿主 EOF 后才评分。非流式错误只显示载荷类型及可用的 HTTP 状态/传输方式，不保存原始错误正文；用请求 ID 关联宿主详情。
 - 完整保留 Meow 的题目、参数、SSE 解析、答案归一化和概率评分。原源码放在 `vendor/meow`，文件哈希没有改变。Meow 版本 4.5.4；基线内容哈希冻结在每次任务中。
 - ModelTrace 的原始 `fingerprint.py` 和统一候选库固定在上游提交 `6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2`，来源及逐文件哈希见 `vendor/modeltrace/SOURCE.json`。复用原始随机题目生成、数字解析、Hellinger / 有序数字块融合、温度校准和家族聚合，不引入原项目的网络服务或 API Key 表单。
-- ModelTrace 生成 3 份独立题目后持久化，断点续测与失败重试保留题目和检测方法。通过现有 Responses 流发送单条用户消息，采样使用供应商默认值，不套用 Meow 的 256-token 短答参数。沿用插件单题 90 秒上限、串行执行、人工续测和 50% 重试预算（3 个有效样本、最多 5 次尝试），而非原网页的自动重试流程。
+- ModelTrace 生成 3 份独立题目后持久化，断点续测与失败重试保留题目和检测方法。通过现有 Responses 流发送单条用户消息，采样使用供应商默认值，不套用 Meow 的 256-token 短答参数。沿用插件模型流读取阶段 90 秒上限（不含此前的请求建立）、串行执行、人工续测和 50% 重试预算（3 个有效样本、最多 5 次尝试），而非原网页的自动重试流程。
 - `ready → running → ready/paused/completed`；显式停止转 `stopped`。发送前先写 pending，异常中断后按一次未知结果计入预算。首轮所有题优先于重试；成功样本不重复计数。
 - 全局推理并发为 1；网络等待时释放状态锁。页面暂停/结束保留当前题的结果。每题发送前及续测时核对账号 ID、平台、启用状态和冻结的上游身份；Cookie 回写、令牌刷新导致的凭据版本变化不视作换号，认证类型或上游身份变化则中止续测。
 - 缺少稳定上游身份的账号，在已有样本且凭据更新时要求新建检测。旧检测没有身份快照时，只有尚无样本或凭据版本未变才会补存当前身份；其他旧检测保留历史，结束后新建一次即可使用稳定身份校验。
@@ -108,7 +109,15 @@ pnpm --dir frontend build
 
 `.github/workflows/release.yml`：推送 `main` 自动构建并发布 Release；也可在 Actions 页面手动触发（`workflow_dispatch`），勾选 `dry_run` 可只构建验收不发布，便于在分支试跑。每次运行用原生 runner（`ubuntu-latest` / `ubuntu-24.04-arm`）同时构建 x86_64 与 aarch64 两种制品，版本号自动生成为「语义版本 + UTC 时间戳」（如 `v0.2.2-20261024.1503`），并附同名 `.sha256`。设计与取舍见 [docs/release-automation.md](docs/release-automation.md)。
 
-直接运行不带 `bundled-engine` 的本机 `cargo test` 另依赖开发用 `meow-llm-detector:4.5.4` Docker 镜像；首次构建优先使用上面的完整脚本，无需这个额外镜像。
+直接运行不带 `bundled-engine` 的本机 `cargo test` 默认使用开发用 `meow-llm-detector:4.5.4` Docker 镜像。若本机已有 Python 和 NumPy，可显式指定 `MODEL_HEALTH_TEST_PYTHON` 为 Python 可执行文件路径，不会根据 Docker 是否安装自动切换环境。例如 PowerShell：
+
+```powershell
+$env:MODEL_HEALTH_TEST_PYTHON='C:/Python313/python.exe'
+cargo test --locked --manifest-path backend/Cargo.toml
+python -X utf8 -B -m unittest discover -s scripts/tests -v
+```
+
+发布构建仍使用内嵌引擎。构建脚本同时校验 Python 冒烟编码与 Rust SDK 的 GPE2/HME1 格式；安装包冒烟覆盖 SSE、两种 WebSocket 封套、多批次和独立 EOF。修复设计与验收范围见 [Responses 流修复方案](docs/investigation/2026-10-24-arm-detection-failures.md)。
 
 浏览器预览显式标注「模拟」，生产构建会剔除模拟宿主与模拟数据模块。`scripts/browser-qa.mjs` 支持 `PLAYWRIGHT_PATH`、`CHROME_BINARY`、`PREVIEW_URL`，检查双方法切换、选择保留、报告隔离、开始→暂停→继续→结束→历史，以及浅/深/窄屏、空/错/加载状态。`scripts/updates-browser-qa.mjs` 使用相同环境变量，验证来源地址、更新检查状态和检查失败时模型表单仍可使用，并在 `sandbox="allow-scripts"` 的隔离页面验证生产资源与地址复制。
 

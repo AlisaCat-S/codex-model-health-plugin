@@ -1,4 +1,4 @@
-"""Exercise the packaged executable over SDK v2; public GitHub checks are opt-in."""
+"""Exercise the packaged executable over SDK v5; public GitHub checks are opt-in."""
 import hashlib
 import json
 import os
@@ -12,6 +12,7 @@ import tempfile
 import urllib.error
 import urllib.request
 from pathlib import Path
+from model_stream_fixture import encode_model_batch, response_payload
 
 package = Path(sys.argv[1]).resolve()
 continuous = "--continuous" in sys.argv[2:]
@@ -116,7 +117,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                 message["result"] = value
         return message, payload
 
-    host = {"executions": 0, "state": {}, "callbacks": [], "numeric": False, "http_body": None}
+    host = {"executions": 0, "state": {}, "callbacks": [], "numeric": False, "http_body": None, "model_read": 0, "model_open": False}
 
     def runtime_account():
         return {"account_id": "smoke-account", "provider_id": "openai", "credential_revision": 1 + host["executions"],
@@ -203,16 +204,33 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                 pending = next(r["value"] for r in host["state"].values() if r["value"]["inflight"])
                 job = next(j for j in pending["plan"]["jobs"] if j["job_id"] == pending["inflight"])
                 assert body["input"] == [{"role": "user", "content": job["prompt"]}]
+            assert not host["model_open"], "previous model stream was not released"
+            host["model_open"] = True
+            host["model_read"] = 0
             host["executions"] += 1
             return {"request_id": f'fixture-request-{host["executions"]}', "stream": "fixture-stream"}, b""
         if method == "host.model.stream_read":
+            assert host["model_open"] and params["stream"] == "fixture-stream"
+            index = host["model_read"]
+            host["model_read"] += 1
+            if index == 3:
+                host["model_open"] = False
+                return {"events": 0, "end": True}, b""
             answer = ','.join(str(1 + (i * 37 + 13) % 355) for i in range(332)) if host["numeric"] else "3"
-            data = {"type": "response.completed", "response": {"id": "fixture-response", "status": "completed",
-                    "output": [{"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": answer}]}],
-                    "usage": {"input_tokens": 10, "output_tokens": 1}}}
-            metadata = json.dumps({"wire": {"protocol": "openai", "payload": {"kind": "json", "event": None, "data": data}}}).encode()
-            event = b"GPE2" + struct.pack(">III", len(metadata), 0, 0) + metadata
-            return {"events": 1, "end": True}, b"HME1" + struct.pack(">II", 1, len(event)) + event
+            events = [
+                {"type": "response.created", "response": {"id": "fixture-response"}},
+                {"type": "response.output_text.delta", "delta": answer},
+                {"type": "response.completed", "response": {"id": "fixture-response", "status": "completed",
+                 "output": [{"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": answer}]}],
+                 "usage": {"input_tokens": 10, "output_tokens": 1}}},
+            ]
+            # 每个制品覆盖四种原生封套；终态事件后仍要读独立 EOF，确保结算与句柄回收。
+            mode = ("json", "web_socket", "web_socket_text", "raw_sse")[(host["executions"] - 1) % 4]
+            return {"events": 1, "end": False}, encode_model_batch([response_payload(events[index], mode)])
+        if method == "host.model.stream_close":
+            assert host["model_open"], "duplicate model close"
+            host["model_open"] = False
+            return {}, b""
         raise AssertionError("unexpected callback: " + method)
 
     def api(path, body=None):
@@ -338,6 +356,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             assert host["executions"] == before_executions
             assert all(m.startswith("host.http.") for m in host["callbacks"][before_calls:])
             print("UPDATES PASS: sources=2; per_source_cache=PASS; account_key_calls=0; state_changes=0; real_model_calls=0", flush=True)
+        assert not host["model_open"], "model EOF was not consumed"
         send({"type": "shutdown"})
         process.wait(timeout=15)
         assert process.returncode == 0, process.stderr.read().decode()

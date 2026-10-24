@@ -10,7 +10,7 @@ bundled-engine = []
 [dependencies]
 gateway-plugin-sdk = { git = "https://github.com/zyycn/codex-proxy-rs.git", rev = "76291f448cdf1d1da2027da32b7c949deb998c7a", features = ["io"] }
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = { version = "1.0.150", features = ["float_roundtrip"] }
+serde_json = { version = "1.0.150", features = ["float_roundtrip", "raw_value"] }
 tokio = { version = "1.52.3", default-features = false, features = ["io-std", "io-util", "macros", "rt", "sync", "time", "process"] }
 
 [profile.release]

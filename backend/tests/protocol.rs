@@ -14,6 +14,10 @@ use std::{
 };
 use tokio::io::{DuplexStream, ReadHalf, WriteHalf};
 
+#[path = "support/stream.rs"]
+mod stream;
+use stream::{json_wire, wire};
+
 struct Peer {
     reader: ReadHalf<DuplexStream>,
     writer: WriteHalf<DuplexStream>,
@@ -34,30 +38,41 @@ impl Peer {
             let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
                 .parent()
                 .unwrap();
-            codex_model_health_plugin::engine::Engine::command(
-                [
-                    "docker",
-                    "run",
-                    "--rm",
-                    "-i",
-                    "--network",
-                    "none",
-                    "--read-only",
-                    "--tmpfs",
-                    "/tmp:rw,noexec,nosuid,size=128m",
-                    "-e",
-                    "PYTHONDONTWRITEBYTECODE=1",
-                    "-v",
-                    &format!("{}:/fixture:ro", root.display()),
-                    "--entrypoint",
-                    "python",
-                    "meow-llm-detector:4.5.4",
-                    "/fixture/engine/worker.py",
-                ]
-                .into_iter()
-                .map(Into::into)
-                .collect(),
-            )
+            // 本地 Python 是显式选择，不根据 Docker 是否安装悄悄切换测试环境。
+            let command: Vec<std::ffi::OsString> =
+                if let Some(python) = std::env::var_os("MODEL_HEALTH_TEST_PYTHON") {
+                    vec![
+                        python,
+                        "-X".into(),
+                        "utf8".into(),
+                        "-B".into(),
+                        root.join("engine/worker.py").into_os_string(),
+                    ]
+                } else {
+                    [
+                        "docker",
+                        "run",
+                        "--rm",
+                        "-i",
+                        "--network",
+                        "none",
+                        "--read-only",
+                        "--tmpfs",
+                        "/tmp:rw,noexec,nosuid,size=128m",
+                        "-e",
+                        "PYTHONDONTWRITEBYTECODE=1",
+                        "-v",
+                        &format!("{}:/fixture:ro", root.display()),
+                        "--entrypoint",
+                        "python",
+                        "meow-llm-detector:4.5.4",
+                        "/fixture/engine/worker.py",
+                    ]
+                    .into_iter()
+                    .map(Into::into)
+                    .collect()
+                };
+            codex_model_health_plugin::engine::Engine::command(command)
         };
         Self::with_engine(engine).await
     }
@@ -175,6 +190,10 @@ struct Host {
     account_patch: Option<Value>,
     repeat_cursor: bool,
     numeric_answer: bool,
+    model_events: Option<VecDeque<ExecutionEvent>>,
+    model_read_reply: Option<(Value, Vec<u8>)>,
+    model_open: bool,
+    end_with_last: bool,
     callbacks: Vec<String>,
     http: VecDeque<(u16, Vec<u8>)>,
     http_body: Option<Vec<u8>>,
@@ -222,7 +241,9 @@ impl Host {
                     serde_json::from_value(params["headers"].clone()).unwrap();
                 let headers: Vec<(String, String)> = headers
                     .into_iter()
-                    .map(|(name, value)| (name, String::from_utf8(value).expect("header 不是 UTF-8")))
+                    .map(|(name, value)| {
+                        (name, String::from_utf8(value).expect("header 不是 UTF-8"))
+                    })
                     .collect();
                 assert_eq!(headers.len(), 3);
                 assert_eq!(
@@ -246,7 +267,9 @@ impl Host {
                 }
                 let (status, body) = self.http.pop_front().expect("unexpected HTTP request");
                 self.http_body = Some(body);
-                metadata(json!({"status":status,"http_version":"HTTP/1.1","headers":[],"stream":"github","trailers":[]}))
+                metadata(
+                    json!({"status":status,"http_version":"HTTP/1.1","headers":[],"stream":"github","trailers":[]}),
+                )
             }
             "host.http.stream_read" => {
                 assert!(payload.is_empty());
@@ -319,6 +342,8 @@ impl Host {
                 assert_eq!(params["model"], "gpt-6-astra");
                 assert!(self.state.values().any(|(v, _)| v["inflight"].is_string()
                     && v["attempts"].as_array().unwrap().last().unwrap()["status"] == "pending"));
+                assert!(!self.model_open, "previous model stream was not released");
+                self.model_open = true;
                 self.executions.push(params);
                 let body: Value = serde_json::from_slice(&payload).unwrap();
                 assert_eq!(body["stream"], true);
@@ -331,49 +356,67 @@ impl Host {
             }
             "host.model.stream_read" => {
                 if self.fail {
-                    return Err(PluginFault::new(
-                        ErrorCode::Upstream,
-                        "fixture network error",
-                    ));
+                    let mut fault = PluginFault::new(ErrorCode::Upstream, "fixture network error");
+                    fault.http_status = Some(503);
+                    fault.send_state = gateway_plugin_sdk::SendState::Sent;
+                    fault.details = Some(json!({"raw_upstream_error":"fixture-secret"}));
+                    return Err(fault);
                 }
-                let prompt = self.bodies.last().unwrap()["input"]
-                    .as_array()
-                    .unwrap()
-                    .last()
-                    .unwrap()["content"]
-                    .as_str()
-                    .unwrap()
-                    .to_lowercase();
-                let answer = if self.numeric_answer {
-                    (0..332)
-                        .map(|i| (1 + (i * 37 + 13) % 355).to_string())
-                        .collect::<Vec<_>>()
-                        .join(",")
-                } else if prompt.contains("bird") {
-                    "robin".into()
-                } else if prompt.contains("country") {
-                    "canada".into()
-                } else {
-                    "3".into()
+                assert!(self.model_open, "read after EOF or close");
+                if let Some((state, payload)) = self.model_read_reply.take() {
+                    if state["end"] == true {
+                        self.model_open = false;
+                    }
+                    return Ok((state, payload));
+                }
+                if self.model_events.is_none() {
+                    let prompt = self.bodies.last().unwrap()["input"]
+                        .as_array()
+                        .unwrap()
+                        .last()
+                        .unwrap()["content"]
+                        .as_str()
+                        .unwrap()
+                        .to_lowercase();
+                    let answer = if self.numeric_answer {
+                        (0..332)
+                            .map(|i| (1 + (i * 37 + 13) % 355).to_string())
+                            .collect::<Vec<_>>()
+                            .join(",")
+                    } else if prompt.contains("bird") {
+                        "robin".into()
+                    } else if prompt.contains("country") {
+                        "canada".into()
+                    } else {
+                        "3".into()
+                    };
+                    let data = json!({"type":"response.completed","response":{"id":"response-one","status":"completed","output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":answer}]}],"usage":{"input_tokens":10,"output_tokens":1}}});
+                    self.model_events = Some(vec![wire(json_wire(data))].into());
+                }
+                let queue = self.model_events.as_mut().unwrap();
+                let Some(event) = queue.pop_front() else {
+                    self.model_open = false;
+                    self.model_events = None;
+                    return metadata(json!({"events":0,"end":true}));
                 };
-                let data = json!({"type":"response.completed","response":{"id":"response-one","status":"completed","output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":answer}]}],"usage":{"input_tokens":10,"output_tokens":1}}});
+                let end = self.end_with_last && queue.is_empty();
+                if end {
+                    self.model_open = false;
+                    self.model_events = None;
+                }
                 let payload = ModelEventBatch {
-                    events: vec![ExecutionEvent::wire(WireEvent {
-                        protocol: "openai".into(),
-                        payload: WirePayload::Json {
-                            event: None,
-                            data,
-                            id: None,
-                            retry: None,
-                            raw_sse: None,
-                        },
-                    })],
+                    events: vec![event],
                 }
                 .encode()
                 .unwrap();
-                Ok((json!({"events":1,"end":true}), payload))
+                Ok((json!({"events":1,"end":end}), payload))
             }
-            "host.model.stream_close" => metadata(json!({})),
+            "host.model.stream_close" => {
+                assert!(self.model_open, "close after EOF or duplicate close");
+                self.model_open = false;
+                self.model_events = None;
+                metadata(json!({}))
+            }
             _ => panic!("unexpected callback: {method}"),
         }
     }
@@ -795,6 +838,11 @@ async fn network_errors_pause_without_calling_them_model_mismatch() {
     assert_eq!(result["run"]["report"]["verdict"], "insufficient");
     assert_eq!(result["run"]["report"]["valid_samples"], 0);
     assert_eq!(result["run"]["attempts"][0]["request_id"], "request-1");
+    let sample = &result["run"]["attempts"][0];
+    assert_eq!(sample["error_code"], "upstream");
+    assert_eq!(sample["http_status"], 503);
+    assert_eq!(sample["send_state"], "sent");
+    assert!(!result.to_string().contains("fixture-secret"));
     assert_eq!(host.executions.len(), 1);
     assert!(
         peer.api("api/runs/step", Some(json!({"id":run["id"]})), &mut host)

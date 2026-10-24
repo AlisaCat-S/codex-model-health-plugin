@@ -359,7 +359,9 @@ async fn step(
             }
         },
         Err(error) => {
-            json!({"status":"error","error":excerpt(&error.fault.message),"request_id":error.request_id})
+            // 只保存公开错误事实；fault.details 可能含原始上游正文或头，不能写入历史。
+            json!({"status":"error","error":excerpt(&error.fault.message),"request_id":error.request_id,
+                "error_code":error.fault.code,"http_status":error.fault.http_status,"send_state":error.fault.send_state})
         }
     };
     let _lock = service.state.lock().await;

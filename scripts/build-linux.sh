@@ -8,6 +8,7 @@ case "$TARGET" in
 esac
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+python3 -m unittest discover -s scripts/tests -v
 docker buildx build --platform "$PLATFORM" -f engine/Dockerfile --output type=local,dest=.build/engine .
 mkdir -p .build/cargo
 docker run --rm --platform "$PLATFORM" \
