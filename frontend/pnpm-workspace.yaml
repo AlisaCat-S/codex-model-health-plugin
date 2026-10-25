@@ -1,2 +1,2 @@
-allowBuilds:
-  '@codex-proxy/ui@https://codeload.github.com/zyycn/codex-proxy-ui/tar.gz/83c92024dec82b5a644d6adca96a140c541684b0': true
+# UI 使用官方预构建 Release；不执行依赖安装脚本。
+allowBuilds: {}

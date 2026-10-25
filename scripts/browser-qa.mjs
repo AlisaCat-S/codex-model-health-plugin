@@ -14,6 +14,19 @@ page.on('pageerror',e=>errors.push(e.message))
 const base=process.env.PREVIEW_URL || 'http://127.0.0.1:4175/'
 async function shot(name){await page.waitForTimeout(300);await page.screenshot({path:`${root}/review/screenshots/${name}.png`,fullPage:true,animations:'disabled'})}
 async function select(label, option){const trigger=page.getByRole('combobox',{name:label,exact:true});await trigger.click();const controls=await trigger.getAttribute('aria-controls');await page.locator(`[id="${controls}"]`).getByRole('option',{name:option,exact:true}).click()}
+async function selectFiltered(label, query, option) {
+  const trigger = page.getByRole('combobox',{name:label,exact:true})
+  await trigger.click()
+  const controls = await trigger.getAttribute('aria-controls')
+  const listbox = page.locator(`[id="${controls}"]`)
+  const search = page.getByRole('combobox',{name:'搜索选项',exact:true}).and(page.locator(`[aria-controls="${controls}"]`))
+  await search.fill('__no_match__')
+  await listbox.getByText('没有匹配项',{exact:true}).waitFor()
+  assert.equal(await listbox.getByRole('option').count(),0)
+  await search.fill(query)
+  assert.equal(await listbox.getByRole('option').count(),1)
+  await listbox.getByRole('option',{name:option,exact:true}).click()
+}
 async function configureTrace(account = 'primary@example.com') {
   await page.getByRole('radio',{name:'ModelTrace',exact:true}).click()
   await select('检测账号',account)
@@ -46,10 +59,14 @@ try {
   await page.goto(`${base}?preview=1`)
   await page.getByText('Meow 4.5.4',{exact:true}).waitFor()
   await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).waitFor()
+  const historyRow = page.getByRole('row').filter({hasText:'主账号 A · 固定代理'})
+  assert.equal(await historyRow.getByRole('cell',{name:'Meow',exact:true}).count(),1)
+  assert.equal(await historyRow.getByRole('cell',{name:'快速检测',exact:true}).count(),1)
+  assert.match(await historyRow.getByRole('cell').first().textContent(),/\d{4}\/\d{1,2}\/\d{1,2}/)
   await shot('light-setup')
-  await select('检测账号','primary@example.com')
-  await select('计量 Key','模型体检专用')
-  await select('请求模型','gpt-6-astra')
+  await selectFiltered('检测账号','primary','primary@example.com')
+  await selectFiltered('计量 Key','体检','模型体检专用')
+  await selectFiltered('请求模型','astra','gpt-6-astra')
   await select('对照基线','gpt-6-astra')
   await page.getByRole('button',{name:'开始检测',exact:true}).click()
   await page.getByRole('button',{name:'当前题完成后暂停',exact:true}).waitFor()
@@ -130,7 +147,7 @@ try {
   await page.getByText('正在读取宿主账号与检测基线…',{exact:true}).waitFor()
   await shot('loading')
   assert.deepEqual(errors,[])
-  const result='BROWSER: meow/modeltrace/switch/pinned-selection/email-display/name-fallback/account-id-binding/frozen-report/legacy-history/start/pause/resume/stop/samples/short-answer/light/dark/mobile/empty/error/loading PASS; console_errors=0; page_overflow=0\n'
+  const result='BROWSER: meow/modeltrace/switch/pinned-selection/email-display/name-fallback/account-id-binding/frozen-report/legacy-history/table-formatters/filtered-select/chinese-empty-state/start/pause/resume/stop/samples/short-answer/light/dark/mobile/empty/error/loading PASS; console_errors=0; page_overflow=0\n'
   writeFileSync(`${root}/review/BROWSER-QA.txt`,result)
   console.log(result.trim())
 } finally {await browser.close()}

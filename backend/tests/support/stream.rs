@@ -93,6 +93,54 @@ async fn all_native_envelopes_preserve_answers_and_drain_to_eof() {
 }
 
 #[tokio::test]
+async fn current_observation_frames_preserve_native_answers_and_drain_to_eof() {
+    let mut peer = Peer::new().await;
+    let mut host = Host::default();
+    let run = peer.start(&mut host).await;
+    for (index, transport) in ["http_sse", "websocket"].into_iter().enumerate() {
+        let mut observation = ResponseObservation::new(transport);
+        observation.status_code = Some(200);
+        observation.provider_metadata = Some("fixture-secret".into());
+        let mut data = completed();
+        // 宿主移除的是自己的模型观测字段，原生 response.model 仍然透传。
+        data["response"]["model"] = json!("upstream-reported-model");
+        let payload = if transport == "websocket" {
+            websocket(data, false)
+        } else {
+            WirePayload::RawSse {
+                frame: format!("data: {data}\n\n").into_bytes(),
+            }
+        };
+        host.model_events = Some(
+            vec![
+                ExecutionEvent {
+                    host: Some(Box::new(ExecutionFacts {
+                        observation: Some(observation),
+                        ..Default::default()
+                    })),
+                    ..Default::default()
+                },
+                wire(payload),
+            ]
+            .into(),
+        );
+        let result = step(&mut peer, &mut host, &run).await;
+        assert_eq!(result["attempts"][index]["answer"], "3");
+        assert_eq!(result["report"]["valid_samples"], index + 1);
+        assert!(!result.to_string().contains("fixture-secret"));
+        assert!(!host.model_open);
+    }
+    assert_eq!(closes(&host), 0);
+    assert_eq!(
+        host.callbacks
+            .iter()
+            .filter(|m| *m == "host.model.stream_read")
+            .count(),
+        6
+    );
+}
+
+#[tokio::test]
 async fn two_http_successes_then_four_websocket_successes() {
     let mut peer = Peer::new().await;
     let mut host = Host::default();

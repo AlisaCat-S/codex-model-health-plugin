@@ -15,7 +15,9 @@
 | [Meow LLM Detector — chen-006](https://github.com/chen-006/meow-llm-detector) | 题目、响应解析、答案归一化与行为概率评分；引擎 4.5.4 / 基线 4.5.3-predictive.2；[提交 dc608d5](https://github.com/chen-006/meow-llm-detector/tree/dc608d5c097abf96575d5b34f49952ddbd27c281) | [PolyForm Noncommercial 1.0.0](vendor/meow/LICENSE) |
 | [ModelTrace — xqy2006](https://github.com/xqy2006/ModelTrace) | 原始指纹算法与统一候选库；[提交 6cd4a8f](https://github.com/xqy2006/ModelTrace/tree/6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2) | [MIT](vendor/modeltrace/LICENSE) |
 
-宿主集成使用 [Codex Proxy 公开 SDK](https://github.com/zyycn/codex-proxy-rs/tree/76291f448cdf1d1da2027da32b7c949deb998c7a/backend/crates/gateway-plugin/sdk)（v3.30.2，插件 RPC 协议 v5）、[@codex-proxy/ui](https://github.com/zyycn/codex-proxy-ui) v0.3.2，并参考 [官方插件示例与规范](https://github.com/zyycn/codex-proxy-plugins)。
+宿主集成使用 [Codex Proxy 公开 SDK](https://github.com/zyycn/codex-proxy-rs/tree/06e1d8f0ac33d8633198d837c4f9017ad466f358/backend/crates/gateway-plugin/sdk)（v3.31.1，插件 RPC 协议 v5）、[@codex-proxy/ui](https://github.com/zyycn/codex-proxy-ui) v0.6.1，并参考 [官方插件示例与规范](https://github.com/zyycn/codex-proxy-plugins)。
+
+本次升级的字段、能力版本及 UI 破坏性变更见 [SDK 适配分析](docs/sdk-upgrade-2026-10-25.md)。当前源码构建要求宿主 **3.31.1+**；3.31.0 及更早宿主应保留升级前的插件制品，不能仅凭同为 RPC v5 强行切换。已发布制品以包内清单为准。
 
 完整集成包按 [PolyForm Noncommercial 1.0.0](LICENSE) 分发，包含非商业用途条件；ModelTrace 等第三方文件仍保留各自的许可证。本仓库是源码公开项目，不将整个包宣称为 MIT 或无商业用途限制。原始版权声明、第三方组件声明与依赖许可证见 [NOTICE](NOTICE)，安装包中也附带相关文件。
 
@@ -24,7 +26,7 @@
 | 项目 | 当前支持 |
 | --- | --- |
 | 插件 ID / 版本 | `local.model-health` / `0.2.2` |
-| 宿主清单范围 | `>=3.29.7, <4.0.0`（插件 RPC 协议 v5）；实际使用验证为 3.30.2，其他版本需另验 |
+| 宿主清单范围 | `>=3.31.1, <4.0.0`（插件 RPC 协议 v5、management v2）；源码适配与离线协议验证基于 3.31.1 SDK |
 | Release 平台 | Linux x86_64 与 ARM64（aarch64），glibc 2.36+（如 Debian 12）；不适用于 Alpine/musl 或 Windows |
 | 运行方式 | `trustedProcess`，插件以宿主系统身份运行，安装代表完整信任；不是操作系统沙箱 |
 | 扩展能力 | 独立管理页面；不注册请求中间件、调度器、观察器或自动维护任务 |
@@ -91,11 +93,11 @@ Meow 报告给出行为匹配、行为偏移或证据不足。ModelTrace 报告�
 
 ## 构建与验证
 
-构建工具：Docker Buildx、Node 24+、pnpm 12.14（`allowBuilds` 需 pnpm 11+）、Python 3.9+（安装包冒烟测试）、Rust 1.99.1（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `76291f448cdf1d1da2027da32b7c949deb998c7a`（v3.30.2，插件 RPC 协议 v5），前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
+构建工具：Docker Buildx、Node 24+、pnpm 12.14、Python 3.9+（安装包冒烟测试）、Rust 1.99.1（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `06e1d8f0ac33d8633198d837c4f9017ad466f358`（v3.31.1，插件 RPC 协议 v5）。UI 使用官方固定版本 Release 归档，不再从 Git 源码安装或执行其构建脚本。前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
 
 ```sh
 cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-  --rev 76291f448cdf1d1da2027da32b7c949deb998c7a \
+  --rev 06e1d8f0ac33d8633198d837c4f9017ad466f358 \
   --locked --root .tools/cpr-cli codex-proxy-plugin-cli
 CPR_PLUGIN_BIN="$PWD/.tools/cpr-cli/bin/cpr-plugin" ./scripts/build-linux.sh
 pnpm --dir frontend install --frozen-lockfile

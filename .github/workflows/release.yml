@@ -119,7 +119,7 @@ jobs:
           docker run --rm --platform "${{ matrix.platform }}" \
             -v "$PWD:/work" -w /work rust:1.99-slim-bookworm \
             sh -c 'cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-              --rev 76291f448cdf1d1da2027da32b7c949deb998c7a \
+              --rev 06e1d8f0ac33d8633198d837c4f9017ad466f358 \
               --locked --root /work/.tools/cpr-cli codex-proxy-plugin-cli'
           test -x .tools/cpr-cli/bin/cpr-plugin
       - name: 前端单测

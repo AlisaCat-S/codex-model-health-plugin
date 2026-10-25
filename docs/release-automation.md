@@ -28,7 +28,7 @@
 
 仓库为公开仓库，GitHub 提供免费的 arm64 托管 runner，因此无需 QEMU 模拟或交叉工具链，两个架构均为原生构建，与既有本地构建命令保持一致（glibc/Debian 12 基线不变）。
 
-打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev 76291f448cdf1d1da2027da32b7c949deb998c7a --locked`（v3.30.2，插件 RPC 协议 v5），在对应架构的 `rust:1.99-slim-bookworm` 容器内安装，产物为该架构原生二进制。
+打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev 06e1d8f0ac33d8633198d837c4f9017ad466f358 --locked`（v3.31.1，插件 RPC 协议 v5），在对应架构的 `rust:1.99-slim-bookworm` 容器内安装，产物为该架构原生二进制。
 
 ## 权限
 

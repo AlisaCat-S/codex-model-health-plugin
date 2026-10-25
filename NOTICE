@@ -8,8 +8,8 @@ Original project: https://github.com/chen-006/gpt56_api_detector
 Meow and this integrated distribution: PolyForm Noncommercial 1.0.0, see LICENSE.
 Full original notices remain in vendor/meow/THIRD_PARTY_NOTICES.md in the source archive.
 
-Host SDK: zyycn/codex-proxy-rs at fef52b3717019513108733549508377a309f129d, Apache-2.0.
-UI: zyycn/codex-proxy-ui v0.3.2, Apache-2.0.
+Host SDK: zyycn/codex-proxy-rs at 06e1d8f0ac33d8633198d837c4f9017ad466f358, Apache-2.0.
+UI: zyycn/codex-proxy-ui v0.6.1, Apache-2.0.
 Vue, Vite, Tailwind CSS and lucide dependencies retain their original licenses.
 Bundled Python/NumPy/HTTPX/keyring/PyInstaller runtime notices and versions are
 provided in engine-legal/ENGINE-LICENSES.txt and ENGINE-REQUIREMENTS.txt.

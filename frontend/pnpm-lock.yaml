@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@codex-proxy/ui':
-        specifier: github:zyycn/codex-proxy-ui#v0.3.2
-        version: https://codeload.github.com/zyycn/codex-proxy-ui/tar.gz/83c92024dec82b5a644d6adca96a140c541684b0(vite@8.3.1(@types/node@26.6.3)(jiti@2.7.0))(vue@3.5.43(typescript@6.0.3))
+        specifier: https://github.com/zyycn/codex-proxy-ui/releases/download/v0.6.1/codex-proxy-ui-0.6.1.tgz
+        version: https://github.com/zyycn/codex-proxy-ui/releases/download/v0.6.1/codex-proxy-ui-0.6.1.tgz(vite@8.3.1(@types/node@26.6.3)(jiti@2.7.0))(vue@3.5.43(typescript@6.0.3))
       '@lucide/vue':
-        specifier: ^1.47.0
-        version: 1.49.0(vue@3.5.43(typescript@6.0.3))
+        specifier: ^1.53.0
+        version: 1.61.0(vue@3.5.43(typescript@6.0.3))
       '@vueuse/core':
         specifier: ^15.0.0
         version: 15.0.0(vue@3.5.43(typescript@6.0.3))
@@ -72,9 +72,9 @@ packages:
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
-  '@codex-proxy/ui@https://codeload.github.com/zyycn/codex-proxy-ui/tar.gz/83c92024dec82b5a644d6adca96a140c541684b0':
-    resolution: {gitHosted: true, integrity: sha512-9s6sXP8QrUZATh80wQnIMi68lORp+HuixhoXM2WANsgULqF0Rq270VHllSCNISUCj6aP8t5ugNDPkIrkAFpu3A==, tarball: https://codeload.github.com/zyycn/codex-proxy-ui/tar.gz/83c92024dec82b5a644d6adca96a140c541684b0}
-    version: 0.3.2
+  '@codex-proxy/ui@https://github.com/zyycn/codex-proxy-ui/releases/download/v0.6.1/codex-proxy-ui-0.6.1.tgz':
+    resolution: {integrity: sha512-hKN9xBP/B9nbGKaTyOclepSli8aq6UqABXbHGpwDo1BuYmIGzXFwBTaL1NSWHHeEMw02WoF1APC9NcwQ6DuxAg==, tarball: https://github.com/zyycn/codex-proxy-ui/releases/download/v0.6.1/codex-proxy-ui-0.6.1.tgz}
+    version: 0.6.1
     engines: {node: '>=24'}
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
@@ -99,8 +99,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lucide/vue@1.49.0':
-    resolution: {integrity: sha512-7xS5gYnLoIx0jlmlRE3Rb71fIHaNqhVBiKMpOlqrYt6nMPy3C/62HJHo5XNsV3HTK+9l3M0hXICrIA7S5v6y5Q==}
+  '@lucide/vue@1.61.0':
+    resolution: {integrity: sha512-XYclbwUQ6Mvf0UskBG9gJH91BdF3VK4Tt6Pv8PSntwPwNnf357PCQnma4TrzOEdwD49UYCtsTafpfytRIxm1cQ==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -436,6 +436,9 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
+  dayjs@1.11.23:
+    resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
+
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
@@ -632,8 +635,8 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  marked@18.0.14:
-    resolution: {integrity: sha512-mBHK6FBHuBAlhgRe88w9F0O1AbwwXJUcQibUbC/QcdTbVGAD7aWza+xt3N6oT/jCZx3/OMeS+8rnuiHZcQ9s7A==}
+  marked@18.1.1:
+    resolution: {integrity: sha512-zEGgrtUG8crk+TrMacJSVABU4DYDDkS8uqgU3ohrn/2fW9C2AEfUrO3m6IhpIpQpl7YcVpiXXC9cSMWDANT3dg==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -771,17 +774,18 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@codex-proxy/ui@https://codeload.github.com/zyycn/codex-proxy-ui/tar.gz/83c92024dec82b5a644d6adca96a140c541684b0(vite@8.3.1(@types/node@26.6.3)(jiti@2.7.0))(vue@3.5.43(typescript@6.0.3))':
+  '@codex-proxy/ui@https://github.com/zyycn/codex-proxy-ui/releases/download/v0.6.1/codex-proxy-ui-0.6.1.tgz(vite@8.3.1(@types/node@26.6.3)(jiti@2.7.0))(vue@3.5.43(typescript@6.0.3))':
     dependencies:
       '@ant-design/colors': 8.0.1
       '@ant-design/fast-color': 3.0.1
-      '@lucide/vue': 1.49.0(vue@3.5.43(typescript@6.0.3))
+      '@lucide/vue': 1.61.0(vue@3.5.43(typescript@6.0.3))
       '@vueuse/core': 15.0.0(vue@3.5.43(typescript@6.0.3))
       '@vueuse/integrations': 15.0.0(sortablejs@1.15.7)(vue@3.5.43(typescript@6.0.3))
+      dayjs: 1.11.23
       dompurify: 3.4.16
       es-toolkit: 1.52.0
       gsap: 3.15.0
-      marked: 18.0.14
+      marked: 18.1.1
       sortablejs: 1.15.7
       vue: 3.5.43(typescript@6.0.3)
     optionalDependencies:
@@ -818,7 +822,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lucide/vue@1.49.0(vue@3.5.43(typescript@6.0.3))':
+  '@lucide/vue@1.61.0(vue@3.5.43(typescript@6.0.3))':
     dependencies:
       vue: 3.5.43(typescript@6.0.3)
 
@@ -1062,6 +1066,8 @@ snapshots:
 
   csstype@3.2.3: {}
 
+  dayjs@1.11.23: {}
+
   detect-libc@2.1.2: {}
 
   dompurify@3.4.16:
@@ -1194,7 +1200,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  marked@18.0.14: {}
+  marked@18.1.1: {}
 
   muggle-string@0.4.1: {}
 
