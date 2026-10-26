@@ -1,4 +1,4 @@
-账号模型体检 / Codex Proxy Model Health 0.2.2
+账号模型体检 / Codex Proxy Model Health 0.3.0
 
 This plugin integrates unchanged Meow LLM Detector source from commit
 dc608d5c097abf96575d5b34f49952ddbd27c281 (engine 4.5.4; baseline 4.5.3-predictive.2).
@@ -8,8 +8,8 @@ Original project: https://github.com/chen-006/gpt56_api_detector
 Meow and this integrated distribution: PolyForm Noncommercial 1.0.0, see LICENSE.
 Full original notices remain in vendor/meow/THIRD_PARTY_NOTICES.md in the source archive.
 
-Host SDK: zyycn/codex-proxy-rs at 06e1d8f0ac33d8633198d837c4f9017ad466f358, Apache-2.0.
-UI: zyycn/codex-proxy-ui v0.6.1, Apache-2.0.
+Host SDK: zyycn/codex-proxy-rs at 8c8618aa0f841638262262e3338c115bc075f125, Apache-2.0.
+UI: zyycn/codex-proxy-ui v0.7.0, Apache-2.0.
 Vue, Vite, Tailwind CSS and lucide dependencies retain their original licenses.
 Bundled Python/NumPy/HTTPX/keyring/PyInstaller runtime notices and versions are
 provided in engine-legal/ENGINE-LICENSES.txt and ENGINE-REQUIREMENTS.txt.

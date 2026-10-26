@@ -1,7 +1,7 @@
 # 自动构建发布（Issue #1）
 # 触发：推送 main 自动构建并发布 Release；workflow_dispatch 支持在任意分支试跑
 # （dry_run=true 时只构建不发布）。版本号 = plugin.json 语义版本 + UTC 时间戳后缀，
-# 如 v0.2.2-20261024.1503；每次运行发布 x86_64 与 aarch64 两种 Linux glibc 制品。
+# 如 v0.3.0-20261026.1200；每次运行发布 x86_64 与 aarch64 两种 Linux glibc 制品。
 name: release
 
 on:
@@ -119,7 +119,7 @@ jobs:
           docker run --rm --platform "${{ matrix.platform }}" \
             -v "$PWD:/work" -w /work rust:1.99-slim-bookworm \
             sh -c 'cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-              --rev 06e1d8f0ac33d8633198d837c4f9017ad466f358 \
+              --rev 8c8618aa0f841638262262e3338c115bc075f125 \
               --locked --root /work/.tools/cpr-cli codex-proxy-plugin-cli'
           test -x .tools/cpr-cli/bin/cpr-plugin
       - name: 前端单测
@@ -151,6 +151,7 @@ jobs:
     env:
       TAG: ${{ needs.prepare.outputs.tag }}
     steps:
+      - uses: actions/checkout@v4
       - name: 汇总两个架构的制品
         uses: actions/download-artifact@v4
         with:
@@ -168,10 +169,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          HOST_RANGE="$(python3 -c 'import json; print(json.load(open("plugin.json", encoding="utf-8"))["engines"]["codex-proxy-rs"])')"
           NOTES="$(cat <<EOF
           自动构建发布（时间版本号，UTC）。
 
           - 版本：${TAG#v}（语义版本 + 时间戳后缀，时间部分为 UTC）
+          - 对应宿主：[Codex Proxy RS v3.33.0](https://github.com/zyycn/codex-proxy-rs/releases/tag/v3.33.0)，插件 RPC **v7**；清单兼容范围：\`${HOST_RANGE}\`。
+          - 升级：本版使用 v3.33.0 SDK 和同源 CLI 重新构建打包；3.32.x 及更早宿主请保留匹配的旧插件。RPC v7 宿主不能使用旧版 RPC v5/v6 插件，不能通过只改清单完成升级。
+          - 适配差异与验证：[SDK 升级说明](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/sdk-upgrade-2026-10-26.md)。
           - 制品（Linux glibc 2.36+，如 Debian 12；不支持 Alpine/musl 与 Windows）：
             - \`local.model-health-${TAG#v}-x86_64-unknown-linux-gnu.tar.gz\`（AMD64/Intel 64）
             - \`local.model-health-${TAG#v}-aarch64-unknown-linux-gnu.tar.gz\`（ARM64）

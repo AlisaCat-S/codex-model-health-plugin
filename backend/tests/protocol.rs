@@ -9,10 +9,10 @@ use gateway_plugin_sdk::{
 };
 use serde_json::{Value, json};
 use std::{
-    collections::{BTreeMap, VecDeque},
+    collections::{BTreeMap, BTreeSet, VecDeque},
     time::Duration,
 };
-use tokio::io::{DuplexStream, ReadHalf, WriteHalf};
+use tokio::io::{AsyncReadExt, DuplexStream, ReadHalf, WriteHalf};
 
 #[path = "support/stream.rs"]
 mod stream;
@@ -110,10 +110,18 @@ impl Peer {
             },
         }))
         .await;
-        assert!(matches!(
-            peer.receive().await.message,
-            Message::Ready { .. }
-        ));
+        match peer.receive().await.message {
+            Message::Ready {
+                protocol_version,
+                call_budgets,
+                ..
+            } => {
+                assert_eq!(protocol_version, 7);
+                // 每次管理调用只处理一题；保留默认 120 秒预算，不延长为后台整轮任务。
+                assert!(call_budgets.is_empty());
+            }
+            other => panic!("expected RPC v7 Ready, got {other:?}"),
+        }
         peer
     }
     async fn send(&mut self, frame: Frame) {
@@ -125,15 +133,53 @@ impl Peer {
             .expect("plugin timeout")
             .unwrap()
     }
+    async fn begin_api(&mut self, path: &str, input: Option<Value>) -> u64 {
+        let id = self.sequence;
+        self.sequence += 2;
+        self.send(Frame {
+            message: Message::Call {
+                id,
+                method: "management.handle".into(),
+                context: CallContext {
+                    request: None,
+                    call_id: id,
+                    instance_id: "test".into(),
+                    generation: 1,
+                    incarnation: "test".into(),
+                    stage: Stage::Management,
+                    timeout_ms: 120000,
+                    resource_stream: false,
+                    resource_scope_id: "scope".into(),
+                    request_id: None,
+                    attempt_id: None,
+                    account_id: None,
+                    credential_revision: None,
+                },
+                params: json!({
+                    "method": if input.is_some() { "POST" } else { "GET" },
+                    "path": path,
+                    "query": "",
+                    "content_type": input.as_ref().map(|_| "application/json"),
+                    "headers": [],
+                }),
+            },
+            payload: input
+                .map(|v| serde_json::to_vec(&v).unwrap())
+                .unwrap_or_default(),
+        })
+        .await;
+        id
+    }
     async fn api(
         &mut self,
         path: &str,
         input: Option<Value>,
         host: &mut Host,
     ) -> Result<Value, PluginFault> {
-        let id = self.sequence;
-        self.sequence += 2;
-        self.send(Frame{message:Message::Call{id,method:"management.handle".into(),context:CallContext{request:None,call_id:id,instance_id:"test".into(),generation:1,incarnation:"test".into(),stage:Stage::Management,timeout_ms:120000,resource_stream:false,resource_scope_id:"scope".into(),request_id:None,attempt_id:None,account_id:None,credential_revision:None},params:json!({"method":if input.is_some(){"POST"}else{"GET"},"path":path,"query":"","content_type":input.as_ref().map(|_|"application/json"),"headers":[]})},payload:input.map(|v|serde_json::to_vec(&v).unwrap()).unwrap_or_default()}).await;
+        let id = self.begin_api(path, input).await;
+        let mut epoch = 0;
+        let mut suspended = false;
+        let mut resident = BTreeSet::new();
         loop {
             let frame = self.receive().await;
             match frame.message {
@@ -144,6 +190,8 @@ impl Peer {
                     params,
                 } => {
                     assert_eq!(parent_id, id);
+                    assert!(!suspended);
+                    assert!(resident.insert(cid));
                     let response = match host.callback(&method, params, frame.payload) {
                         Ok((result, payload)) => Frame {
                             message: Message::Result { id: cid, result },
@@ -153,8 +201,34 @@ impl Peer {
                     };
                     self.send(response).await;
                 }
+                Message::Suspend {
+                    id: parent,
+                    epoch: next,
+                } => {
+                    assert_eq!(parent, id);
+                    assert!(frame.payload.is_empty() && !suspended);
+                    assert_eq!(next, epoch + 1);
+                    epoch = next;
+                    suspended = true;
+                }
+                Message::Resume {
+                    id: parent,
+                    epoch: resumed,
+                } => {
+                    assert_eq!((parent, resumed), (id, epoch));
+                    assert!(frame.payload.is_empty() && suspended);
+                    self.send(Frame::control(Message::Resumed { id, epoch }))
+                        .await;
+                    suspended = false;
+                }
+                Message::CallbackConsumed { id: cid, parent_id } => {
+                    assert_eq!(parent_id, id);
+                    assert!(frame.payload.is_empty() && !suspended);
+                    assert!(resident.remove(&cid));
+                }
                 Message::Result { id: rid, result } => {
                     assert_eq!(id, rid);
+                    assert!(!suspended && resident.is_empty());
                     assert_eq!(result["content_type"], "application/json");
                     let body: Value = serde_json::from_slice(&frame.payload).unwrap();
                     let status = result["status"].as_u64().unwrap();
@@ -177,6 +251,77 @@ impl Peer {
     async fn start(&mut self, host: &mut Host) -> Value {
         self.api("api/runs/start",Some(json!({"account_id":"account-b","key_id":"key-b","request_model":"gpt-6-astra","claimed_model":"gpt-6-astra","tier":"low"})),host).await.unwrap()["run"].clone()
     }
+}
+
+async fn models_awaiting_resume_grant(peer: &mut Peer) -> (u64, u64) {
+    let id = peer
+        .begin_api("api/models", Some(json!({"key_id":"key-b"})))
+        .await;
+    let Message::Callback {
+        id: child,
+        parent_id,
+        method,
+        ..
+    } = peer.receive().await.message
+    else {
+        panic!("models must use a host callback");
+    };
+    assert_eq!(parent_id, id);
+    assert_eq!(method, "host.models.list");
+    assert!(
+        matches!(peer.receive().await.message, Message::Suspend { id: parent, epoch: 1 } if parent == id)
+    );
+    peer.send(Frame::control(Message::Result {
+        id: child,
+        result: json!({"models":["gpt-6-astra"]}),
+    }))
+    .await;
+    assert!(
+        matches!(peer.receive().await.message, Message::Resume { id: parent, epoch: 1 } if parent == id)
+    );
+    (id, child)
+}
+
+#[tokio::test]
+async fn rpc_v7_requires_a_resume_grant_before_consuming_the_callback_or_returning() {
+    let mut peer = Peer::new().await;
+    let (id, child) = models_awaiting_resume_grant(&mut peer).await;
+    // read() 可取消；授权前既不能发消费通知，也不能发最终结果。
+    let mut byte = [0];
+    assert!(
+        tokio::time::timeout(Duration::from_millis(25), peer.reader.read(&mut byte))
+            .await
+            .is_err()
+    );
+    peer.send(Frame::control(Message::Resumed { id, epoch: 1 }))
+        .await;
+    assert!(
+        matches!(peer.receive().await.message, Message::CallbackConsumed { id: cid, parent_id } if cid == child && parent_id == id)
+    );
+    let frame = peer.receive().await;
+    assert!(matches!(frame.message, Message::Result { id: parent, .. } if parent == id));
+    assert_eq!(
+        serde_json::from_slice::<Value>(&frame.payload).unwrap(),
+        json!({"models":["gpt-6-astra"]})
+    );
+}
+
+#[tokio::test]
+async fn rpc_v7_cancelled_resume_cannot_be_revived_by_a_late_grant() {
+    let mut peer = Peer::new().await;
+    let (id, _) = models_awaiting_resume_grant(&mut peer).await;
+    peer.send(Frame::control(Message::Cancel { id })).await;
+    peer.send(Frame::control(Message::Resumed { id, epoch: 1 }))
+        .await;
+    assert!(
+        matches!(peer.receive().await.message, Message::Cancelled { id: parent } if parent == id)
+    );
+    let mut host = Host::default();
+    let next = peer
+        .api("api/models", Some(json!({"key_id":"key-b"})), &mut host)
+        .await
+        .unwrap();
+    assert_eq!(next, json!({"models":["gpt-6-astra"]}));
 }
 
 #[derive(Default)]

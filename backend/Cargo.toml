@@ -1,6 +1,6 @@
 [package]
 name = "codex-model-health-plugin"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.99.1"
 
@@ -8,7 +8,7 @@ rust-version = "1.99.1"
 bundled-engine = []
 
 [dependencies]
-gateway-plugin-sdk = { git = "https://github.com/zyycn/codex-proxy-rs.git", rev = "06e1d8f0ac33d8633198d837c4f9017ad466f358", features = ["io"] }
+gateway-plugin-sdk = { git = "https://github.com/zyycn/codex-proxy-rs.git", rev = "8c8618aa0f841638262262e3338c115bc075f125", features = ["io"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.150", features = ["float_roundtrip", "raw_value"] }
 tokio = { version = "1.52.3", default-features = false, features = ["io-std", "io-util", "macros", "rt", "sync", "time", "process"] }

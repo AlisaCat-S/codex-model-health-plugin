@@ -1,0 +1,119 @@
+[
+  {
+    "message": {
+      "type": "hello",
+      "handshake": {
+        "protocol_version": 7,
+        "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "plugin_id": "local.model-health",
+        "instance_id": "smoke",
+        "generation": 1,
+        "incarnation": "smoke",
+        "configuration": {},
+        "contributes": {
+          "management": {
+            "version": 2,
+            "stages": [
+              "management"
+            ],
+            "id": "",
+            "inputFormats": [],
+            "outputFormats": []
+          }
+        }
+      }
+    },
+    "payload": "",
+    "frame_hex": "0000016300000000000000027b2274797065223a2268656c6c6f222c2268616e647368616b65223a7b2270726f746f636f6c5f76657273696f6e223a372c2261727469666163745f736861323536223a2261616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161222c22706c7567696e5f6964223a226c6f63616c2e6d6f64656c2d6865616c7468222c22696e7374616e63655f6964223a22736d6f6b65222c2267656e65726174696f6e223a312c22696e6361726e6174696f6e223a22736d6f6b65222c22636f6e7472696275746573223a7b226d616e6167656d656e74223a7b2276657273696f6e223a322c22737461676573223a5b226d616e6167656d656e74225d2c226964223a22222c22696e707574466f726d617473223a5b5d2c226f7574707574466f726d617473223a5b5d7d7d7d2c22646174615f6279746573223a327d7b7d"
+  },
+  {
+    "message": {
+      "type": "ready",
+      "protocol_version": 7,
+      "incarnation": "smoke",
+      "call_budgets": {}
+    },
+    "payload": "",
+    "frame_hex": "0000004d00000000000000007b2274797065223a227265616479222c2270726f746f636f6c5f76657273696f6e223a372c22696e6361726e6174696f6e223a22736d6f6b65222c2263616c6c5f62756467657473223a7b7d7d"
+  },
+  {
+    "message": {
+      "type": "callback",
+      "id": 2,
+      "parent_id": 1,
+      "method": "host.models.list",
+      "params": {
+        "client_key_id": "smoke-key",
+        "protocol": "openai",
+        "client_version": "model-health/0.3.0"
+      }
+    },
+    "payload": "",
+    "frame_hex": "0000005400000000000000577b2274797065223a2263616c6c6261636b222c226964223a322c22706172656e745f6964223a312c226d6574686f64223a22686f73742e6d6f64656c732e6c697374222c22646174615f6279746573223a38377d7b22636c69656e745f6b65795f6964223a22736d6f6b652d6b6579222c2270726f746f636f6c223a226f70656e6169222c22636c69656e745f76657273696f6e223a226d6f64656c2d6865616c74682f302e332e30227d"
+  },
+  {
+    "message": {
+      "type": "suspend",
+      "id": 1,
+      "epoch": 1
+    },
+    "payload": "",
+    "frame_hex": "0000002300000000000000007b2274797065223a2273757370656e64222c226964223a312c2265706f6368223a317d"
+  },
+  {
+    "message": {
+      "type": "result",
+      "id": 2,
+      "result": {
+        "models": [
+          "gpt-6-astra"
+        ]
+      }
+    },
+    "payload": "body",
+    "frame_hex": "00000028000000000000001e7b2274797065223a22726573756c74222c226964223a322c22646174615f6279746573223a32367d7b226d6f64656c73223a5b226770742d362d6173747261225d7d626f6479"
+  },
+  {
+    "message": {
+      "type": "resume",
+      "id": 1,
+      "epoch": 1
+    },
+    "payload": "",
+    "frame_hex": "0000002200000000000000007b2274797065223a22726573756d65222c226964223a312c2265706f6368223a317d"
+  },
+  {
+    "message": {
+      "type": "resumed",
+      "id": 1,
+      "epoch": 1
+    },
+    "payload": "",
+    "frame_hex": "0000002300000000000000007b2274797065223a22726573756d6564222c226964223a312c2265706f6368223a317d"
+  },
+  {
+    "message": {
+      "type": "callback_consumed",
+      "id": 2,
+      "parent_id": 1
+    },
+    "payload": "",
+    "frame_hex": "0000003100000000000000007b2274797065223a2263616c6c6261636b5f636f6e73756d6564222c226964223a322c22706172656e745f6964223a317d"
+  },
+  {
+    "message": {
+      "type": "cancel",
+      "id": 1
+    },
+    "payload": "",
+    "frame_hex": "0000001800000000000000007b2274797065223a2263616e63656c222c226964223a317d"
+  },
+  {
+    "message": {
+      "type": "cancelled",
+      "id": 1
+    },
+    "payload": "",
+    "frame_hex": "0000001b00000000000000007b2274797065223a2263616e63656c6c6564222c226964223a317d"
+  }
+]

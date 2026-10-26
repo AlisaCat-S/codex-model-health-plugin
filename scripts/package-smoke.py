@@ -1,4 +1,4 @@
-"""Exercise the packaged executable over SDK v5; public GitHub checks are opt-in."""
+"""Exercise the packaged executable over RPC v7; public GitHub checks are opt-in."""
 import hashlib
 import json
 import os
@@ -13,6 +13,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from model_stream_fixture import encode_model_batch, response_payload
+from rpc_fixture import PROTOCOL_VERSION, CallSchedule, decode_frame, encode_frame
 
 package = Path(sys.argv[1]).resolve()
 continuous = "--continuous" in sys.argv[2:]
@@ -43,6 +44,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             path.write_bytes(archive.extractfile(member).read())
             path.chmod(0o755 if member.mode & 0o111 else 0o644)
     manifest = json.loads((root / "plugin.json").read_text())
+    assert manifest["package"]["protocolVersion"] == PROTOCOL_VERSION
     for path, digest in manifest["package"]["files"].items():
         assert hashlib.sha256((root / path).read_bytes()).hexdigest() == digest, path
     assert (root / "bin/plugin").read_bytes()[:4] == b"\x7fELF"
@@ -66,23 +68,11 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
                'exec /usr/bin/env -i ./bin/plugin']
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
 
-    # 协议 v5 帧编码：[u32 元数据长度][u64 载荷总长][元数据 JSON][业务 data JSON][原始正文]；
+    # 协议 v7 帧编码：[u32 元数据长度][u64 载荷总长][元数据 JSON][业务 data JSON][原始正文]；
     # Hello.configuration / Call.params / Callback.params / Result.result 移入 data 段，
     # 元数据内以 data_bytes 声明长度（为 0 时省略）。
     def send(message, payload=b""):
-        data = b""
-        kind = message["type"]
-        if kind == "hello":
-            data = json.dumps(message["handshake"].pop("configuration"), separators=(",", ":")).encode()
-            message["data_bytes"] = len(data)
-        elif kind in ("call", "callback"):
-            data = json.dumps(message.pop("params"), separators=(",", ":")).encode()
-            message["data_bytes"] = len(data)
-        elif kind == "result":
-            data = json.dumps(message.pop("result"), separators=(",", ":")).encode()
-            message["data_bytes"] = len(data)
-        body = json.dumps(message, separators=(",", ":")).encode()
-        process.stdin.write(struct.pack(">IQ", len(body), len(data) + len(payload)) + body + data + payload)
+        process.stdin.write(encode_frame(message, payload))
         process.stdin.flush()
 
     def read_exact(length):
@@ -99,23 +89,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
     def receive():
         meta, total = struct.unpack(">IQ", read_exact(12))
         assert 0 < meta <= 65536 and total < 2 * 1024 * 1024
-        message = json.loads(read_exact(meta))
-        request_bytes = message.pop("request_context_bytes", 0)
-        data_bytes = message.pop("data_bytes", 0)
-        assert request_bytes == 0, "冒烟宿主不下发入口请求快照"
-        payload = read_exact(total)
-        data, payload = payload[:data_bytes], payload[data_bytes:]
-        if data_bytes:
-            kind = message["type"]
-            value = json.loads(data)
-            if kind == "hello":
-                message["handshake"]["configuration"] = value
-            elif kind in ("call", "callback"):
-                message["params"] = value
-            else:
-                assert kind == "result", message
-                message["result"] = value
-        return message, payload
+        return decode_frame(read_exact(meta), read_exact(total))
 
     host = {"executions": 0, "state": {}, "callbacks": [], "numeric": False, "http_body": None, "model_read": 0, "model_open": False}
 
@@ -236,12 +210,18 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
     def api(path, body=None):
         context["call_id"] += 2
         identifier = context["call_id"]
+        schedule = CallSchedule(identifier)
         send({"type": "call", "id": identifier, "method": "management.handle", "context": context,
               "params": {"method": "GET" if body is None else "POST", "path": path, "query": "",
                          "content_type": None if body is None else "application/json", "headers": []}},
              b"" if body is None else json.dumps(body).encode())
         while True:
             message, payload = receive()
+            grant = schedule.observe(message, payload)
+            if grant is not None:
+                send(grant)
+            if message["type"] in ("suspend", "resume", "callback_consumed"):
+                continue
             if message["type"] == "result":
                 assert message["id"] == identifier
                 return message["result"]["status"], json.loads(payload)
@@ -251,9 +231,9 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
             send({"type": "result", "id": message["id"], "result": result}, response)
 
     try:
-        send({"type": "hello", "handshake": {"protocol_version": 5, "artifact_sha256": hashlib.sha256(package.read_bytes()).hexdigest(), "plugin_id": "local.model-health", "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "configuration": {}, "contributes": manifest["contributes"]}})
+        send({"type": "hello", "handshake": {"protocol_version": PROTOCOL_VERSION, "artifact_sha256": hashlib.sha256(package.read_bytes()).hexdigest(), "plugin_id": "local.model-health", "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "configuration": {}, "contributes": manifest["contributes"]}})
         ready, _ = receive()
-        assert ready["type"] == "ready" and ready["protocol_version"] == 5
+        assert ready["type"] == "ready" and ready["protocol_version"] == PROTOCOL_VERSION and ready["call_budgets"] == {}
         context = {"call_id": 1, "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "stage": "management", "timeout_ms": 120000, "resource_stream": False, "resource_scope_id": "smoke", "request_id": None, "attempt_id": None, "account_id": None, "credential_revision": None}
         status, boot = api("api/bootstrap")
         assert status == 200, boot
@@ -360,7 +340,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
         send({"type": "shutdown"})
         process.wait(timeout=15)
         assert process.returncode == 0, process.stderr.read().decode()
-        print("PACKAGE PASS: hashes=PASS; tmp_noexec=PASS; nonroot=PASS; empty_env=PASS; readonly_root=PASS; sdk_v5=PASS; engine=4.5.4; accounts=1; keys=1; error_http=400; real_model_calls=0")
+        print("PACKAGE PASS: hashes=PASS; tmp_noexec=PASS; nonroot=PASS; empty_env=PASS; readonly_root=PASS; rpc_v7=PASS; engine=4.5.4; accounts=1; keys=1; error_http=400; real_model_calls=0")
     finally:
         if process.poll() is None:
             subprocess.run(["docker", "rm", "-f", container], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)

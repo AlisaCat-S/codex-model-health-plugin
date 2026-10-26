@@ -2,7 +2,7 @@
 
 为 [Codex Proxy RS](https://github.com/zyycn/codex-proxy-rs) 提供独立的账号模型体检页面：选择已有账号与计量 Key，通过原生代理和请求链路运行 **Meow / ModelTrace** 两种行为指纹检测，无需再次填写 API 地址或密钥，也不修改主项目。
 
-[下载 v0.2.2](https://github.com/R-lmmortal/codex-model-health-plugin/releases/tag/v0.2.2) · [反馈问题](https://github.com/R-lmmortal/codex-model-health-plugin/issues) · [插件使用规范](https://github.com/zyycn/codex-proxy-rs/blob/main/docs/plugins.md)
+[下载本分支最新构建](https://github.com/AlisaCat-S/codex-model-health-plugin/releases/latest) · [反馈问题](https://github.com/R-lmmortal/codex-model-health-plugin/issues) · [插件使用规范](https://github.com/zyycn/codex-proxy-rs/blob/main/docs/plugins.md)
 
 ![插件页面（模拟数据，不代表真实检测结果）](docs/screenshots/overview.png)
 
@@ -15,9 +15,9 @@
 | [Meow LLM Detector — chen-006](https://github.com/chen-006/meow-llm-detector) | 题目、响应解析、答案归一化与行为概率评分；引擎 4.5.4 / 基线 4.5.3-predictive.2；[提交 dc608d5](https://github.com/chen-006/meow-llm-detector/tree/dc608d5c097abf96575d5b34f49952ddbd27c281) | [PolyForm Noncommercial 1.0.0](vendor/meow/LICENSE) |
 | [ModelTrace — xqy2006](https://github.com/xqy2006/ModelTrace) | 原始指纹算法与统一候选库；[提交 6cd4a8f](https://github.com/xqy2006/ModelTrace/tree/6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2) | [MIT](vendor/modeltrace/LICENSE) |
 
-宿主集成使用 [Codex Proxy 公开 SDK](https://github.com/zyycn/codex-proxy-rs/tree/06e1d8f0ac33d8633198d837c4f9017ad466f358/backend/crates/gateway-plugin/sdk)（v3.31.1，插件 RPC 协议 v5）、[@codex-proxy/ui](https://github.com/zyycn/codex-proxy-ui) v0.6.1，并参考 [官方插件示例与规范](https://github.com/zyycn/codex-proxy-plugins)。
+宿主集成使用 [Codex Proxy 公开 SDK](https://github.com/zyycn/codex-proxy-rs/tree/8c8618aa0f841638262262e3338c115bc075f125/backend/crates/gateway-plugin/sdk)（v3.33.0，插件 RPC 协议 v7）、[@codex-proxy/ui](https://github.com/zyycn/codex-proxy-ui) v0.7.0，并参考 [官方插件示例与规范](https://github.com/zyycn/codex-proxy-plugins)。
 
-本次升级的字段、能力版本及 UI 破坏性变更见 [SDK 适配分析](docs/sdk-upgrade-2026-10-25.md)。当前源码构建要求宿主 **3.31.1+**；3.31.0 及更早宿主应保留升级前的插件制品，不能仅凭同为 RPC v5 强行切换。已发布制品以包内清单为准。
+本次升级到 **RPC v7** 的预算、协作调度、回调回收和 UI 差异见 [SDK 适配分析](docs/sdk-upgrade-2026-10-26.md)。插件 **v0.3.0 对应宿主 v3.33.0**，当前构建要求宿主 **3.33.0+**。宿主 v3.33.0 仅支持 RPC v7；3.32.x 及更早宿主应保留匹配的旧插件，旧 RPC v5/v6 插件须更新 SDK、重新构建和打包，不能只改清单。已发布制品以包内清单为准。
 
 完整集成包按 [PolyForm Noncommercial 1.0.0](LICENSE) 分发，包含非商业用途条件；ModelTrace 等第三方文件仍保留各自的许可证。本仓库是源码公开项目，不将整个包宣称为 MIT 或无商业用途限制。原始版权声明、第三方组件声明与依赖许可证见 [NOTICE](NOTICE)，安装包中也附带相关文件。
 
@@ -25,8 +25,8 @@
 
 | 项目 | 当前支持 |
 | --- | --- |
-| 插件 ID / 版本 | `local.model-health` / `0.2.2` |
-| 宿主清单范围 | `>=3.31.1, <4.0.0`（插件 RPC 协议 v5、management v2）；源码适配与离线协议验证基于 3.31.1 SDK |
+| 插件 ID / 版本 | `local.model-health` / `0.3.0` |
+| 宿主清单范围 | `>=3.33.0, <4.0.0`（插件 RPC 协议 v7、management v2）；源码适配与离线协议验证基于 3.33.0 SDK |
 | Release 平台 | Linux x86_64 与 ARM64（aarch64），glibc 2.36+（如 Debian 12）；不适用于 Alpine/musl 或 Windows |
 | 运行方式 | `trustedProcess`，插件以宿主系统身份运行，安装代表完整信任；不是操作系统沙箱 |
 | 扩展能力 | 独立管理页面；不注册请求中间件、调度器、观察器或自动维护任务 |
@@ -34,13 +34,13 @@
 在 **插件管理 → 安装插件 → GitHub** 中填写：
 
 ```text
-仓库：R-lmmortal/codex-model-health-plugin
-版本标签：v0.2.2（或留空查询最新稳定版）
+仓库：AlisaCat-S/codex-model-health-plugin
+版本标签：留空查询本分支最新构建（v0.3.0-<UTC 时间戳>）
 ```
 
-按服务器架构选择制品：AMD64/Intel 64 选 `local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz`，ARM64 选 `local.model-health-<版本>-aarch64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/R-lmmortal/codex-model-health-plugin/releases) 下载对应文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
+按服务器架构选择制品：AMD64/Intel 64 选 `local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz`，ARM64 选 `local.model-health-<版本>-aarch64-unknown-linux-gnu.tar.gz`，核对平台与摘要后安装并启用。也可从 [Releases](https://github.com/AlisaCat-S/codex-model-health-plugin/releases) 下载对应文件，通过“上传包”安装。请不要上传 GitHub 自动生成的 **Source code (zip/tar.gz)**，它们是源码而不是插件制品。
 
-版本号由 GitHub Actions 自动发布生成，格式为「语义版本 + UTC 时间戳」，如 `v0.2.2-20261024.1503`；分钟数不带前导零（05:04 记为 `20261024.504`）以符合 semver 预发布标识符规则，数值比较仍严格单调。详见 [docs/release-automation.md](docs/release-automation.md)。
+版本号由 GitHub Actions 自动发布生成，格式为「语义版本 + UTC 时间戳」，如 `v0.3.0-20261026.1200`；分钟数不带前导零（05:04 记为 `20261024.504`）以符合 semver 预发布标识符规则，数值比较仍严格单调。详见 [docs/release-automation.md](docs/release-automation.md)。
 
 Release 同时提供同名 `.tar.gz.sha256`；下载两个附件后可校验（以 x86_64 为例，aarch64 同理）：
 
@@ -49,7 +49,7 @@ sha256sum -c local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz.sha256
 # macOS：shasum -a 256 -c local.model-health-<版本>-x86_64-unknown-linux-gnu.tar.gz.sha256
 ```
 
-保留 `local.model-health` 是为了让原先本地安装的版本继续沿用同一插件身份与历史，不是更换发布账号。仓库与发布者主页为 [R-lmmortal](https://github.com/R-lmmortal)。已有本地安装可在插件详情设置 GitHub 更新来源，或上传新版后确认切换；不要为了更新而删除原配置或私有数据。
+保留 `local.model-health` 是为了让原先本地安装的版本继续沿用同一插件身份与历史。原项目为 [R-lmmortal/codex-model-health-plugin](https://github.com/R-lmmortal/codex-model-health-plugin)；本分支构建发布到 [AlisaCat-S/codex-model-health-plugin](https://github.com/AlisaCat-S/codex-model-health-plugin)。已有本地安装可在插件详情设置 GitHub 更新来源，或上传新版后确认切换；不要为了更新而删除原配置或私有数据。
 
 ## 使用
 
@@ -93,11 +93,11 @@ Meow 报告给出行为匹配、行为偏移或证据不足。ModelTrace 报告�
 
 ## 构建与验证
 
-构建工具：Docker Buildx、Node 24+、pnpm 12.14、Python 3.9+（安装包冒烟测试）、Rust 1.99.1（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `06e1d8f0ac33d8633198d837c4f9017ad466f358`（v3.31.1，插件 RPC 协议 v5）。UI 使用官方固定版本 Release 归档，不再从 Git 源码安装或执行其构建脚本。前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
+构建工具：Docker Buildx、Node 24+、pnpm 12.14、Python 3.9+（安装包冒烟测试）、Rust 1.99.1（构建打包 CLI）。SDK 与 CLI 固定为同一个宿主提交 `8c8618aa0f841638262262e3338c115bc075f125`（v3.33.0，插件 RPC 协议 v7）。UI 使用官方固定版本 Release 归档，不再从 Git 源码安装或执行其构建脚本。前端依赖锁定在 `frontend/pnpm-lock.yaml`；不要直接换成浮动 `main`。在仓库根目录执行：
 
 ```sh
 cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-  --rev 06e1d8f0ac33d8633198d837c4f9017ad466f358 \
+  --rev 8c8618aa0f841638262262e3338c115bc075f125 \
   --locked --root .tools/cpr-cli codex-proxy-plugin-cli
 CPR_PLUGIN_BIN="$PWD/.tools/cpr-cli/bin/cpr-plugin" ./scripts/build-linux.sh
 pnpm --dir frontend install --frozen-lockfile
@@ -109,7 +109,7 @@ pnpm --dir frontend build
 
 ### 自动构建发布
 
-`.github/workflows/release.yml`：推送 `main` 自动构建并发布 Release；也可在 Actions 页面手动触发（`workflow_dispatch`），勾选 `dry_run` 可只构建验收不发布，便于在分支试跑。每次运行用原生 runner（`ubuntu-latest` / `ubuntu-24.04-arm`）同时构建 x86_64 与 aarch64 两种制品，版本号自动生成为「语义版本 + UTC 时间戳」（如 `v0.2.2-20261024.1503`），并附同名 `.sha256`。设计与取舍见 [docs/release-automation.md](docs/release-automation.md)。
+`.github/workflows/release.yml`：推送 `main` 自动构建并发布 Release；也可在 Actions 页面手动触发（`workflow_dispatch`），勾选 `dry_run` 可只构建验收不发布，便于在分支试跑。每次运行用原生 runner（`ubuntu-latest` / `ubuntu-24.04-arm`）同时构建 x86_64 与 aarch64 两种制品，版本号自动生成为「语义版本 + UTC 时间戳」（如 `v0.3.0-20261026.1200`），并附同名 `.sha256`。设计与取舍见 [docs/release-automation.md](docs/release-automation.md)。
 
 直接运行不带 `bundled-engine` 的本机 `cargo test` 默认使用开发用 `meow-llm-detector:4.5.4` Docker 镜像。若本机已有 Python 和 NumPy，可显式指定 `MODEL_HEALTH_TEST_PYTHON` 为 Python 可执行文件路径，不会根据 Docker 是否安装自动切换环境。例如 PowerShell：
 
@@ -119,7 +119,7 @@ cargo test --locked --manifest-path backend/Cargo.toml
 python -X utf8 -B -m unittest discover -s scripts/tests -v
 ```
 
-发布构建仍使用内嵌引擎。构建脚本同时校验 Python 冒烟编码与 Rust SDK 的 GPE2/HME1 格式；安装包冒烟覆盖 SSE、两种 WebSocket 封套、多批次和独立 EOF。修复设计与验收范围见 [Responses 流修复方案](docs/investigation/2026-10-24-arm-detection-failures.md)。
+发布构建仍使用内嵌引擎。构建脚本同时校验 Python 冒烟编码与 Rust SDK 的 RPC v7、GPE2/HME1 格式；安装包冒烟覆盖挂起/恢复授权/回调消费、SSE、两种 WebSocket 封套、多批次和独立 EOF。修复设计与验收范围见 [Responses 流修复方案](docs/investigation/2026-10-24-arm-detection-failures.md)。
 
 浏览器预览显式标注「模拟」，生产构建会剔除模拟宿主与模拟数据模块。`scripts/browser-qa.mjs` 支持 `PLAYWRIGHT_PATH`、`CHROME_BINARY`、`PREVIEW_URL`，检查双方法切换、选择保留、报告隔离、开始→暂停→继续→结束→历史，以及浅/深/窄屏、空/错/加载状态。`scripts/updates-browser-qa.mjs` 使用相同环境变量，验证来源地址、更新检查状态和检查失败时模型表单仍可使用，并在 `sandbox="allow-scripts"` 的隔离页面验证生产资源与地址复制。
 
@@ -128,6 +128,8 @@ python -X utf8 -B -m unittest discover -s scripts/tests -v
 离线协议验收使用固定模拟回调，不向真实模型发送请求。安装后的最终验收是用一个账号分别执行 Meow 快速档和 ModelTrace 三轮检测，核对主项目使用记录中的账号与请求 ID。安装与真实计费检测由使用者主动触发。
 
 ## 回退
+
+宿主 v3.33.0 仅接受 RPC v7，不能在该宿主上回退到 RPC v5/v6 插件；如需回退旧协议，须同时回退到匹配的旧宿主。
 
 安装新版时在插件管理中更新同一插件，保留现有 `runs` 状态。升级前保留旧安装包并备份宿主数据；需要回退时使用插件详情中的“回退版本”或“切换版本”，选择已安装、已接受且兼容的旧制品。配置回退不等于恢复私有数据，不能用卸载重装代替历史备份。停用本插件会停止插件功能，不修改主项目代码或其他插件。
 
