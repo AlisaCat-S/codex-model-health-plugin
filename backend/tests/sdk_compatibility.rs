@@ -8,7 +8,8 @@ fn management_contract_is_unchanged_but_legacy_hosts_are_outside_the_manifest_ra
     let manifest = Manifest::from_author_slice(include_bytes!("../../plugin.json")).unwrap();
     assert_eq!(PROTOCOL_VERSION, 7);
     assert_eq!(manifest.plugin_id().unwrap(), "local.model-health");
-    assert_eq!(manifest.contributes.len(), 1);
+    assert_eq!(manifest.contributes.len(), 2);
+    assert_eq!(manifest.contributes[&Capability::Maintenance].version, 1);
     let management = &manifest.contributes[&Capability::Management];
     assert_eq!(management.version, 2);
     assert_eq!(management.stages, [Stage::Management]);

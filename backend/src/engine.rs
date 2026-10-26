@@ -101,13 +101,15 @@ impl Engine {
                 output,
             });
         }
-        let result = tokio::time::timeout(
-            Duration::from_secs(20),
-            slot.as_mut().unwrap().exchange(request),
-        )
-        .await;
+        // A cancelled parent must drop the in-flight worker, not leave its late
+        // response queued for the next unrelated query.
+        let mut worker = slot.take().unwrap();
+        let result = tokio::time::timeout(Duration::from_secs(20), worker.exchange(request)).await;
         match result {
-            Ok(Ok(value)) => Ok(value),
+            Ok(Ok(value)) => {
+                *slot = Some(worker);
+                Ok(value)
+            }
             Ok(Err(error)) => {
                 *slot = None;
                 Err(error)

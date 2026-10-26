@@ -14,6 +14,8 @@ use std::{
 };
 use tokio::io::{AsyncReadExt, DuplexStream, ReadHalf, WriteHalf};
 
+#[path = "support/background.rs"]
+mod background;
 #[path = "support/stream.rs"]
 mod stream;
 use stream::{json_wire, wire};
@@ -81,8 +83,11 @@ impl Peer {
         let (host, transport) = tokio::io::duplex(2 * 1024 * 1024);
         let (reader, writer) = tokio::io::split(transport);
         let task = tokio::spawn(async move {
-            let session = PluginSession::accept(reader, writer, SessionConfig::default())
+            let mut session = PluginSession::accept(reader, writer, SessionConfig::default())
                 .await
+                .unwrap();
+            session
+                .set_call_budgets(codex_model_health_plugin::call_budgets())
                 .unwrap();
             session
                 .run(codex_model_health_plugin::plugin(engine).unwrap())
@@ -117,8 +122,7 @@ impl Peer {
                 ..
             } => {
                 assert_eq!(protocol_version, 7);
-                // 每次管理调用只处理一题；保留默认 120 秒预算，不延长为后台整轮任务。
-                assert!(call_budgets.is_empty());
+                assert_eq!(call_budgets, codex_model_health_plugin::call_budgets());
             }
             other => panic!("expected RPC v7 Ready, got {other:?}"),
         }
@@ -344,6 +348,7 @@ struct Host {
     http_body: Option<Vec<u8>>,
     http_requests: Vec<Value>,
     http_failure: bool,
+    reject_completed_write: bool,
 }
 fn account(id: &str, revision: u64) -> Value {
     json!({"account_id":id,"provider_id":"openai","credential_revision":revision,"name":id,"email":null,"upstream_user_id":format!("user-{id}"),"upstream_account_id":format!("upstream-{id}"),"plan_type":"pro","authentication_kind":"oauth","enabled":true,"credential_state":"ready","has_refresh_token":true,"access_token_expires_at_ms":null,"next_refresh_at_ms":null})
@@ -470,6 +475,16 @@ impl Host {
             }
             "host.state.put" => {
                 assert_eq!(params["namespace"], "runs");
+                if self.reject_completed_write
+                    && params["value"]["attempts"]
+                        .as_array()
+                        .is_some_and(|a| a.last().is_some_and(|a| a["status"] != "pending"))
+                {
+                    return Err(PluginFault::new(
+                        ErrorCode::Fault,
+                        "fixture state unavailable",
+                    ));
+                }
                 let key = params["key"].as_str().unwrap().to_string();
                 let current = self.state.get(&key).map(|(_, v)| *v);
                 if current != params["expected_version"].as_u64() {

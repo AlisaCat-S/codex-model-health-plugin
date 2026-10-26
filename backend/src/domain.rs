@@ -38,6 +38,13 @@ pub struct Run {
     pub attempts: Vec<Value>,
     pub inflight: Option<String>,
     pub report: Value,
+    /// Opt-in keeps existing single-step API clients usable.
+    #[serde(default)]
+    pub background: bool,
+    #[serde(default)]
+    pub queued_at: Option<u64>,
+    #[serde(default)]
+    pub task_error: Option<String>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Debug)]
@@ -113,6 +120,7 @@ impl Run {
         }
         *last = result;
         if matches!(self.status, Status::Stopped | Status::Paused) {
+            self.queued_at = None;
             return Ok(());
         }
         self.status = if self.next_job().is_none() {
@@ -122,6 +130,9 @@ impl Run {
         } else {
             Status::Ready
         };
+        if self.status != Status::Ready {
+            self.queued_at = None;
+        }
         Ok(())
     }
     pub fn recover(&mut self) -> Result<(), PluginFault> {
@@ -143,7 +154,8 @@ impl Run {
             "request_model":self.plan["request_model"],"claimed_model":self.plan["claimed_model"],
             "method":self.plan.get("method").cloned().unwrap_or_else(|| json!("meow")),
             "tier":self.plan["tier"],"baseline_hash":self.plan["hash"],"status":self.status,
-            "attempts":self.attempts.len(),"planned":self.jobs().len(),"report":self.report})
+            "attempts":self.attempts.len(),"planned":self.jobs().len(),"report":self.report,
+            "background":self.background,"queued_at":self.queued_at,"task_error":self.task_error})
     }
 }
 
@@ -179,6 +191,9 @@ mod tests {
             attempts: vec![],
             inflight: None,
             report: Value::Null,
+            background: false,
+            queued_at: None,
+            task_error: None,
         }
     }
     #[test]

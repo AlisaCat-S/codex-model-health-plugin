@@ -23,7 +23,7 @@ SDK crate 版本仍为 `0.1.0`，应以宿主提交和协议版本识别合同�
 
 | 边界 | 上游差异 | 本插件采用的处理 |
 | --- | --- | --- |
-| RPC v6 调用预算 | `Ready` 新增必填 `call_budgets`；移除 `SessionConfig.maximum_call_timeout`，改为分阶段预算；支持 `set_call_budgets` 和 `remaining_budget` | 沿用 SDK `PluginSession::accept/run` 和默认会话配置，由 SDK 发送 `call_budgets={}`；management 默认仍为 120 秒，每次只执行一题，保留现有模型流读取 90 秒上限，不声明整轮后台任务预算 |
+| RPC v6 调用预算 | `Ready` 新增必填 `call_budgets`；移除 `SessionConfig.maximum_call_timeout`，改为分阶段预算；支持 `set_call_budgets` 和 `remaining_budget` | 沿用 SDK `PluginSession::accept/run` 和默认会话配置，management 默认仍为 120 秒；新增后台执行后，通过 SDK 声明 `call_budgets={"maintenance":3600000}`，维护循环单题限时 120 秒，保留模型流读取 90 秒上限；轮次交接与重启策略见 README |
 | RPC v7 调度 | 父 future 返回 Pending 时发送 `Suspend` 归还执行名额；唤醒后发 `Resume`，收到宿主 `Resumed` 才能继续，epoch 从 1 严格递增 | 生产执行交给新版 SDK，不自建调度器；Rust 测试宿主和 Python 安装包冒烟宿主均处理并校验挂起、恢复授权与 epoch，不能再只等待 Callback/Result |
 | 回调驻留与回收 | 回调结果到达不再代表释放额度；`CallbackConsumed { id, parent_id }` 表示消费或 future 被丢弃；默认回调容量 64 → 320，统一包含 `next`，最大 512 | 保留 SDK 默认值和串行模型执行；测试宿主跟踪驻留回调，最终结果前确认回收，不自动重试可能已发出的业务操作 |
 | 处理预算计时 | 普通模型/HTTP 回调及恢复排队仍计时；仅父任务挂起且驻留回调全部为 `next` 时暂停预算 | 本插件没有 `next` 中间件，不把模型网络等待当成免费预算，不延长既有请求时限 |

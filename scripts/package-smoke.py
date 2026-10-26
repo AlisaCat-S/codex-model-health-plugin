@@ -233,7 +233,7 @@ with tempfile.TemporaryDirectory(prefix="model-health-smoke-") as directory:
     try:
         send({"type": "hello", "handshake": {"protocol_version": PROTOCOL_VERSION, "artifact_sha256": hashlib.sha256(package.read_bytes()).hexdigest(), "plugin_id": "local.model-health", "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "configuration": {}, "contributes": manifest["contributes"]}})
         ready, _ = receive()
-        assert ready["type"] == "ready" and ready["protocol_version"] == PROTOCOL_VERSION and ready["call_budgets"] == {}
+        assert ready["type"] == "ready" and ready["protocol_version"] == PROTOCOL_VERSION and ready["call_budgets"] == {"maintenance": 3600000}
         context = {"call_id": 1, "instance_id": "smoke", "generation": 1, "incarnation": "smoke", "stage": "management", "timeout_ms": 120000, "resource_stream": False, "resource_scope_id": "smoke", "request_id": None, "attempt_id": None, "account_id": None, "credential_revision": None}
         status, boot = api("api/bootstrap")
         assert status == 200, boot

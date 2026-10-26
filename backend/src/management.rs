@@ -1,7 +1,7 @@
 use crate::{
     Service,
     domain::{Method, Run, SLOTS, Status, slot_from_id},
-    host, invalid, now_ms, now_nanos, updates,
+    host, invalid, now_ms, now_nanos, runner, updates,
 };
 use gateway_plugin_sdk::{
     ErrorCode, PluginFault,
@@ -57,6 +57,8 @@ pub fn registration() -> ManagementRegistration {
 #[serde(deny_unknown_fields)]
 struct Start {
     #[serde(default)]
+    background: bool,
+    #[serde(default)]
     method: Method,
     account_id: String,
     key_id: String,
@@ -74,6 +76,8 @@ struct Identity {
 struct Control {
     id: String,
     action: String,
+    #[serde(default)]
+    background: Option<bool>,
 }
 
 fn input<T: serde::de::DeserializeOwned>(
@@ -92,7 +96,7 @@ fn reply_status(status: u16, value: Value) -> Result<TypedReply<ManagementRespon
     })
     .with_payload(serde_json::to_vec(&value).map_err(|_| invalid("响应编码失败"))?))
 }
-async fn find(host: &HostClient, id: &str) -> Result<(Run, u64), PluginFault> {
+pub(crate) async fn find(host: &HostClient, id: &str) -> Result<(Run, u64), PluginFault> {
     let (run, version) = host::read(host, slot_from_id(id)?)
         .await?
         .ok_or_else(|| invalid("检测记录不存在"))?;
@@ -101,7 +105,7 @@ async fn find(host: &HostClient, id: &str) -> Result<(Run, u64), PluginFault> {
     }
     Ok((run, version))
 }
-async fn histories(host: &HostClient) -> Result<Vec<(Run, u64)>, PluginFault> {
+pub(crate) async fn histories(host: &HostClient) -> Result<Vec<(Run, u64)>, PluginFault> {
     let mut runs = Vec::new();
     for slot in 0..SLOTS {
         if let Some(run) = host::read(host, slot).await? {
@@ -111,7 +115,7 @@ async fn histories(host: &HostClient) -> Result<Vec<(Run, u64)>, PluginFault> {
     runs.sort_by_key(|(r, _)| std::cmp::Reverse(r.created_at));
     Ok(runs)
 }
-async fn update_report(service: &Service, run: &mut Run) -> Result<(), PluginFault> {
+pub(crate) async fn update_report(service: &Service, run: &mut Run) -> Result<(), PluginFault> {
     run.report = service
         .engine
         .query(json!({"op":"score","plan":run.plan,"results":run.attempts}))
@@ -157,6 +161,9 @@ async fn dispatch(
 ) -> Result<TypedReply<ManagementResponse>, PluginFault> {
     if !call.request.query.is_empty() || call.payload.len() > 8192 {
         return Err(invalid("管理请求大小或查询参数不符合接口"));
+    }
+    if call.request.path.starts_with("api/runs") {
+        runner::initialize(service, &call.host).await?;
     }
     match (call.request.method.as_str(), call.request.path.as_str()) {
         ("GET", "api/bootstrap") => {
@@ -270,9 +277,13 @@ async fn start(
         attempts: vec![],
         inflight: None,
         report: Value::Null,
+        background: query.background,
+        queued_at: query.background.then(|| runner::queue_time(&history)),
+        task_error: None,
     };
     update_report(service, &mut run).await?;
     host::write(host, &run, version).await?;
+    service.wake.notify_one();
     reply(json!({"run":run}))
 }
 
@@ -284,39 +295,68 @@ async fn control(
     if !["pause", "resume", "stop"].contains(&query.action.as_str()) {
         return Err(invalid("未知的任务控制操作"));
     }
-    // 只有明确续测才修复上次中断；并发中的真实请求仍持有执行租约。
-    let _execution = if query.action == "resume" {
-        Some(
-            service
-                .execution
-                .try_acquire()
-                .map_err(|_| invalid("当前题目尚在完成，请稍后刷新"))?,
-        )
-    } else {
-        None
-    };
     let _lock = service.state.lock().await;
     let (mut run, version) = find(host, &query.id).await?;
     if run.finished() {
         return Err(invalid("任务已结束，历史报告保持不变"));
     }
+    if query.action == "resume"
+        && run.inflight.is_some()
+        && service.execution.available_permits() == 0
+    {
+        // Repeated resume is harmless, but cannot undo a requested pause/stop.
+        if run.background && run.queued_at.is_some() && run.status == Status::Running {
+            return reply(json!({"run":run}));
+        }
+        return Err(invalid("当前题目尚在完成，请稍后刷新"));
+    }
     match query.action.as_str() {
-        "pause" => run.status = Status::Paused,
+        "pause" => {
+            run.status = Status::Paused;
+            run.queued_at = None;
+        }
         "stop" => {
             run.status = Status::Stopped;
+            run.queued_at = None;
             if service.execution.available_permits() > 0 && run.inflight.is_some() {
                 run.recover()?;
                 run.status = Status::Stopped;
             }
         }
         "resume" => {
-            host::validate_account(host, &mut run).await?;
+            if let Err(error) = host::validate_account(host, &mut run).await {
+                if run.background || query.background == Some(true) {
+                    runner::pause(&mut run, &error.message);
+                    host::write(host, &run, Some(version)).await?;
+                    return reply(json!({"run":run}));
+                }
+                return Err(error);
+            }
+            if run.background && run.queued_at.is_some() && run.status == Status::Ready {
+                return reply(json!({"run":run}));
+            }
             run.recover()?;
+            run.background = query.background.unwrap_or(run.background);
+            run.task_error = None;
+            if run.background && run.status == Status::Ready {
+                run.queued_at = Some(runner::queue_time(&histories(host).await?));
+            }
         }
         _ => unreachable!(),
     }
-    update_report(service, &mut run).await?;
+    if query.action == "resume" {
+        if let Err(error) = update_report(service, &mut run).await {
+            if !run.background {
+                return Err(error);
+            }
+            runner::pause(&mut run, &error.message);
+        }
+    } else {
+        // Pausing/stopping must not depend on a healthy scoring subprocess.
+        run.updated_at = now_ms();
+    }
     host::write(host, &run, Some(version)).await?;
+    service.wake.notify_one();
     reply(json!({"run":run}))
 }
 
@@ -329,18 +369,47 @@ async fn step(
         .execution
         .try_acquire()
         .map_err(|_| invalid("另一个检测请求正在执行，请等待该题完成"))?;
+    let run = advance(service, host, id, false).await?;
+    reply(json!({"run":run}))
+}
+
+/// Caller owns the global execution permit. Never constructs an upstream HTTP client.
+pub(crate) async fn advance(
+    service: &Service,
+    host: &HostClient,
+    id: &str,
+    background: bool,
+) -> Result<Run, PluginFault> {
     let (snapshot, job, body) = {
         let _lock = service.state.lock().await;
         let (mut run, version) = find(host, id).await?;
-        host::validate_account(host, &mut run).await?;
+        if run.background != background {
+            return Err(invalid("后台托管任务不能手动逐题执行"));
+        }
+        if background && (run.status != Status::Ready || run.queued_at.is_none()) {
+            return Ok(run); // pause/stop won the race with queue selection
+        }
         let job = run.next_job().ok_or_else(|| invalid("检测计划已完成"))?;
-        let body = service
-            .engine
-            .query(json!({"op":"payload","plan":run.plan,"job_id":job}))
-            .await?;
+        let prepared = async {
+            host::validate_account(host, &mut run).await?;
+            service
+                .engine
+                .query(json!({"op":"payload","plan":run.plan,"job_id":job}))
+                .await
+        }
+        .await;
+        let body = match prepared {
+            Ok(body) => body,
+            Err(error) if background => {
+                runner::pause(&mut run, &error.message);
+                host::write(host, &run, Some(version)).await?;
+                return Ok(run);
+            }
+            Err(error) => return Err(error),
+        };
         run.reserve(&job)?;
         run.updated_at = now_ms();
-        // 发送前写入 pending；进程或页面中断不会恢复成免费重试。
+        // 发送前写入 pending；未知结果不能恢复成免费重试。
         host::write(host, &run, Some(version)).await?;
         (run, job, body)
     };
@@ -367,12 +436,32 @@ async fn step(
     let _lock = service.state.lock().await;
     let (mut latest, version) = find(host, id).await?;
     latest.finish_attempt(result)?;
-    update_report(service, &mut latest).await?;
+    if background
+        && latest
+            .attempts
+            .last()
+            .is_some_and(|a| a["status"] == "error")
+    {
+        let message = latest
+            .attempts
+            .last()
+            .and_then(|a| a["error"].as_str())
+            .unwrap_or("检测请求失败")
+            .to_owned();
+        runner::pause(&mut latest, &message);
+    }
+    let scored = update_report(service, &mut latest).await;
+    if let Err(error) = &scored {
+        runner::pause(&mut latest, &error.message);
+    }
     host::write(host, &latest, Some(version)).await?;
-    reply(json!({"run":latest}))
+    if !background {
+        scored?;
+    }
+    Ok(latest)
 }
 
-fn excerpt(message: &str) -> String {
+pub(crate) fn excerpt(message: &str) -> String {
     let mut end = message.len().min(512);
     while !message.is_char_boundary(end) {
         end -= 1;

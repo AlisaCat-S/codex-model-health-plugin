@@ -14,3 +14,7 @@ export function tone(report: Report, status: Status): 'success' | 'danger' | 'wa
 }
 export const reasonText: Record<string, string> = {samples_incomplete: '各题组有效样本未达到基线要求', no_valid_samples: '还没有有效样本', no_threshold: '没有候选超过判定阈值', multiple_thresholds: '候选结果存在歧义', uncalibrated: '基线校准不匹配', unknown_claimed_model: '所选基线不包含该模型', baseline_cell_missing: '基线缺少题组', samples_exceed_plan: '样本数量超过计划'}
 export function formatTime(value: number) { return new Date(value).toLocaleString('zh-CN', {hour12: false}) }
+
+export function runStatusText(run: {status: Status; background?: boolean; queued_at?: number | null}) {
+  return run.status === 'ready' && run.background && run.queued_at != null ? '排队中' : statusText[run.status]
+}
