@@ -58,6 +58,74 @@ pub enum Status {
 }
 
 impl Run {
+    pub fn data_error(&self) -> Option<&'static str> {
+        // 旧引擎被取消后可能串用响应，把 catalog 写成 plan；不能据此补造题目或续测。
+        let plan = &self.plan;
+        let method = plan
+            .get("method")
+            .map_or("meow", |value| value.as_str().unwrap_or(""));
+        let plan_valid = [
+            "engine_version",
+            "id",
+            "hash",
+            "version",
+            "tier",
+            "claimed_model",
+            "request_model",
+        ]
+        .iter()
+        .all(|key| plan[*key].as_str().is_some_and(|value| !value.is_empty()))
+            && matches!(method, "meow" | "modeltrace")
+            && plan["retry_budget"].as_u64().is_some()
+            && plan["jobs"].as_array().is_some_and(|jobs| {
+                !jobs.is_empty()
+                    && jobs
+                        .iter()
+                        .all(|job| job["job_id"].as_str().is_some_and(|id| !id.is_empty()))
+            });
+        if !plan_valid {
+            return Some(if self.finished() {
+                "检测计划不完整，请新建检测；已有请求明细会保留"
+            } else {
+                "检测计划不完整，无法继续；请结束此任务后新建检测，已有请求明细会保留"
+            });
+        }
+        let report = &self.report;
+        let report_valid = report["valid_samples"].as_u64().is_some()
+            && report["planned_samples"].as_u64().is_some()
+            && report["reasons"].as_array().is_some()
+            && if method == "modeltrace" {
+                report["method"] == "modeltrace"
+                    && matches!(
+                        report["verdict"].as_str(),
+                        Some("attributed" | "insufficient")
+                    )
+                    && (report["analysis"].is_null()
+                        || (report["analysis"]["results"].is_array()
+                            && report["analysis"]["family_probabilities"].is_array()))
+            } else {
+                report.get("method").is_none_or(|value| value == "meow")
+                    && matches!(
+                        report["verdict"].as_str(),
+                        Some("match" | "mismatch" | "insufficient")
+                    )
+                    && report["matches"].is_object()
+                    && report["thresholds"].is_object()
+            };
+        if !report_valid {
+            return Some(if self.finished() {
+                "检测报告不完整，请新建检测；已有请求明细会保留"
+            } else {
+                "检测报告不完整，无法继续；请结束此任务后新建检测，已有请求明细会保留"
+            });
+        }
+        None
+    }
+    pub fn detail(&self) -> Value {
+        let mut detail = json!(self);
+        detail["data_error"] = json!(self.data_error());
+        detail
+    }
     pub fn finished(&self) -> bool {
         matches!(self.status, Status::Completed | Status::Stopped) && self.inflight.is_none()
     }
@@ -155,7 +223,8 @@ impl Run {
             "method":self.plan.get("method").cloned().unwrap_or_else(|| json!("meow")),
             "tier":self.plan["tier"],"baseline_hash":self.plan["hash"],"status":self.status,
             "attempts":self.attempts.len(),"planned":self.jobs().len(),"report":self.report,
-            "background":self.background,"queued_at":self.queued_at,"task_error":self.task_error})
+            "background":self.background,"queued_at":self.queued_at,"task_error":self.task_error,
+            "data_error":self.data_error()})
     }
 }
 

@@ -1109,6 +1109,112 @@ async fn malformed_start_does_not_mutate_host() {
 }
 
 #[tokio::test]
+async fn shifted_legacy_plan_is_readable_and_stoppable_without_a_healthy_engine() {
+    let mut peer = Peer::new().await;
+    let mut host = Host::default();
+    let run = peer.start(&mut host).await;
+    let catalog = peer.api("api/bootstrap", None, &mut host).await.unwrap()["catalog"].clone();
+    // 复现旧版取消请求后的落盘形态：catalog 被当成 plan，prepare 被当成 report。
+    let stored = &mut host.state.values_mut().next().unwrap().0;
+    stored["plan"] = catalog.clone();
+    stored["report"] = run["plan"].clone();
+    stored.as_object_mut().unwrap().remove("background");
+    stored.as_object_mut().unwrap().remove("queued_at");
+    stored.as_object_mut().unwrap().remove("task_error");
+    drop(peer);
+    let mut peer = Peer::with_engine(codex_model_health_plugin::engine::Engine::command(vec![
+        std::env::temp_dir()
+            .join("missing-model-health-recovery-engine")
+            .into_os_string(),
+    ]))
+    .await;
+    let history = peer.api("api/runs", None, &mut host).await.unwrap();
+    assert!(
+        history["runs"][0]["data_error"]
+            .as_str()
+            .unwrap()
+            .contains("检测计划不完整")
+    );
+    assert_eq!(history["runs"][0]["status"], "paused");
+    let detail = peer
+        .api("api/runs/get", Some(json!({"id":run["id"]})), &mut host)
+        .await
+        .unwrap()["run"]
+        .clone();
+    assert_eq!(detail["plan"], catalog);
+    assert_eq!(detail["report"], run["plan"]);
+    assert_eq!(detail["attempts"], run["attempts"]);
+    let error = peer
+        .api(
+            "api/runs/control",
+            Some(json!({"id":run["id"],"action":"resume","background":true})),
+            &mut host,
+        )
+        .await
+        .unwrap_err();
+    assert!(error.message.contains("检测计划不完整"));
+    let stopped = peer
+        .api(
+            "api/runs/control",
+            Some(json!({"id":run["id"],"action":"stop"})),
+            &mut host,
+        )
+        .await
+        .unwrap()["run"]
+        .clone();
+    assert_eq!(stopped["status"], "stopped");
+    assert_eq!(stopped["plan"], detail["plan"]);
+    assert_eq!(stopped["report"], detail["report"]);
+    assert!(host.executions.is_empty());
+    drop(peer);
+    let mut peer = Peer::new().await;
+    let reopened = peer
+        .api("api/runs/get", Some(json!({"id":run["id"]})), &mut host)
+        .await
+        .unwrap()["run"]
+        .clone();
+    assert_eq!(reopened, stopped);
+    let next = peer.start(&mut host).await;
+    assert_ne!(next["id"], stopped["id"]);
+    assert!(next["data_error"].is_null());
+}
+
+#[tokio::test]
+async fn malformed_report_keeps_existing_request_details_available() {
+    let mut peer = Peer::new().await;
+    let mut host = Host::default();
+    let run = peer.start(&mut host).await;
+    peer.api("api/runs/step", Some(json!({"id":run["id"]})), &mut host)
+        .await
+        .unwrap();
+    host.state.values_mut().next().unwrap().0["report"] = Value::Null;
+    let detail = peer
+        .api("api/runs/get", Some(json!({"id":run["id"]})), &mut host)
+        .await
+        .unwrap()["run"]
+        .clone();
+    assert!(
+        detail["data_error"]
+            .as_str()
+            .unwrap()
+            .contains("检测报告不完整")
+    );
+    assert_eq!(detail["attempts"][0]["request_id"], "request-1");
+    let stopped = peer
+        .api(
+            "api/runs/control",
+            Some(json!({"id":run["id"],"action":"stop"})),
+            &mut host,
+        )
+        .await
+        .unwrap()["run"]
+        .clone();
+    assert_eq!(stopped["attempts"], detail["attempts"]);
+    assert!(stopped["report"].is_null());
+    assert_eq!(host.executions.len(), 1);
+}
+
+#[tokio::test]
 async fn bootstrap_engine_failure_is_an_actionable_http_error_without_inference() {
     let missing = std::env::temp_dir().join(format!(
         "missing-model-health-engine-{}-{}",

@@ -9,6 +9,7 @@ import type { Bootstrap, Run, History, Method } from './api'
 import { accountDisplayName } from './accountDisplay'
 import { formatTime, methodText, runStatusText, tierText, verdict, tone, reasonText } from './presentation'
 import SourceUpdates from './SourceUpdates.vue'
+import AttemptTable from './AttemptTable.vue'
 
 const preview = import.meta.env.DEV && new URLSearchParams(location.search).get('preview') === '1'
 const bootstrap = ref<Bootstrap | null>(null), history = ref<History[]>([]), run = ref<Run | null>(null)
@@ -35,7 +36,6 @@ const candidates = computed<[string, number][]>(() => {
   return report?.method === 'modeltrace' ? (report.analysis?.results.slice(0,5).map(r => [r.display_name,r.probability] as [string,number]) ?? []) : Object.entries(report?.matches ?? {}).sort((a,b) => b[1]-a[1])
 })
 const historyColumns: TableColumn<History>[] = [{key:'created_at',label:'检测时间',kind:'datetime',formatter:value=>formatTime(Number(value))},{key:'account_name',label:'账号',kind:'identity',size:'xl'},{key:'method',label:'检测方法',size:'lg',formatter:value=>methodText(value as Method | undefined)},{key:'request_model',label:'请求模型',kind:'mono',size:'lg'},{key:'tier',label:'检测档位',size:'lg',formatter:value=>tierText[String(value)]},{key:'result',label:'检测结果',kind:'custom',size:'xl'},{key:'actions',label:'操作',kind:'actions'}]
-const attemptColumns = [{key:'number',label:'#',kind:'index'},{key:'job_id',label:'样本',kind:'mono',size:'xl'},{key:'status',label:'状态',kind:'status'},{key:'answer',label:'回答 / 错误',kind:'custom',size:'2xl'},{key:'request_id',label:'请求 ID',kind:'mono',size:'2xl'}] satisfies TableColumn[]
 const accountOptions = computed(() => bootstrap.value?.accounts.map(a => ({value:a.id,label:accountDisplayName(a)})) ?? [])
 
 function message(cause: unknown) { return cause instanceof Error ? cause.message : String(cause) }
@@ -150,7 +150,11 @@ onScopeDispose(() => { disposed=true; ++viewVersion; clearTimeout(pollTimer); do
       </ZCard>
     </div>
 
-    <ZCard v-if="run">
+    <ZCard v-if="run && run.data_error">
+      <template #header><div class="flex flex-wrap items-center justify-between gap-3"><div class="flex items-center gap-2"><h2>{{ run.account_name || run.account_id }}</h2><ZTag type="warning">记录异常</ZTag></div><div class="flex gap-2"><ZIconButton aria-label="刷新当前任务" :disabled="action" @click="openRun(run.id)"><RefreshCw class="size-4" /></ZIconButton><ZButton v-if="!finished" size="small" :disabled="action" @click="control('stop')"><Square class="size-3" />结束检测</ZButton></div></div></template>
+      <template #body><p class="sample-error" role="status">{{ run.data_error }}</p><p class="muted text-cp-sm">{{ formatTime(run.created_at) }} · {{ run.key_name }} · 任务 {{ run.id }}</p><AttemptTable :attempts="run.attempts" /></template>
+    </ZCard>
+    <ZCard v-else-if="run">
       <template #header><div class="flex flex-wrap items-center justify-between gap-3"><div><div class="flex flex-wrap items-center gap-2"><h2>{{ run.account_name }}</h2><ZTag :type="tone(run.report,run.status)">{{ runStatusText(run) }}</ZTag><ZTag>{{ methodText(run.plan.method) }}</ZTag></div><p class="subtitle">{{ run.plan.request_model }} <span class="mx-1">→</span> {{ run.plan.method === 'modeltrace' ? '统一候选库' : run.plan.claimed_model }} · {{ tierText[run.plan.tier] }}</p></div><div class="flex flex-wrap gap-2"><ZIconButton aria-label="刷新当前任务" :disabled="action" @click="openRun(run.id)"><RefreshCw class="size-4" /></ZIconButton><template v-if="!finished"><ZButton v-if="enqueued" size="small" :disabled="action" @click="control('pause')"><Pause class="size-4" />当前题完成后暂停</ZButton><ZButton v-else size="small" type="primary" :disabled="action || !!run.inflight" @click="control('resume')"><Play class="size-4" />继续检测</ZButton><ZButton size="small" :disabled="action" @click="control('stop')"><Square class="size-3" />结束检测</ZButton></template></div></div></template>
       <template #body>
         <div class="progress-facts"><div><span>有效样本</span><strong>{{ valid }} <small>/ {{ run.plan.jobs.length }}</small></strong></div><div><span>尝试（含中断）</span><strong>{{ run.attempts.length }} <small>/ {{ run.plan.jobs.length + run.plan.retry_budget }}</small></strong></div><div><span>失败 / 中断</span><strong>{{ failures }}</strong></div><div><span>检测结论</span><strong class="verdict-text">{{ verdict(run.report,run.status) }}</strong></div></div>
@@ -164,12 +168,12 @@ onScopeDispose(() => { disposed=true; ++viewVersion; clearTimeout(pollTimer); do
           <div><p class="text-cp-sm font-emphasis mt-0">{{ traceReport ? '前 5 候选 · 库内相对概率' : '候选相对匹配度' }} <span class="muted font-normal">（不是正确率）</span></p><p v-if="!candidates.length" class="muted">还没有有效样本</p><div v-for="[name,value] in candidates" :key="name" class="candidate"><div class="flex justify-between gap-3 text-cp-sm"><span class="break-all">{{ name === 'other_known_external' ? '其他 / 未建模行为' : name }}</span><span class="font-mono">{{ (value*100).toFixed(1) }}%</span></div><div class="candidate-track"><div :style="{width:`${Math.max(0,Math.min(100,value*100))}%`}" /></div><p v-if="run.report.method !== 'modeltrace'" class="muted text-cp-xs mt-1 mb-0">判定阈值 {{ ((run.report.thresholds[name] ?? 0)*100).toFixed(1) }}%</p></div><div v-if="traceReport?.analysis" class="baseline-meta"><template v-for="family in traceReport.analysis.family_probabilities" :key="family.family"><span>{{ family.display_name }} 家族</span><strong>{{ (family.probability*100).toFixed(1) }}%</strong></template></div></div>
           <div class="report-note"><ShieldCheck class="size-5 mb-3 text-cp-text-secondary" /><strong>{{ verdict(run.report,run.status) }}</strong><p v-if="run.report.reasons.length">{{ run.report.reasons.map(r=>reasonText[r] || r).join('，') }}</p><p v-if="traceReport">ModelTrace 在冻结的统一候选库内比较，库外模型也会被归到现有候选，结果不是模型身份认证</p><p v-else-if="!run.report.reasons.length">结果仅针对本次账号、请求模型与冻结的基线，建议同条件复测后再判断是否存在持续偏移</p><p>请求模型可能经过主项目的模型映射或中间件，报告反映这条实际链路的行为</p><p class="text-cp-xs mb-1">{{ methodText(run.plan.method) }} · {{ run.plan.version }} · 冻结基线 SHA-256</p><code class="baseline-hash">{{ run.plan.hash }}</code></div>
         </div>
-        <ZTable v-else :columns="attemptColumns" :data="run.attempts.map((a,i)=>({...a,number:i+1,id:i}))" empty-text="尚未发起检测请求"><template #status="{row}"><ZTag :type="row.status === 'ok' ? 'success' : row.status === 'pending' ? 'primary' : 'warning'">{{ row.status === 'ok' ? '有效' : row.status === 'pending' ? '进行中' : '异常' }}</ZTag></template><template #answer="{row}"><span class="sample-answer">{{ row.error || row.answer || '—' }}{{ row.answer_truncated ? '（展示已截短，评分使用完整回答）' : '' }}</span></template></ZTable>
+        <AttemptTable v-else :attempts="run.attempts" />
       </template>
     </ZCard>
     <ZCard>
       <template #header><div class="flex flex-wrap justify-between gap-3"><div><h2>任务列表</h2><p class="subtitle">保留最近 16 条记录 · 报告沿用检测时的基线，不重新评分</p></div><ZTag class="self-start">{{ history.length }} 条</ZTag></div></template>
-      <template #body><ZTable :columns="historyColumns" :data="history" :loading="loading" empty-text="还没有检测记录。选择账号，开始第一次检测。"><template #result="{row}"><ZTag :type="tone(row.report,row.status)">{{ row.status === 'completed' || row.status === 'stopped' ? verdict(row.report,row.status) : runStatusText(row) }}</ZTag></template><template #actions="{row}"><ZIconButton :aria-label="`查看 ${row.account_name} 的检测报告`" :disabled="action" @click="openRun(row.id)"><ArrowRight class="size-4" /></ZIconButton></template></ZTable></template>
+      <template #body><ZTable :columns="historyColumns" :data="history" :loading="loading" empty-text="还没有检测记录。选择账号，开始第一次检测。"><template #result="{row}"><ZTag :type="row.data_error ? 'warning' : tone(row.report,row.status)">{{ row.data_error ? '记录异常' : row.status === 'completed' || row.status === 'stopped' ? verdict(row.report,row.status) : runStatusText(row) }}</ZTag></template><template #actions="{row}"><ZIconButton :aria-label="`查看 ${row.account_name || row.account_id} 的检测报告`" :disabled="action" @click="openRun(row.id)"><ArrowRight class="size-4" /></ZIconButton></template></ZTable></template>
     </ZCard>
   </main>
   </ZConfigProvider>

@@ -206,7 +206,7 @@ async fn dispatch(
         ("POST", "api/runs/get") => {
             let query: Identity = input(&call)?;
             let (run, _) = find(&call.host, &query.id).await?;
-            reply(json!({"run":run,"busy":service.execution.available_permits()==0}))
+            reply(json!({"run":run.detail(),"busy":service.execution.available_permits()==0}))
         }
         ("POST", "api/runs/start") => start(service, &call.host, input(&call)?).await,
         ("POST", "api/runs/control") => control(service, &call.host, input(&call)?).await,
@@ -282,9 +282,14 @@ async fn start(
         task_error: None,
     };
     update_report(service, &mut run).await?;
+    if run.data_error().is_some() {
+        return Err(invalid(
+            "检测引擎返回的计划或报告不完整，未创建任务；请重新读取状态后重试",
+        ));
+    }
     host::write(host, &run, version).await?;
     service.wake.notify_one();
-    reply(json!({"run":run}))
+    reply(json!({"run":run.detail()}))
 }
 
 async fn control(
@@ -301,12 +306,17 @@ async fn control(
         return Err(invalid("任务已结束，历史报告保持不变"));
     }
     if query.action == "resume"
+        && let Some(error) = run.data_error()
+    {
+        return Err(invalid(error));
+    }
+    if query.action == "resume"
         && run.inflight.is_some()
         && service.execution.available_permits() == 0
     {
         // Repeated resume is harmless, but cannot undo a requested pause/stop.
         if run.background && run.queued_at.is_some() && run.status == Status::Running {
-            return reply(json!({"run":run}));
+            return reply(json!({"run":run.detail()}));
         }
         return Err(invalid("当前题目尚在完成，请稍后刷新"));
     }
@@ -328,12 +338,12 @@ async fn control(
                 if run.background || query.background == Some(true) {
                     runner::pause(&mut run, &error.message);
                     host::write(host, &run, Some(version)).await?;
-                    return reply(json!({"run":run}));
+                    return reply(json!({"run":run.detail()}));
                 }
                 return Err(error);
             }
             if run.background && run.queued_at.is_some() && run.status == Status::Ready {
-                return reply(json!({"run":run}));
+                return reply(json!({"run":run.detail()}));
             }
             run.recover()?;
             run.background = query.background.unwrap_or(run.background);
@@ -357,7 +367,7 @@ async fn control(
     }
     host::write(host, &run, Some(version)).await?;
     service.wake.notify_one();
-    reply(json!({"run":run}))
+    reply(json!({"run":run.detail()}))
 }
 
 async fn step(
@@ -370,7 +380,7 @@ async fn step(
         .try_acquire()
         .map_err(|_| invalid("另一个检测请求正在执行，请等待该题完成"))?;
     let run = advance(service, host, id, false).await?;
-    reply(json!({"run":run}))
+    reply(json!({"run":run.detail()}))
 }
 
 /// Caller owns the global execution permit. Never constructs an upstream HTTP client.
@@ -388,6 +398,14 @@ pub(crate) async fn advance(
         }
         if background && (run.status != Status::Ready || run.queued_at.is_none()) {
             return Ok(run); // pause/stop won the race with queue selection
+        }
+        if let Some(error) = run.data_error() {
+            if !background {
+                return Err(invalid(error));
+            }
+            runner::pause(&mut run, error);
+            host::write(host, &run, Some(version)).await?;
+            return Ok(run);
         }
         let job = run.next_job().ok_or_else(|| invalid("检测计划已完成"))?;
         let prepared = async {

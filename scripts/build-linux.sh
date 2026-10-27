@@ -14,8 +14,9 @@ mkdir -p .build/cargo
 docker run --rm --platform "$PLATFORM" \
   -v "$ROOT:/work" -v "${LINUX_CARGO_CACHE:-$ROOT/.build/cargo}:/cache" \
   -e CARGO_HOME=/cache -e MEOW_ENGINE_BINARY=/work/.build/engine/meow-engine \
+  -e MODEL_HEALTH_TEST_PYTHON=/usr/bin/python3 \
   -e CARGO_TARGET_DIR=/work/.build/linux-target -w /work rust:1.99-slim-bookworm \
-  sh -c 'cargo test --locked --features bundled-engine --manifest-path backend/Cargo.toml && cargo build --locked --release --features bundled-engine --manifest-path backend/Cargo.toml'
+  sh -c 'apt-get update && apt-get install -y --no-install-recommends python3 python3-numpy python3-httpx && cargo test --locked --features bundled-engine --manifest-path backend/Cargo.toml && cargo build --locked --release --features bundled-engine --manifest-path backend/Cargo.toml'
 pnpm --dir frontend install --frozen-lockfile
 pnpm --dir frontend build
 "${CPR_PLUGIN_BIN:-cpr-plugin}" package --manifest "$ROOT/plugin.json" \

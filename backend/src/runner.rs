@@ -49,6 +49,20 @@ pub(crate) async fn initialize(service: &Service, host: &HostClient) -> Result<(
         if run.finished() {
             continue;
         }
+        if let Some(error) = run.data_error() {
+            // 读取和结束异常记录不依赖评分器，也不能让它阻塞其他排队任务。
+            if run.inflight.is_some() {
+                run.recover()?;
+            }
+            if run.status != Status::Paused
+                || run.queued_at.is_some()
+                || run.task_error.as_deref() != Some(error)
+            {
+                pause(&mut run, error);
+                host::write(host, &run, Some(version)).await?;
+            }
+            continue;
+        }
         let interrupted = run.inflight.is_some();
         if interrupted {
             run.recover()?;
@@ -56,10 +70,8 @@ pub(crate) async fn initialize(service: &Service, host: &HostClient) -> Result<(
         // Existing user pauses keep their reason. No scoring is required to pause.
         if run.status != Status::Paused || interrupted || run.queued_at.is_some() {
             pause(&mut run, &reason);
-            if interrupted {
-                if let Err(error) = management::update_report(service, &mut run).await {
-                    run.task_error = Some(excerpt(&error.message));
-                }
+            if interrupted && let Err(error) = management::update_report(service, &mut run).await {
+                run.task_error = Some(excerpt(&error.message));
             }
             host::write(host, &run, Some(version)).await?;
         }
