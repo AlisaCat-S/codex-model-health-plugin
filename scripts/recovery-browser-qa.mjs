@@ -17,7 +17,7 @@ try {
   const { boot, seed, theme } = await seedPage.evaluate(async () => {
     const read = async(path, body) => JSON.parse(new TextDecoder().decode((await window.codexProxyPlugin.request({path:`api/${path}`,method:body?'POST':'GET',...(body?{body:JSON.stringify(body),contentType:'application/json'}:{})})).body))
     return {boot:await read('bootstrap'), seed:(await read('runs/get',{id:'0-1'})).run,
-      theme:{attributes:Array.from(document.documentElement.attributes,a=>[a.name,a.value]),bodyStyle:document.body.getAttribute('style'),runtimeStyle:document.getElementById('cp-runtime-theme').textContent}}
+      theme:{attributes:Array.from(document.documentElement.attributes,a=>[a.name,a.value]),bodyStyle:document.body.getAttribute('style'),runtimeStyle:document.getElementById('z-runtime-theme').textContent}}
   })
   await seedPage.close()
   const broken = {...structuredClone(seed), id:'1-1', account_name:'', status:'paused', attempts:[], plan:boot.catalog, report:seed.plan,
@@ -53,14 +53,14 @@ try {
     document.addEventListener('DOMContentLoaded',() => {
       for (const [name,value] of theme.attributes) document.documentElement.setAttribute(name,value)
       const style=document.createElement('style')
-      style.id='cp-runtime-theme';style.textContent=theme.runtimeStyle;document.head.append(style)
+      style.id='z-runtime-theme';style.textContent=theme.runtimeStyle;document.head.append(style)
       document.body.setAttribute('style',theme.bodyStyle)
     })
   },theme)
   const page=await context.newPage()
   page.on('pageerror',e=>errors.push(e.message))
   await page.goto(base)
-  assert.ok(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--cp-card-bg').trim()),'隔离测试页面必须携带宿主主题')
+  assert.ok(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--z-card-bg').trim()),'隔离测试页面必须携带宿主主题')
   await page.getByRole('button',{name:`查看 ${broken.account_id} 的检测报告`,exact:true}).click()
   await page.getByText(broken.data_error,{exact:true}).waitFor()
   await page.getByText('尚未发起检测请求',{exact:true}).waitFor()

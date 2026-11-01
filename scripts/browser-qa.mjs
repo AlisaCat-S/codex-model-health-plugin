@@ -13,6 +13,12 @@ const errors=[]
 page.on('pageerror',e=>errors.push(e.message))
 const base=process.env.PREVIEW_URL || 'http://127.0.0.1:4175/'
 async function shot(name){await page.waitForTimeout(300);await page.screenshot({path:`${root}/review/screenshots/${name}.png`,fullPage:true,animations:'disabled'})}
+async function themeColor(name) {
+  return page.evaluate(name=>{
+    const probe=document.createElement('span');probe.style.color=`var(${name})`;document.body.append(probe)
+    const color=getComputedStyle(probe).color;probe.remove();return color
+  },name)
+}
 async function select(label, option){const trigger=page.getByRole('combobox',{name:label,exact:true});await trigger.click();const controls=await trigger.getAttribute('aria-controls');await page.locator(`[id="${controls}"]`).getByRole('option',{name:option,exact:true}).click()}
 async function selectFiltered(label, query, option) {
   const trigger = page.getByRole('combobox',{name:label,exact:true})
@@ -58,6 +64,8 @@ async function assertNewAccountHistory(id, name) {
 try {
   await page.goto(`${base}?preview=1`)
   await page.getByText('Meow 4.5.4',{exact:true}).waitFor()
+  assert.equal(await page.locator('main').evaluate(e=>getComputedStyle(e).color),await themeColor('--z-color-text'),'page utilities must use the host z namespace')
+  assert.equal(await page.locator('.subtitle').first().evaluate(e=>getComputedStyle(e).color),await themeColor('--z-color-text-secondary'),'custom styles must use the host z namespace')
   await page.getByRole('button',{name:'查看 主账号 A · 固定代理 的检测报告',exact:true}).waitFor()
   const historyRow = page.getByRole('row').filter({hasText:'主账号 A · 固定代理'})
   assert.equal(await historyRow.getByRole('cell',{name:'Meow',exact:true}).count(),1)

@@ -1,4 +1,4 @@
-import { applyResolvedTheme, resolveTheme, DEFAULT_THEME_COLOR, DEFAULT_CUSTOM_THEME_COLOR } from '@codex-proxy/ui/theme'
+import { applyTheme, createTheme } from '@codex-proxy/ui/theme'
 import type { Catalog, MethodCatalog, ModelTraceReport, Report, Run, History, UpstreamSource } from './api'
 import { accountDisplayName } from './accountDisplay'
 
@@ -21,8 +21,8 @@ function example(id: string, total = 36): Run {return {id,created_at:Date.now()-
 function summary(r: Run): History {return {id:r.id,method:r.plan.method,created_at:r.created_at,account_name:r.account_name,account_id:r.account_id,key_name:r.key_name,request_model:r.plan.request_model,claimed_model:r.plan.claimed_model,tier:r.plan.tier,baseline_hash:r.plan.hash,status:r.status,attempts:r.attempts.length,planned:r.plan.jobs.length,report:r.report,background:r.background,queued_at:r.queued_at,task_error:r.task_error}}
 
 export function installPreview() {
-  applyResolvedTheme(document.documentElement,resolveTheme(params.get('theme') === 'dark' ? 'dark' : 'light',DEFAULT_THEME_COLOR,DEFAULT_CUSTOM_THEME_COLOR))
-  document.body.style.background='var(--cp-color-bg-layout)'
+  applyTheme(document.documentElement,createTheme({scheme:params.get('theme') === 'dark' ? 'dark' : 'light'}))
+  document.body.style.background='var(--z-color-bg-layout)'
   document.body.style.padding='24px'
   const runs: Run[] = params.get('scenario') === 'empty' ? [] : [example('0-1')]
   let draining = false

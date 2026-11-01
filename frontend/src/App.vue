@@ -115,10 +115,10 @@ onScopeDispose(() => { disposed=true; ++viewVersion; clearTimeout(pollTimer); do
 
 <template>
   <ZConfigProvider :locale="zhHans">
-  <main class="flex min-w-0 flex-col gap-5 font-sans text-cp-text">
+  <main class="flex min-w-0 flex-col gap-5 font-sans text-z-text">
     <div v-if="preview" class="preview-note" role="note">独立模拟预览 · 不代表真实账号的检测结果</div>
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <p class="m-0 text-cp-sm text-cp-text-secondary">固定账号 · 原生代理链路 · 双方法行为指纹</p>
+      <p class="m-0 text-z-sm text-z-text-secondary">固定账号 · 原生代理链路 · 双方法行为指纹</p>
       <ZIconButton aria-label="刷新账号和历史" :disabled="loading" @click="load"><RefreshCw class="size-4" /></ZIconButton>
     </div>
     <p v-if="connectionError" role="status" class="sample-error">{{ connectionError }}</p>
@@ -136,15 +136,15 @@ onScopeDispose(() => { disposed=true; ++viewVersion; clearTimeout(pollTimer); do
             <div class="field"><label id="model-label">请求模型</label><ZSelect v-model="model" aria-labelledby="model-label" :options="models.map(m=>({value:m,label:m}))" :loading="modelsLoading" :disabled="!key" placeholder="先选择计量 Key" filterable /></div>
             <div class="field"><label id="claimed-label">对照基线</label><ZSelect v-if="method === 'meow'" v-model="claimed" aria-labelledby="claimed-label" :options="catalog?.models.map(m=>({value:m.id,label:m.label || m.id})) ?? []" :disabled="loading" placeholder="选择要核对的模型" /><ZSelect v-else v-model="claimed" aria-labelledby="claimed-label" :options="[{value:'unified',label:`统一候选库 · ${catalog?.models.length ?? 0} 个模型`}]" disabled /></div>
             <div v-if="method === 'meow'" class="field col-span-full"><label id="tier-label">检测档位</label><ZSegmented v-model="tier" aria-labelledby="tier-label" aria-label="检测档位" :options="tierOptions" :disabled="action" /></div>
-            <p v-else class="col-span-full muted text-cp-sm m-0">三轮独立数字选择 · 同时比较 GPT / Claude 家族候选</p>
+            <p v-else class="col-span-full muted text-z-sm m-0">三轮独立数字选择 · 同时比较 GPT / Claude 家族候选</p>
           </div>
-          <div class="start-row"><p class="muted text-cp-xs">{{ count }} 个样本 · 最多 {{ count + Math.ceil(count/2) }} 次请求（含重试）<br>真实调用会计入所选 Key 的用量；任务串行排队，离开页面后仍在后台执行。</p><ZButton type="primary" :disabled="!canStart" :loading="starting" @click="start"><Play class="size-4" />开始检测</ZButton></div>
+          <div class="start-row"><p class="muted text-z-xs">{{ count }} 个样本 · 最多 {{ count + Math.ceil(count/2) }} 次请求（含重试）<br>真实调用会计入所选 Key 的用量；任务串行排队，离开页面后仍在后台执行。</p><ZButton type="primary" :disabled="!canStart" :loading="starting" @click="start"><Play class="size-4" />开始检测</ZButton></div>
         </template>
       </ZCard>
       <ZCard>
-        <template #header><div class="flex items-center gap-2"><Fingerprint class="size-5 text-cp-text-secondary" /><h2>如何理解结果</h2></div></template>
+        <template #header><div class="flex items-center gap-2"><Fingerprint class="size-5 text-z-text-secondary" /><h2>如何理解结果</h2></div></template>
         <template #body>
-          <div class="explanation"><p>这里比较的是<span class="text-cp-text font-emphasis">模型行为指纹</span>，不是智商分数，也不是模型身份认证</p><ul><li><Check class="size-4" /><span>锁定所选账号，由主服务使用其原有代理和凭据发送</span></li><li><Check class="size-4" /><span>错误、拒答和截断不算模型答错，失败后自动暂停</span></li><li><Check class="size-4" /><span>离开页面后仍在后台执行，服务重启后手动继续</span></li></ul><div class="baseline-meta"><span>检测引擎</span><strong>{{ methodText(method) }} {{ catalog?.engine_version ?? '—' }}</strong><span>基线版本</span><strong>{{ catalog?.version ?? '—' }}</strong></div><p v-if="method === 'modeltrace'" class="text-cp-xs mb-0">概率只在候选库内比较，库外模型也会归到最接近的候选，不代表真实身份概率</p><p v-else class="text-cp-xs mb-0">Meow 使用 GPT 行为基线，检测不会自动调整账号、路由或额度</p></div>
+          <div class="explanation"><p>这里比较的是<span class="text-z-text font-emphasis">模型行为指纹</span>，不是智商分数，也不是模型身份认证</p><ul><li><Check class="size-4" /><span>锁定所选账号，由主服务使用其原有代理和凭据发送</span></li><li><Check class="size-4" /><span>错误、拒答和截断不算模型答错，失败后自动暂停</span></li><li><Check class="size-4" /><span>离开页面后仍在后台执行，服务重启后手动继续</span></li></ul><div class="baseline-meta"><span>检测引擎</span><strong>{{ methodText(method) }} {{ catalog?.engine_version ?? '—' }}</strong><span>基线版本</span><strong>{{ catalog?.version ?? '—' }}</strong></div><p v-if="method === 'modeltrace'" class="text-z-xs mb-0">概率只在候选库内比较，库外模型也会归到最接近的候选，不代表真实身份概率</p><p v-else class="text-z-xs mb-0">Meow 使用 GPT 行为基线，检测不会自动调整账号、路由或额度</p></div>
           <SourceUpdates v-if="bootstrap" :sources="bootstrap.sources" />
         </template>
       </ZCard>
@@ -152,21 +152,21 @@ onScopeDispose(() => { disposed=true; ++viewVersion; clearTimeout(pollTimer); do
 
     <ZCard v-if="run && run.data_error">
       <template #header><div class="flex flex-wrap items-center justify-between gap-3"><div class="flex items-center gap-2"><h2>{{ run.account_name || run.account_id }}</h2><ZTag type="warning">记录异常</ZTag></div><div class="flex gap-2"><ZIconButton aria-label="刷新当前任务" :disabled="action" @click="openRun(run.id)"><RefreshCw class="size-4" /></ZIconButton><ZButton v-if="!finished" size="small" :disabled="action" @click="control('stop')"><Square class="size-3" />结束检测</ZButton></div></div></template>
-      <template #body><p class="sample-error" role="status">{{ run.data_error }}</p><p class="muted text-cp-sm">{{ formatTime(run.created_at) }} · {{ run.key_name }} · 任务 {{ run.id }}</p><AttemptTable :attempts="run.attempts" /></template>
+      <template #body><p class="sample-error" role="status">{{ run.data_error }}</p><p class="muted text-z-sm">{{ formatTime(run.created_at) }} · {{ run.key_name }} · 任务 {{ run.id }}</p><AttemptTable :attempts="run.attempts" /></template>
     </ZCard>
     <ZCard v-else-if="run">
       <template #header><div class="flex flex-wrap items-center justify-between gap-3"><div><div class="flex flex-wrap items-center gap-2"><h2>{{ run.account_name }}</h2><ZTag :type="tone(run.report,run.status)">{{ runStatusText(run) }}</ZTag><ZTag>{{ methodText(run.plan.method) }}</ZTag></div><p class="subtitle">{{ run.plan.request_model }} <span class="mx-1">→</span> {{ run.plan.method === 'modeltrace' ? '统一候选库' : run.plan.claimed_model }} · {{ tierText[run.plan.tier] }}</p></div><div class="flex flex-wrap gap-2"><ZIconButton aria-label="刷新当前任务" :disabled="action" @click="openRun(run.id)"><RefreshCw class="size-4" /></ZIconButton><template v-if="!finished"><ZButton v-if="enqueued" size="small" :disabled="action" @click="control('pause')"><Pause class="size-4" />当前题完成后暂停</ZButton><ZButton v-else size="small" type="primary" :disabled="action || !!run.inflight" @click="control('resume')"><Play class="size-4" />继续检测</ZButton><ZButton size="small" :disabled="action" @click="control('stop')"><Square class="size-3" />结束检测</ZButton></template></div></div></template>
       <template #body>
         <div class="progress-facts"><div><span>有效样本</span><strong>{{ valid }} <small>/ {{ run.plan.jobs.length }}</small></strong></div><div><span>尝试（含中断）</span><strong>{{ run.attempts.length }} <small>/ {{ run.plan.jobs.length + run.plan.retry_budget }}</small></strong></div><div><span>失败 / 中断</span><strong>{{ failures }}</strong></div><div><span>检测结论</span><strong class="verdict-text">{{ verdict(run.report,run.status) }}</strong></div></div>
         <progress class="sample-progress" :value="valid" :max="run.plan.jobs.length" aria-label="有效样本进度" />
-        <p v-if="run.inflight" role="status" class="muted text-cp-sm">当前题目正在请求中；结束或暂停会保留本题的用量与结果。</p>
-        <p v-else-if="enqueued" role="status" class="muted text-cp-sm">已加入后台队列，轮到本任务后自动执行；可以离开页面，稍后回来查看。</p>
-        <p v-else-if="!finished" class="muted text-cp-sm">任务已暂停。点击“继续检测”后继续；服务或插件重启后需要手动继续。</p>
+        <p v-if="run.inflight" role="status" class="muted text-z-sm">当前题目正在请求中；结束或暂停会保留本题的用量与结果。</p>
+        <p v-else-if="enqueued" role="status" class="muted text-z-sm">已加入后台队列，轮到本任务后自动执行；可以离开页面，稍后回来查看。</p>
+        <p v-else-if="!finished" class="muted text-z-sm">任务已暂停。点击“继续检测”后继续；服务或插件重启后需要手动继续。</p>
         <p v-if="lastError" class="sample-error" role="status">最近一次异常：{{ lastError }}</p>
-        <div class="flex flex-wrap justify-between items-center gap-3 mt-5 mb-4"><ZSegmented v-model="reportView" aria-label="报告视图" :options="[{value:'fingerprint',label:'指纹报告'},{value:'samples',label:'请求明细'}]" /><span class="muted text-cp-xs">{{ formatTime(run.updated_at) }} 更新 · {{ run.key_name }}</span></div>
+        <div class="flex flex-wrap justify-between items-center gap-3 mt-5 mb-4"><ZSegmented v-model="reportView" aria-label="报告视图" :options="[{value:'fingerprint',label:'指纹报告'},{value:'samples',label:'请求明细'}]" /><span class="muted text-z-xs">{{ formatTime(run.updated_at) }} 更新 · {{ run.key_name }}</span></div>
         <div v-if="reportView === 'fingerprint'" class="report-grid">
-          <div><p class="text-cp-sm font-emphasis mt-0">{{ traceReport ? '前 5 候选 · 库内相对概率' : '候选相对匹配度' }} <span class="muted font-normal">（不是正确率）</span></p><p v-if="!candidates.length" class="muted">还没有有效样本</p><div v-for="[name,value] in candidates" :key="name" class="candidate"><div class="flex justify-between gap-3 text-cp-sm"><span class="break-all">{{ name === 'other_known_external' ? '其他 / 未建模行为' : name }}</span><span class="font-mono">{{ (value*100).toFixed(1) }}%</span></div><div class="candidate-track"><div :style="{width:`${Math.max(0,Math.min(100,value*100))}%`}" /></div><p v-if="run.report.method !== 'modeltrace'" class="muted text-cp-xs mt-1 mb-0">判定阈值 {{ ((run.report.thresholds[name] ?? 0)*100).toFixed(1) }}%</p></div><div v-if="traceReport?.analysis" class="baseline-meta"><template v-for="family in traceReport.analysis.family_probabilities" :key="family.family"><span>{{ family.display_name }} 家族</span><strong>{{ (family.probability*100).toFixed(1) }}%</strong></template></div></div>
-          <div class="report-note"><ShieldCheck class="size-5 mb-3 text-cp-text-secondary" /><strong>{{ verdict(run.report,run.status) }}</strong><p v-if="run.report.reasons.length">{{ run.report.reasons.map(r=>reasonText[r] || r).join('，') }}</p><p v-if="traceReport">ModelTrace 在冻结的统一候选库内比较，库外模型也会被归到现有候选，结果不是模型身份认证</p><p v-else-if="!run.report.reasons.length">结果仅针对本次账号、请求模型与冻结的基线，建议同条件复测后再判断是否存在持续偏移</p><p>请求模型可能经过主项目的模型映射或中间件，报告反映这条实际链路的行为</p><p class="text-cp-xs mb-1">{{ methodText(run.plan.method) }} · {{ run.plan.version }} · 冻结基线 SHA-256</p><code class="baseline-hash">{{ run.plan.hash }}</code></div>
+          <div><p class="text-z-sm font-emphasis mt-0">{{ traceReport ? '前 5 候选 · 库内相对概率' : '候选相对匹配度' }} <span class="muted font-normal">（不是正确率）</span></p><p v-if="!candidates.length" class="muted">还没有有效样本</p><div v-for="[name,value] in candidates" :key="name" class="candidate"><div class="flex justify-between gap-3 text-z-sm"><span class="break-all">{{ name === 'other_known_external' ? '其他 / 未建模行为' : name }}</span><span class="font-mono">{{ (value*100).toFixed(1) }}%</span></div><div class="candidate-track"><div :style="{width:`${Math.max(0,Math.min(100,value*100))}%`}" /></div><p v-if="run.report.method !== 'modeltrace'" class="muted text-z-xs mt-1 mb-0">判定阈值 {{ ((run.report.thresholds[name] ?? 0)*100).toFixed(1) }}%</p></div><div v-if="traceReport?.analysis" class="baseline-meta"><template v-for="family in traceReport.analysis.family_probabilities" :key="family.family"><span>{{ family.display_name }} 家族</span><strong>{{ (family.probability*100).toFixed(1) }}%</strong></template></div></div>
+          <div class="report-note"><ShieldCheck class="size-5 mb-3 text-z-text-secondary" /><strong>{{ verdict(run.report,run.status) }}</strong><p v-if="run.report.reasons.length">{{ run.report.reasons.map(r=>reasonText[r] || r).join('，') }}</p><p v-if="traceReport">ModelTrace 在冻结的统一候选库内比较，库外模型也会被归到现有候选，结果不是模型身份认证</p><p v-else-if="!run.report.reasons.length">结果仅针对本次账号、请求模型与冻结的基线，建议同条件复测后再判断是否存在持续偏移</p><p>请求模型可能经过主项目的模型映射或中间件，报告反映这条实际链路的行为</p><p class="text-z-xs mb-1">{{ methodText(run.plan.method) }} · {{ run.plan.version }} · 冻结基线 SHA-256</p><code class="baseline-hash">{{ run.plan.hash }}</code></div>
         </div>
         <AttemptTable v-else :attempts="run.attempts" />
       </template>

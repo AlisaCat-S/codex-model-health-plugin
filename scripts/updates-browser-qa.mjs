@@ -38,7 +38,10 @@ async function select(label, option) {
 try {
   await load()
   const boot = await page.evaluate(async()=>JSON.parse(new TextDecoder().decode((await window.codexProxyPlugin.request({method:'GET',path:'api/bootstrap'})).body)))
-  const theme = await page.evaluate(()=>({css:document.querySelector('[data-cp-runtime-theme]').textContent,name:document.documentElement.dataset.theme,color:document.documentElement.dataset.themeColor}))
+  const theme = await page.evaluate(()=>{
+    const style = document.querySelector('[data-z-runtime-theme]').sheet.cssRules[0].style
+    return {name:document.documentElement.dataset.theme,tokens:Object.fromEntries(Array.from(style).filter(name=>name.startsWith('--z-')).map(name=>[name.slice(4),style.getPropertyValue(name).trim()]))}
+  })
   assert.equal(await page.getByRole('textbox',{name:'Meow GitHub 地址',exact:true}).inputValue(),boot.sources[0].url)
   assert.equal(await page.getByRole('textbox',{name:'ModelTrace GitHub 地址',exact:true}).inputValue(),boot.sources[1].url)
   await shot('updates-idle')
@@ -105,18 +108,18 @@ try {
   const css = readFileSync(`${root}/frontend/dist/app.css`,'utf8')
   assert(!js.includes('preview-request-'))
   const csp = "default-src 'none'; script-src 'unsafe-inline' data:; style-src 'unsafe-inline' data:; img-src data:; font-src data:; media-src data:; connect-src 'none'; worker-src 'none'; child-src 'none'; frame-src 'none'; object-src 'none'; manifest-src 'none'; base-uri 'none'; form-action 'none'"
-  const mock = `document.documentElement.dataset.theme=${JSON.stringify(theme.name)};document.documentElement.dataset.themeColor=${JSON.stringify(theme.color)};delete window.codexProxyPlugin;window.__calls=[];window.codexProxyPlugin={version:2,async request(input){window.__calls.push(input);let value;
+  const mock = `document.documentElement.dataset.theme=${JSON.stringify(theme.name)};for(const [name,value] of Object.entries(${JSON.stringify(theme.tokens)}))document.documentElement.style.setProperty('--z-'+name,value);delete window.codexProxyPlugin;window.__calls=[];window.codexProxyPlugin={version:2,async request(input){window.__calls.push(input);let value;
     if(input.path==='api/bootstrap')value=${JSON.stringify(boot)};
     else if(input.path==='api/runs')value={runs:[]};
     else if(input.path==='api/upstreams/check'){const source=${JSON.stringify(boot.sources)}.find(s=>s.method===JSON.parse(input.body).method);value={check:{method:source.method,status:'identical',checked_at:Date.now(),latest_commit:source.bundled_commit,ahead_by:0,behind_by:0,compare_url:source.url}}}
     else throw Error('unexpected sandbox request');
     return{status:200,contentType:'application/json',body:new TextEncoder().encode(JSON.stringify(value)).buffer}}};`
-  const srcdoc = `<html><head><meta http-equiv="Content-Security-Policy" content="${csp}"><style>${css}</style><style>${theme.css}</style></head><body style="padding:24px;background:var(--cp-color-bg-layout)"><div id="app"></div><script>${mock}</script><script>${js.replaceAll('</script','<\\/script')}</script></body></html>`
+  const srcdoc = `<html><head><meta http-equiv="Content-Security-Policy" content="${csp}"><style>${css}</style></head><body style="padding:24px;background:var(--z-color-bg-layout)"><div id="app"></div><script>${mock}</script><script>${js.replaceAll('</script','<\\/script')}</script></body></html>`
   await page.setContent('<iframe title="Plugin sandbox" sandbox="allow-scripts" style="border:0;width:100%;height:1000px"></iframe><textarea aria-label="粘贴验收"></textarea>')
   await page.locator('iframe').evaluate((frame, content)=>{frame.srcdoc=content},srcdoc)
   const frame = page.frameLocator('iframe')
   await frame.getByRole('button',{name:'检查 Meow 更新',exact:true}).waitFor()
-  assert.equal(await frame.locator('html').evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--cp-color-primary').trim().length>0),true)
+  assert.equal(await frame.locator('html').evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--z-color-primary').trim().length>0),true)
   const initialCalls = await frame.locator('html').evaluate(()=>window.__calls.map(c=>c.path))
   assert.equal(initialCalls.filter(path=>path==='api/bootstrap').length,1)
   assert(initialCalls.includes('api/runs') && initialCalls.every(path=>['api/bootstrap','api/runs'].includes(path)))

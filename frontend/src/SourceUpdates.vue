@@ -69,25 +69,25 @@ function copyAddress(id: string) {
 </template>
 
 <style scoped>
-.source-updates { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--cp-color-border-secondary); font-size: .75rem; }
+.source-updates { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--z-color-border-secondary); font-size: .75rem; }
 .source-heading, .source-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .35rem .5rem; }
 .source-heading h3 { display: flex; align-items: center; gap: .45rem; margin: 0; font-size: .8rem; font-weight: 600; }
-.source-heading > span, .source-revision, .source-help, .source-copy-note { color: var(--cp-color-text-secondary); }
-.source-heading > span { padding: .15rem .4rem; border-radius: var(--cp-border-radius-sm); background: var(--cp-color-fill-quaternary); font-size: .6875rem; }
+.source-heading > span, .source-revision, .source-help, .source-copy-note { color: var(--z-color-text-secondary); }
+.source-heading > span { padding: .15rem .4rem; border-radius: var(--z-border-radius-sm); background: var(--z-color-fill-quaternary); font-size: .6875rem; }
 .source-entry { margin-top: .65rem; }
-.source-entry + .source-entry { padding-top: .55rem; border-top: 1px solid var(--cp-color-border-secondary); }
+.source-entry + .source-entry { padding-top: .55rem; border-top: 1px solid var(--z-color-border-secondary); }
 .source-title > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .6rem; }
-.source-revision { font-family: var(--cp-font-family-mono, monospace); font-size: .6875rem; }
+.source-revision { font-family: var(--z-font-family-code, monospace); font-size: .6875rem; }
 .source-address { display: flex; align-items: center; min-width: 0; gap: .2rem; }
-.source-address input { flex: 1; width: 0; min-width: 0; border: 0; border-radius: .25rem; padding: .3rem 0; outline: none; background: transparent; color: var(--cp-color-primary); font: inherit; font-size: .6875rem; text-overflow: ellipsis; }
-.source-address input:focus-visible { outline: 2px solid var(--cp-color-control-outline); outline-offset: 2px; }
+.source-address input { flex: 1; width: 0; min-width: 0; border: 0; border-radius: .25rem; padding: .3rem 0; outline: none; background: transparent; color: var(--z-color-primary); font: inherit; font-size: .6875rem; text-overflow: ellipsis; }
+.source-address input:focus-visible { outline: 2px solid var(--z-control-outline); outline-offset: 2px; }
 .source-copy-note { display: block; font-size: .6875rem; }
-.source-result, .source-check-error { margin-top: .4rem; padding: .5rem .6rem; border-radius: var(--cp-border-radius-sm); line-height: 1.55; overflow-wrap: anywhere; background: var(--cp-color-fill-quaternary); }
+.source-result, .source-check-error { margin-top: .4rem; padding: .5rem .6rem; border-radius: var(--z-border-radius-sm); line-height: 1.55; overflow-wrap: anywhere; background: var(--z-color-fill-quaternary); }
 .source-result strong { display: block; font-weight: 500; }
-.source-result-identical strong { color: var(--cp-color-success-text); }
-.source-result-ahead strong { color: var(--cp-color-primary); }
-.source-result-behind strong, .source-result-diverged strong { color: var(--cp-color-warning-text); }
-.source-check-error { color: var(--cp-color-error-text); background: var(--cp-color-error-container); }
-.source-checked { display: block; color: var(--cp-color-text-secondary); font-size: .6875rem; }
+.source-result-identical strong { color: var(--z-color-success-text); }
+.source-result-ahead strong { color: var(--z-color-primary); }
+.source-result-behind strong, .source-result-diverged strong { color: var(--z-color-warning-text); }
+.source-check-error { color: var(--z-color-error-text); background: var(--z-color-error-container); }
+.source-checked { display: block; color: var(--z-color-text-secondary); font-size: .6875rem; }
 .source-help { margin: .65rem 0 0; font-size: .6875rem; line-height: 1.65; }
 </style>
