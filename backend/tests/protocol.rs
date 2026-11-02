@@ -334,6 +334,7 @@ struct Host {
     executions: Vec<Value>,
     bodies: Vec<Value>,
     fail: bool,
+    execute_error: Option<PluginFault>,
     revision_changed: bool,
     refresh_each_request: bool,
     account_patch: Option<Value>,
@@ -503,13 +504,16 @@ impl Host {
                 assert!(self.state.values().any(|(v, _)| v["inflight"].is_string()
                     && v["attempts"].as_array().unwrap().last().unwrap()["status"] == "pending"));
                 assert!(!self.model_open, "previous model stream was not released");
-                self.model_open = true;
                 self.executions.push(params);
                 let body: Value = serde_json::from_slice(&payload).unwrap();
                 assert_eq!(body["stream"], true);
                 assert_eq!(body["store"], false);
                 assert!(body["tools"].is_null());
                 self.bodies.push(body);
+                if let Some(error) = self.execute_error.take() {
+                    return Err(error);
+                }
+                self.model_open = true;
                 metadata(
                     json!({"request_id":format!("request-{}",self.executions.len()),"stream":"stream-one"}),
                 )

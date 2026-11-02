@@ -280,6 +280,47 @@ async fn error_pauses_only_its_run_and_continues_next() {
 }
 
 #[tokio::test]
+async fn model_eligibility_rejection_pauses_without_fallback_and_continues_the_queue() {
+    let mut peer = Peer::new().await;
+    let mut host = Host::default();
+    let first = queued(&mut peer, &mut host).await;
+    let second = queued(&mut peer, &mut host).await;
+    let mut error = PluginFault::new(ErrorCode::Capacity, "fixture account model unavailable");
+    error.details = Some(json!({"diagnostic":"fixture-secret"}));
+    host.execute_error = Some(error);
+    let mut bg = Background::new(peer, 3_600_000).await;
+    bg.until(&mut host, |h| saved(h, &first["id"])["status"] == "paused")
+        .await;
+    let rejected = saved(&host, &first["id"]);
+    assert_eq!(rejected["attempts"].as_array().unwrap().len(), 1);
+    assert_eq!(rejected["attempts"][0]["error_code"], "capacity");
+    assert_eq!(rejected["attempts"][0]["send_state"], "not_sent");
+    assert!(rejected["attempts"][0]["request_id"].is_null());
+    assert_eq!(rejected["report"]["valid_samples"], 0);
+    assert_eq!(rejected["task_error"], "fixture account model unavailable");
+    assert!(rejected["inflight"].is_null() && rejected["queued_at"].is_null());
+    assert!(!rejected.to_string().contains("fixture-secret"));
+    assert_eq!(host.executions.len(), 1);
+    assert!(!host.model_open);
+    assert!(!host.callbacks.iter().any(|m| m == "host.model.stream_read"));
+    bg.until(&mut host, |h| {
+        saved(h, &second["id"])["status"] == "completed"
+    })
+    .await;
+    assert_eq!(host.executions.len(), 37);
+    assert_eq!(saved(&host, &first["id"])["status"], "paused");
+    assert_eq!(
+        saved(&host, &first["id"])["attempts"]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(!host.callbacks.iter().any(|m| m.starts_with("host.http.")));
+    bg.cancel(&mut host).await;
+}
+
+#[tokio::test]
 async fn account_change_pauses_before_sending() {
     let mut peer = Peer::new().await;
     let mut host = Host::default();
