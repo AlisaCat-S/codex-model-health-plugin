@@ -13,7 +13,7 @@
 
 ## 版本号规则（时间命名）
 
-- 格式：`v<语义版本>-<yyyymmdd>.<HM>`，如 `v0.4.1-20261102.1200`；05:04 记为 `20261024.504`。
+- 格式：`v<语义版本>-<yyyymmdd>.<HM>`，如 `v0.4.2-20261104.1200`；05:04 记为 `20261024.504`。
 - 分钟段按十进制去掉前导零：宿主 SDK 用 `semver::Version` 解析清单版本，而 semver 要求数字标识符不得以前导零开头（`0504` 非法，`504` 合法）；`0`（00:00）合法。去零后按数值比较仍严格单调（59 < 100 < 2359）。
 - 语义版本取自 `plugin.json` 的 `version`（若含预发布后缀则取 `-` 之前部分），由维护者手工推进；时间戳为流水线启动时刻的 **UTC** `yyyymmdd.HHMM`，每次运行不同。
 - 该格式是合法 semver 预发布版本：同一语义版本下时间越大版本越新，且始终小于下一个语义版本，宿主升级比较不受影响。
@@ -28,11 +28,11 @@
 
 仓库为公开仓库，GitHub 提供免费的 arm64 托管 runner，因此无需 QEMU 模拟或交叉工具链，两个架构均为原生构建，与既有本地构建命令保持一致（glibc/Debian 12 基线不变）。
 
-打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev e0b7a841ca074f17e11dad73f39a159c75cb2fb1 --locked`（v3.38.1，插件 RPC 协议 v7），在对应架构的 `rust:1.99-slim-bookworm` 容器内安装，产物为该架构原生二进制。
+打包 CLI 与 SDK 同源锁定：`cargo install codex-proxy-plugin-cli --rev 12c32fcdecb29da4e44a21bb33fbbf2aaf6a166d --locked`（v3.39.1，插件 RPC 协议 v7），在对应架构的 `rust:1.99-slim-bookworm` 容器内安装，产物为该架构原生二进制。
 
 ## 发布说明标识宿主
 
-v0.4.1 对应 **Codex Proxy RS v3.38.1 / RPC v7 / UI v0.8.0**。自动 Release 说明固定标注此适配目标，从 `plugin.json` 读取实际宿主兼容范围，并链接到该次提交的 [SDK 适配分析](sdk-upgrade-2026-11-02.md)。本次 SDK 公开合同与主题桥未变，兼容下限仍为 v3.37.2；发布说明提醒账号模型资格收紧以及拒绝后的人工续测流程。
+v0.4.2 对应 **Codex Proxy RS v3.39.1 / RPC v7 / UI v0.8.0**。自动 Release 说明固定标注此适配目标，从 `plugin.json` 读取实际宿主兼容范围，并链接到该次提交的 [SDK 适配分析](sdk-upgrade-2026-11-04.md)。SDK 新增宿主 Retry-After 等待上限设置，本插件不调用该接口，使用的合同与主题桥未变，兼容下限仍为 v3.37.2；发布说明明确单题 120 秒预算不变，以及拒绝后的人工续测流程。
 
 ## 权限
 
