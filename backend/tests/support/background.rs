@@ -284,6 +284,7 @@ async fn host_execution_errors_pause_without_fallback_and_continue_the_queue() {
     use gateway_plugin_sdk::SendState;
     for (code, http_status, send_state) in [
         (ErrorCode::Capacity, None, SendState::NotSent),
+        (ErrorCode::Timeout, None, SendState::NotSent),
         (ErrorCode::Upstream, Some(503), SendState::Sent),
         (ErrorCode::Upstream, Some(503), SendState::Ambiguous),
     ] {

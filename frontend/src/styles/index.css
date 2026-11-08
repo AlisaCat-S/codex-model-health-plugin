@@ -2,6 +2,8 @@
 @import '@codex-proxy/ui/tailwind.css';
 @import 'tailwindcss/utilities.css' layer(utilities) source('../');
 
+/* UI v0.8 宿主没有弹层专用 Token；新宿主的内联主题值优先。 */
+:root { --z-popover-shadow: var(--z-box-shadow); }
 html, body, #app { height: auto; min-width: 0; }
 body { margin: 0; background: transparent; }
 #app { min-height: inherit; }

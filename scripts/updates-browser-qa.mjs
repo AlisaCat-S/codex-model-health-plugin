@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 
 const require = createRequire(import.meta.url)
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright')
+const { createTheme } = await import(new URL('../frontend/node_modules/@codex-proxy/ui/dist/theme/index.js', import.meta.url))
 const root = fileURLToPath(new URL('../', import.meta.url))
 const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4179/'
 mkdirSync(`${root}/review/screenshots`, {recursive:true})
@@ -137,9 +138,32 @@ try {
   await frame.getByRole('button',{name:'复制 ModelTrace 地址',exact:true}).click()
   await frame.getByText('地址已选中，请手动复制',{exact:true}).waitFor()
   assert.equal(await frame.getByRole('textbox',{name:'ModelTrace GitHub 地址',exact:true}).evaluate(e=>e.selectionEnd-e.selectionStart),boot.sources[1].url.length)
+  for (const scheme of ['light', 'dark']) {
+    for (const legacy of [false, true]) {
+      const tokens = createTheme({scheme, preset:'soft', colorId:'graphite'}).tokens
+      // v0.8 宿主没有这些新增 Token；其余字段仍走同一个 z 主题桥。
+      if (legacy) for (const name of ['card-bg-image', 'popover-shadow', 'layout-sider-bg-image', 'layout-sider-border-radius', 'menu-item-selected-bg-image', 'menu-item-selected-shadow']) delete tokens[name]
+      await frame.locator('html').evaluate((root, {scheme, tokens}) => {
+        for (const name of Array.from(root.style)) if (name.startsWith('--z-')) root.style.removeProperty(name)
+        root.dataset.theme = scheme
+        for (const [name, value] of Object.entries(tokens)) root.style.setProperty('--z-' + name, value)
+      }, {scheme, tokens})
+      const card = frame.locator('.setup-grid > :first-child')
+      assert.equal(await card.evaluate(e=>getComputedStyle(e).backgroundImage === 'none'),legacy)
+      await frame.getByRole('combobox',{name:'检测账号',exact:true}).click()
+      const overlay = frame.locator('[data-z-overlay]')
+      await overlay.waitFor()
+      assert.notEqual(await overlay.evaluate(e=>getComputedStyle(e).boxShadow),'none',`${scheme}: ${legacy ? 'legacy fallback' : 'host popover shadow'}`)
+      assert.equal(await overlay.evaluate(e=>getComputedStyle(e).getPropertyValue('--z-popover-shadow').trim()),tokens['popover-shadow'] || tokens['box-shadow'])
+      await page.setViewportSize({width:legacy ? 390 : 1440,height:1050})
+      assert.equal(await frame.locator('html').evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false)
+      await shot(`sdk-theme-${scheme}-${legacy ? 'legacy' : 'soft'}`)
+      await frame.getByRole('combobox',{name:'检测账号',exact:true}).press('Escape')
+    }
+  }
   assert.equal(network.filter(url=>!url.startsWith(base) && !url.startsWith('data:')).length,0,'UI must only use the host bridge')
   assert.deepEqual(errors,[])
-  const result = 'UPDATES BROWSER PASS: idle/current/ahead/behind/diverged/loading/error-isolation/dark/mobile PASS; sandbox=allow-scripts; production_copy=PASS; direct_http=0; console_errors=0; page_overflow=0\n'
+  const result = 'UPDATES BROWSER PASS: idle/current/ahead/behind/diverged/loading/error-isolation/dark/mobile PASS; sandbox=allow-scripts; production_copy=PASS; soft_and_legacy_themes=PASS; direct_http=0; console_errors=0; page_overflow=0\n'
   writeFileSync(`${root}/review/UPDATES-BROWSER-QA.txt`,result)
   console.log(result.trim())
 } finally { await browser.close() }
