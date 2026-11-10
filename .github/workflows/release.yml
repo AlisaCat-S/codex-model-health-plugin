@@ -1,7 +1,7 @@
 # 自动构建发布（Issue #1）
 # 触发：推送 main 自动构建并发布 Release；workflow_dispatch 支持在任意分支试跑
 # （dry_run=true 时只构建不发布）。版本号 = plugin.json 语义版本 + UTC 时间戳后缀，
-# 如 v0.4.3-20261108.1200；每次运行发布 x86_64 与 aarch64 两种 Linux glibc 制品。
+# 如 v0.4.4-20261111.1200；每次运行发布 x86_64 与 aarch64 两种 Linux glibc 制品。
 name: release
 
 on:
@@ -119,7 +119,7 @@ jobs:
           docker run --rm --platform "${{ matrix.platform }}" \
             -v "$PWD:/work" -w /work rust:1.99-slim-bookworm \
             sh -c 'cargo install --git https://github.com/zyycn/codex-proxy-rs.git \
-              --rev 402bc37fbb5c83378cc83cec89e9fa251e4a99c1 \
+              --rev c622f085748f812936a7371fcc85d1621fa72ca8 \
               --locked --root /work/.tools/cpr-cli codex-proxy-plugin-cli'
           test -x .tools/cpr-cli/bin/cpr-plugin
       - name: 前端单测
@@ -174,9 +174,9 @@ jobs:
           自动构建发布（时间版本号，UTC）。
 
           - 版本：${TAG#v}（语义版本 + 时间戳后缀，时间部分为 UTC）
-          - 对应宿主：[Codex Proxy RS v3.43.0](https://github.com/zyycn/codex-proxy-rs/releases/tag/v3.43.0)，插件 RPC **v7**；清单兼容范围：\`${HOST_RANGE}\`。
-          - 升级：本版使用 v3.43.0 SDK、同源 CLI 和 UI v0.9.0 重新构建打包；SDK 拆分排队超时并新增历史用量读取，本插件不调用这些接口。页面支持新主题材质，旧宿主使用弹层阴影回退，兼容下限仍为 v3.37.2。显式绑定账号不参与队满换号；宿主拒绝后暂停任务，保留发送状态并等待人工继续，不直连或自动重发，单题 120 秒预算不变。
-          - 适配差异与验证：[SDK 升级说明](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/sdk-upgrade-2026-11-08.md)。
+          - 对应宿主：[Codex Proxy RS v3.44.0](https://github.com/zyycn/codex-proxy-rs/releases/tag/v3.44.0)，插件 RPC **v7**；清单兼容范围：\`${HOST_RANGE}\`。
+          - 升级：本版使用 v3.44.0 SDK、同源 CLI 和 UI v0.9.1 重新构建打包；SDK 新增代理目录与按代理 ID 出站接口，本插件不调用这些接口；UI 修复柔光材质联动圆角，保留宿主自定义尺寸与旧宿主弹层阴影回退，兼容下限仍为 v3.37.2。显式绑定账号不参与队满换号；宿主拒绝后暂停任务，保留发送状态并等待人工继续，不直连或自动重发，单题 120 秒预算不变。
+          - 适配差异与验证：[SDK 升级说明](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/sdk-upgrade-2026-11-11.md)。
           - 制品（Linux glibc 2.36+，如 Debian 12；不支持 Alpine/musl 与 Windows）：
             - \`local.model-health-${TAG#v}-x86_64-unknown-linux-gnu.tar.gz\`（AMD64/Intel 64）
             - \`local.model-health-${TAG#v}-aarch64-unknown-linux-gnu.tar.gz\`（ARM64）

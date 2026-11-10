@@ -18,6 +18,7 @@ fn management_contract_preserves_the_host_floor_and_accepts_the_upgrade_target()
     assert!(range.matches(&"3.38.1".parse().unwrap()));
     assert!(range.matches(&"3.39.1".parse().unwrap()));
     assert!(range.matches(&"3.43.0".parse().unwrap()));
+    assert!(range.matches(&"3.44.0".parse().unwrap()));
     for version in [
         "3.29.7", "3.30.2", "3.31.0", "3.31.1", "3.31.3", "3.32.0", "3.33.0", "3.36.0", "3.37.1",
         "4.0.0",
@@ -46,18 +47,18 @@ fn release_versions_and_host_notes_match_the_migration_target() {
         .split('-')
         .next()
         .unwrap();
-    assert_eq!(base, "0.4.3");
+    assert_eq!(base, "0.4.4");
     assert_eq!(manifest["version"], env!("CARGO_PKG_VERSION"));
     assert_eq!(frontend["version"], base);
     assert_eq!(
         frontend["dependencies"]["@codex-proxy/ui"],
-        "https://github.com/zyycn/codex-proxy-ui/releases/download/v0.9.0/codex-proxy-ui-0.9.0.tgz"
+        "https://github.com/zyycn/codex-proxy-ui/releases/download/v0.9.1/codex-proxy-ui-0.9.1.tgz"
     );
     let workflow = include_str!("../../.github/workflows/release.yml");
-    assert!(workflow.contains("对应宿主：[Codex Proxy RS v3.43.0]"));
+    assert!(workflow.contains("对应宿主：[Codex Proxy RS v3.44.0]"));
     assert!(workflow.contains(&format!("RPC **v{PROTOCOL_VERSION}**")));
     assert!(workflow.contains("${HOST_RANGE}"));
-    assert!(workflow.contains("docs/sdk-upgrade-2026-11-08.md"));
+    assert!(workflow.contains("docs/sdk-upgrade-2026-11-11.md"));
 }
 
 #[tokio::test]
